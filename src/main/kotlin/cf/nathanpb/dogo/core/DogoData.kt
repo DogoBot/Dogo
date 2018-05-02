@@ -16,6 +16,7 @@ class DogoData constructor(file : File){
         read()
         setDefault("COMMAND_PREFIX", "!dg")
         setDefault("DEBUG_PROFILE", false)
+        setDefault("BOT_TOKEN", "Insert your token here")
         write()
     }
 

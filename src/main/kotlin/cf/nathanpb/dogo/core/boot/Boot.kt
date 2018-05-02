@@ -5,6 +5,12 @@ import cf.nathanpb.dogo.core.DogoData
 import cf.nathanpb.dogo.core.DogoThread
 import cf.nathanpb.dogo.core.Logger
 import cf.nathanpb.dogo.utils.ConsoleColors
+import com.mongodb.MongoClient
+import com.mongodb.MongoClientURI
+import com.mongodb.client.MongoDatabase
+import net.dv8tion.jda.core.AccountType
+import net.dv8tion.jda.core.JDABuilder
+import net.dv8tion.jda.core.entities.Game
 import java.io.File
 
 fun main(args : Array<String>){
@@ -13,7 +19,15 @@ fun main(args : Array<String>){
 
 class Boot {
     var phaseList = listOf(
-            /*Phase("Connecting to Database",
+            Phase("Initializing JDA",
+                    {
+                        DogoBot.jda = JDABuilder(AccountType.BOT)
+                                .setToken(DogoBot.data?.getString("BOT_TOKEN"))
+                                .setGame(Game.watching("myself starting"))
+                                .buildBlocking()
+                    }
+            ),
+            Phase("Connecting to Database",
                     {
                         DogoBot.mongoClient = MongoClient(MongoClientURI(DogoBot.data?.getString("MONGO_URI")))
                         DogoBot.db = DogoBot.mongoClient?.getDatabase(DogoBot.data?.getString("DB_NAME"))
@@ -21,14 +35,22 @@ class Boot {
             ),
             Phase("Checking Database",
                     {
-                        //todo checar database
+                        if (!DogoBot.db!!.hasCollection("USERS")) {
+                            DogoBot.logger?.info("USERS collection doesn't exists! Creating one...")
+                            DogoBot.db?.createCollection("USERS")
+                        }
+                        if (!DogoBot.db!!.hasCollection("GUILDS")) {
+                            DogoBot.logger?.info("GUILDS collection doesn't exists! Creating one...")
+                            DogoBot.db?.createCollection("GUILDS")
+                        }
                     }
-            ),*/
+            ),
             Phase("Setting Up Threads",
                     {
                         DogoThread("Test Thread", {}).shedule(0, 50)
                     }
             )
+
     )
 
     val init = File("init.json")
@@ -44,9 +66,9 @@ class Boot {
         DogoBot.logger = Logger(System.out)
         println("Logger successfully created")
 
-        var debug = DogoBot.data?.getBoolean("DEBUG_PROFILE")
+        val debug = DogoBot.data?.getBoolean("DEBUG_PROFILE")
         if(debug != null && debug){
-            DogoBot.logger?.info("DEBUG PROFILE IS ON")
+            DogoBot.logger?.info("DEBUG PROFILE IS ACTIVE")
 
         }
 
@@ -71,20 +93,29 @@ class Boot {
                 " |_____/ \\___/ \\__, |\\___/|____/ \\___/ \\__|\n" +
                 "                __/ |                      \n" +
                 "               |___/                    \n" +
-                "By NathanPB - https://github.com/NathanPB")
+                "By NathanPB - https://github.com/NathanPB/Dogo")
 
         var count = 1
 
         for(phase in phaseList){
             DogoBot.logger?.info("["+count+"/"+phaseList.size+"] " + phase.getDisplay(), ConsoleColors.YELLOW)
+            DogoBot.jda?.presence?.game = Game.watching("myself starting - "+phase.getDisplay())
             phase.start()
             DogoBot.logger?.info("["+count+"/"+phaseList.size+"] Done in "+(System.currentTimeMillis() - DogoBot.initTime)+"ms", ConsoleColors.GREEN)
             count++
         }
 
         DogoBot.ready = true
+        DogoBot.jda?.presence?.game = Game.playing("in "+DogoBot.jda?.guilds?.size+" guilds | dg!help")
         DogoBot.logger?.info("Dogo is Done! "+(System.currentTimeMillis() - DogoBot.initTime)+"ms", ConsoleColors.GREEN_BACKGROUND)
     }
 
 
+    /*
+     extension shit
+     */
+
+    fun MongoDatabase.hasCollection(name : String) : Boolean {
+        return this.listCollectionNames().contains(name)
+    }
 }
