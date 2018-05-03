@@ -44,11 +44,6 @@ class Boot {
                             DogoBot.db?.createCollection("GUILDS")
                         }
                     }
-            ),
-            Phase("Setting Up Threads",
-                    {
-                        DogoThread("Test Thread", {}).shedule(0, 50)
-                    }
             )
 
     )
