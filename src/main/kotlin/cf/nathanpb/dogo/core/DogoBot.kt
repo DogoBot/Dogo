@@ -1,6 +1,8 @@
 package cf.nathanpb.dogo.core
 
 import cf.nathanpb.dogo.core.boot.Boot
+import cf.nathanpb.dogo.core.eventBus.EventBus
+import cf.nathanpb.dogo.core.queue.DogoQueue
 import cf.nathanpb.dogo.core.queue.DogoThread
 import com.mongodb.MongoClient
 import com.mongodb.client.MongoDatabase
@@ -18,6 +20,10 @@ class DogoBot {
         val initTime = System.currentTimeMillis()
         var ready = false
         val threads = HashMap<String, DogoThread>()
+
+        val eventBus = EventBus("EVENT BUS")
+        val jdaOutputThread = DogoQueue("JDA OUTPUT")
+        val cmdProcessorThread = DogoQueue("CMD PROCESSOR")
     }
 
     fun isAvailable() : Boolean {
