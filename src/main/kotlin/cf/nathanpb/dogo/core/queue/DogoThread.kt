@@ -1,4 +1,4 @@
-package cf.nathanpb.dogo.core.threads
+package cf.nathanpb.dogo.core.queue
 
 import cf.nathanpb.dogo.core.DogoBot
 import java.util.*

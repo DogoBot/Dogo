@@ -1,7 +1,7 @@
 package cf.nathanpb.dogo.core
 
 import cf.nathanpb.dogo.core.boot.Boot
-import cf.nathanpb.dogo.core.threads.DogoThread
+import cf.nathanpb.dogo.core.queue.DogoThread
 import com.mongodb.MongoClient
 import com.mongodb.client.MongoDatabase
 import net.dv8tion.jda.core.JDA
