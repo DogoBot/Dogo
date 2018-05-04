@@ -2,7 +2,6 @@ package cf.nathanpb.dogo.core.boot
 
 import cf.nathanpb.dogo.core.DogoBot
 import cf.nathanpb.dogo.core.DogoData
-import cf.nathanpb.dogo.core.DogoThread
 import cf.nathanpb.dogo.core.Logger
 import cf.nathanpb.dogo.utils.ConsoleColors
 import com.mongodb.MongoClient
@@ -101,7 +100,7 @@ class Boot {
         }
 
         DogoBot.ready = true
-        DogoBot.jda?.presence?.game = Game.playing("in "+DogoBot.jda?.guilds?.size+" guilds | dg!help")
+        DogoBot.jda?.presence?.game = Game.playing("in ${DogoBot.jda?.guilds?.size} | dg!help")
         DogoBot.logger?.info("Dogo is Done! "+(System.currentTimeMillis() - DogoBot.initTime)+"ms", ConsoleColors.GREEN_BACKGROUND)
     }
 

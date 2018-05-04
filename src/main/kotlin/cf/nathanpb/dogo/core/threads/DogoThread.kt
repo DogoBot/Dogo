@@ -1,5 +1,6 @@
-package cf.nathanpb.dogo.core
+package cf.nathanpb.dogo.core.threads
 
+import cf.nathanpb.dogo.core.DogoBot
 import java.util.*
 
 
