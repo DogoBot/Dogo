@@ -26,6 +26,7 @@ repositories {
 }
 
 dependencies {
+    compile "org.jetbrains.kotlin:kotlin-reflect"
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compile 'net.dv8tion:JDA:3.5.1_345'
     compile 'org.mongodb:mongodb-driver:3.6.3'
