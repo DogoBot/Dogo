@@ -11,6 +11,7 @@ import net.dv8tion.jda.core.AccountType
 import net.dv8tion.jda.core.JDABuilder
 import net.dv8tion.jda.core.entities.Game
 import java.io.File
+import java.util.concurrent.TimeUnit
 
 fun main(args : Array<String>){
     DogoBot.boot = Boot()
@@ -57,7 +58,7 @@ class Boot {
             init.createNewFile()
         }
         println("Data successfully loaded")
-        DogoBot.logger = Logger(System.out)
+        DogoBot.logger = Logger(System.out, "console")
         println("Logger successfully created")
 
         val debug = DogoBot.data?.getBoolean("DEBUG_PROFILE")
@@ -92,16 +93,17 @@ class Boot {
         var count = 1
 
         for(phase in phaseList){
+            val time = System.currentTimeMillis()
             DogoBot.logger?.info("["+count+"/"+phaseList.size+"] " + phase.getDisplay(), ConsoleColors.YELLOW)
             DogoBot.jda?.presence?.game = Game.watching("myself starting - "+phase.getDisplay())
             phase.start()
-            DogoBot.logger?.info("["+count+"/"+phaseList.size+"] Done in "+(System.currentTimeMillis() - DogoBot.initTime)+"ms", ConsoleColors.GREEN)
+            DogoBot.logger?.info("["+count+"/"+phaseList.size+"] Done in ${time.timeSince()}", ConsoleColors.GREEN)
             count++
         }
 
         DogoBot.ready = true
         DogoBot.jda?.presence?.game = Game.playing("in ${DogoBot.jda?.guilds?.size} | dg!help")
-        DogoBot.logger?.info("Dogo is Done! "+(System.currentTimeMillis() - DogoBot.initTime)+"ms", ConsoleColors.GREEN_BACKGROUND)
+        DogoBot.logger?.info("Dogo is Done! ${DogoBot.initTime.timeSince()}", ConsoleColors.GREEN_BACKGROUND)
     }
 
 
@@ -111,5 +113,16 @@ class Boot {
 
     fun MongoDatabase.hasCollection(name : String) : Boolean {
         return this.listCollectionNames().contains(name)
+    }
+
+    fun Long.timeSince() : String {
+        val time = System.currentTimeMillis() - this;
+        if(time < 1000){
+            return time.toString()+"ms"
+        } else if(time < 60000){
+            return TimeUnit.MILLISECONDS.toSeconds(time).toString()+"sec"
+        } else {
+            return TimeUnit.MILLISECONDS.toMinutes(time).toString()+"min"
+        }
     }
 }
