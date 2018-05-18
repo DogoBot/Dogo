@@ -31,4 +31,5 @@ open class DogoThread(name : String, run : () -> Unit) : TimerTask() {
         timer.schedule(this, delay, period-1)
     }
 
+
 }
