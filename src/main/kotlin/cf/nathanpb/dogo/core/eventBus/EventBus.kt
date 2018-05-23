@@ -1,14 +1,16 @@
 package cf.nathanpb.dogo.core.eventBus
 
+import cf.nathanpb.dogo.core.DogoBot
 import cf.nathanpb.dogo.core.queue.DogoQueue
+import net.dv8tion.jda.core.events.Event
+import net.dv8tion.jda.core.hooks.EventListener
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.LinkedHashMap
 import kotlin.reflect.KFunction
-import kotlin.reflect.full.createType
-import kotlin.reflect.full.functions
+import kotlin.reflect.full.*
 
-class EventBus(name : String) : DogoQueue(name){
+class EventBus(name : String) : DogoQueue(name), EventListener {
     private val listeners = LinkedHashMap<Long, EventBus.EventListener>()
 
     fun submit(element : Any) {
@@ -20,11 +22,9 @@ class EventBus(name : String) : DogoQueue(name){
     fun submitSink(element : Any) {
         for(listener in listeners){
             val parameter = listener.value.func.parameters.first()
-            println(listener.value.func.parameters.map { p -> p.type})
-
-            if(parameter.type.equals(element::class.createType())){
+            try{
                 listener.value.func.call(listener.value.instance, element)
-            }
+            }catch (ex : IllegalArgumentException) {}
         }
     }
 
@@ -77,5 +77,9 @@ class EventBus(name : String) : DogoQueue(name){
         override fun toString(): String {
             return "EventListener@"+id
         }
+    }
+
+    override fun onEvent(event: Event?) {
+        if(event != null) submit(event)
     }
 }
