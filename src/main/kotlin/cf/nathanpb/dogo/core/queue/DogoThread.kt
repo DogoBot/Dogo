@@ -7,6 +7,7 @@ import java.util.*
 open class DogoThread(name : String, run : () -> Unit) : TimerTask() {
     private var lastTick01 = System.currentTimeMillis()
     private var lastTick02 = System.currentTimeMillis()
+    public val name = name
     open var run = run
     private var timer = Timer(name)
 
