@@ -4,6 +4,8 @@ import cf.nathanpb.dogo.commands.Help
 import cf.nathanpb.dogo.core.DogoBot
 import cf.nathanpb.dogo.core.DogoData
 import cf.nathanpb.dogo.core.Logger
+import cf.nathanpb.dogo.core.profiles.PermGroup
+import cf.nathanpb.dogo.core.profiles.PermGroupSet
 import cf.nathanpb.dogo.utils.ConsoleColors
 import com.mongodb.MongoClient
 import com.mongodb.MongoClientURI
@@ -11,6 +13,7 @@ import com.mongodb.client.MongoDatabase
 import net.dv8tion.jda.core.AccountType
 import net.dv8tion.jda.core.JDABuilder
 import net.dv8tion.jda.core.entities.Game
+import org.bson.Document
 import java.io.File
 import java.util.concurrent.TimeUnit
 
@@ -39,6 +42,10 @@ class Boot {
                         if (!DogoBot.db!!.hasCollection("GUILDS")) {
                             DogoBot.logger?.info("GUILDS collection doesn't exists! Creating one...")
                             DogoBot.db?.createCollection("GUILDS")
+                        }
+                        if(!DogoBot.db!!.hasCollection("PERMGROUPS")) {
+                            DogoBot.logger?.info("PERMGROUPS collection doesn't exists! Creating one...")
+                            DogoBot.db?.createCollection("PERMGROUPS")
                         }
                     }),
             Phase("Registering Commands",{
@@ -87,6 +94,24 @@ class Boot {
                         }
                     }
                 }
+            }),
+            Phase("Setting up Permgroups", {
+                val default = PermGroup("0")
+                    default.name = "default"
+                    default.applyTo = arrayListOf("everyone")
+                    default.include = arrayListOf("commands.*")
+                    default.exclude = arrayListOf("commands.admin.*")
+                    default.priotiry = 0
+                val admins = PermGroup("-1")
+                    admins.name = "admin"
+                    admins.include = arrayListOf("commands.admin.*")
+                    admins.exclude = arrayListOf("commands.admin.root.*")
+                    admins.priotiry = -1
+                val root = PermGroup("-2")
+                    root.name = "root"
+                    root.applyTo = arrayListOf(DogoBot?.data?.getString("OWNER_ID") as String)
+                    root.include = arrayListOf("*")
+                    root.priotiry = -2
             })
     )
 
