@@ -18,6 +18,7 @@ class DogoData constructor(file : File){
         setDefault("DEBUG_PROFILE", false)
         setDefault("BOT_TOKEN", "Insert your token here")
         setDefault("LOG_PATH", "/logs/")
+        setDefault("OWNER_ID", "Your ID here")
         write()
     }
 
