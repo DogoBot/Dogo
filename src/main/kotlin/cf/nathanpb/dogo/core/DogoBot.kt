@@ -2,11 +2,13 @@ package cf.nathanpb.dogo.core
 
 import cf.nathanpb.dogo.core.boot.Boot
 import cf.nathanpb.dogo.core.cmdHandler.CommandFactory
+import cf.nathanpb.dogo.core.entities.DogoGuild
 import cf.nathanpb.dogo.core.eventBus.EventBus
 import cf.nathanpb.dogo.core.queue.DogoQueue
 import com.mongodb.MongoClient
 import com.mongodb.client.MongoDatabase
 import net.dv8tion.jda.core.JDA
+import org.json.JSONArray
 import kotlin.collections.HashMap
 
 class DogoBot {
@@ -27,9 +29,20 @@ class DogoBot {
         val ocWatcher = DogoQueue("OC WATCHER")
 
         val cmdFactory = CommandFactory(eventBus)
+        val instance = DogoBot()
     }
 
     fun isAvailable() : Boolean {
         return ready
+    }
+
+    fun getCommandPrefixes(vararg guilds : DogoGuild) : ArrayList<String> {
+        val list = ArrayList<String>()
+        for(s in data?.getAny("COMMAND_PREFIX") as JSONArray){
+            list.add(s.toString())
+        }
+        guilds.forEach { g -> list.addAll(g.prefix) }
+        list.sortedBy { a -> -a.length}
+        return list
     }
 }
