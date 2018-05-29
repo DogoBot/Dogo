@@ -1,0 +1,44 @@
+package cf.nathanpb.dogo.core.cmdHandler
+
+import cf.nathanpb.dogo.exceptions.CommandException
+import cf.nathanpb.dogo.lang.LanguageEntry
+import kotlin.reflect.full.allSuperclasses
+
+abstract class DogoCommand(name : String, factory : CommandFactory) {
+    val name  = name
+    abstract val minArgumentsSize : Int
+    abstract val usage : String
+    abstract val aliases : String
+    abstract val category : CommandCategory
+    val lang = LanguageEntry(getPermission(factory))
+    val children = ArrayList<DogoCommand>()
+
+    @Throws(CommandException::class)
+    abstract fun execute(cmd : CommandContext)
+
+    fun getTriggers() : List<String> {
+        return ("$aliases ").split(" ")
+    }
+
+    fun getPermission(factory : CommandFactory) : String {
+        var perm = "command"
+        for(cmd in CommandTree(this, factory)){
+            perm+=".${cmd.name}"
+        }
+        return perm
+    }
+
+    fun getParent(factory: CommandFactory) : DogoCommand? {
+        if(this::class.allSuperclasses.isNotEmpty()) {
+            val a = this::class.allSuperclasses.stream().findFirst().orElse(null)
+            if (a != null) {
+                return factory.commands[a]
+            }
+        }
+        return null
+    }
+
+    fun isRoot(factory: CommandFactory) : Boolean {
+        return getParent(factory) != null
+    }
+}
