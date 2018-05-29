@@ -49,10 +49,7 @@ class Boot {
                         }
                     }),
             Phase("Registering Commands",{
-                DogoBot.cmdFactory.commands.put(
-                        Help::class,
-                        Help(DogoBot.cmdFactory)
-                )
+                DogoBot.cmdFactory.commands[Help::class] = Help(DogoBot.cmdFactory)
             }),
             Phase("Setting up Queues", {
                 DogoBot.ocWatcher.run = {
@@ -78,18 +75,18 @@ class Boot {
                         }
 
                         //Reduces the overclock to ONLY THE NECESSARY
-                        clk =- t.clk
+                        clk -= t.clk
                         if(clk < 0) clk = 0
 
                         //Applies the overclock (if necessary)
                         if(t.overclock < clk) {
-                            DogoBot.logger?.info("Queue ${t.name} overclocked from ${t.clk}Hz (+${t.overclock}Hz oc) to ${t.clk + clk}Hz (+${clk}Hz oc)", ConsoleColors.YELLOW)
+                            //DogoBot.logger?.info("Queue ${t.name} overclocked from ${t.clk}Hz (+${t.overclock}Hz oc) to ${t.clk + clk}Hz (+${clk}Hz oc)", ConsoleColors.YELLOW)
                             t.overclock = clk
                             if ((t.overclock / t.defaultClock) > 10) {
                                 DogoBot.logger?.warn("Overclock from ${t.name} is TOO FUCKING HIGH!!! Something is really wrong")
                             }
                         } else if(t.overclock > clk){
-                            DogoBot.logger?.info("Queue ${t.name} downclocked from ${t.clk}Hz (+${t.overclock}Hz oc) to ${t.clk + clk}Hz (+${clk}Hz oc)", ConsoleColors.GREEN)
+                            //DogoBot.logger?.info("Queue ${t.name} downclocked from ${t.clk}Hz (+${t.overclock}Hz oc) to ${t.clk + clk}Hz (+${clk}Hz oc)", ConsoleColors.GREEN)
                             t.overclock = clk
                         }
                     }
@@ -99,13 +96,13 @@ class Boot {
                 val default = PermGroup("0")
                     default.name = "default"
                     default.applyTo = arrayListOf("everyone")
-                    default.include = arrayListOf("commands.*")
-                    default.exclude = arrayListOf("commands.admin.*")
+                    default.include = arrayListOf("command.*")
+                    default.exclude = arrayListOf("command.admin.*")
                     default.priotiry = 0
                 val admins = PermGroup("-1")
                     admins.name = "admin"
-                    admins.include = arrayListOf("commands.admin.*")
-                    admins.exclude = arrayListOf("commands.admin.root.*")
+                    admins.include = arrayListOf("command.admin.*")
+                    admins.exclude = arrayListOf("command.admin.root.*")
                     admins.priotiry = -1
                 val root = PermGroup("-2")
                     root.name = "root"

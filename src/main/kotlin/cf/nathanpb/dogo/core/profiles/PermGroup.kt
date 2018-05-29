@@ -8,8 +8,12 @@ import java.util.regex.Pattern
 import kotlin.collections.ArrayList
 
 class PermGroup(id : String? = null) {
-    val col : MongoCollection<Document>
-        get() {return DogoBot.db?.getCollection("PERMGROUPS") as MongoCollection}
+    companion object {
+        val col: MongoCollection<Document>
+            get() {
+                return DogoBot.db?.getCollection("PERMGROUPS") as MongoCollection
+            }
+    }
 
     var id = id
         private set
@@ -83,6 +87,7 @@ class PermGroup(id : String? = null) {
     fun hasIncluded(perm: String) : Boolean {
         for(s in include){
             var p2 = s.replace(".", "\\.").replace("\\.*", ".*")
+            if(p2.contains("*") && !p2.contains("\\.*")) p2 = p2.replace("*", ".*")
             var pattern2 = Pattern.compile(p2)
             if(pattern2.matcher(perm).matches()) return true
         }
@@ -92,6 +97,7 @@ class PermGroup(id : String? = null) {
     fun hasExcluded(perm : String) : Boolean {
         for(s in exclude){
             var p2 = s.replace(".", "\\.").replace("\\.*", ".*")
+            if(p2.contains("*") && !p2.contains("\\.*")) p2 = p2.replace("*", ".*")
             var pattern2 = Pattern.compile(p2)
             if(pattern2.matcher(perm).matches()) return true
         }
