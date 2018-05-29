@@ -9,13 +9,12 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class Logger constructor(ps : PrintStream, name : String){
-    val format = SimpleDateFormat("ss:mm:HH - MM/dd/YYYY")
+    val format = SimpleDateFormat("HH:mm:ss - dd/MM/YYYY")
     private val name = name
     private val ps  = ps;
     private val file = File(File(DogoBot.data?.getString("LOG_PATH")), "$name _${format.format(Date()).replace("/", "-").replace(":", "-")}.log")
     val fwqueue = DogoQueue("LOGGER_FW_QUEUE")
     init {
-        fwqueue.shedule(0, 1000)
         if(!file.exists()) {
             if(file.parentFile != null && !file.parentFile.exists()){
                 file.parentFile.mkdirs()
@@ -29,13 +28,12 @@ class Logger constructor(ps : PrintStream, name : String){
     fun print(obj : Any?) {
         val s = obj.toString()+ConsoleColors.RESET.toString()
         ps.print(s)
-        printToFile(s);
+        printToFile(s)
     }
 
     fun println(obj : Any?){
         val s = obj.toString()+ConsoleColors.RESET.toString()+"\n"
         print(s)
-        //printToFile(s)
     }
 
     fun info(obj : Any?, color : ConsoleColors) {
