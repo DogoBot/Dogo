@@ -18,6 +18,7 @@ class PermGroupSet() : ArrayList<PermGroup>(){
     }
 
     fun can(perm : String) : Boolean {
+        sort()
         var b = false
         forEach { g ->
             if(g.hasIncluded(perm)) b = true
