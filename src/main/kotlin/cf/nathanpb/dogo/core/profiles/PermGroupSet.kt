@@ -1,6 +1,9 @@
 package cf.nathanpb.dogo.core.profiles
 
-class PermGroupSet : ArrayList<PermGroup>(){
+class PermGroupSet() : ArrayList<PermGroup>(){
+    constructor(list : List<PermGroup>) : this(){
+        addAll(list)
+    }
 
 
     fun removeFromId(id : String) {
@@ -21,5 +24,9 @@ class PermGroupSet : ArrayList<PermGroup>(){
             if(g.hasExcluded(perm)) b = false
          }
         return b
+    }
+
+    fun filterApplied(applied: String) : PermGroupSet {
+        return PermGroupSet(filter { g -> g.applyTo.contains(applied) })
     }
 }
