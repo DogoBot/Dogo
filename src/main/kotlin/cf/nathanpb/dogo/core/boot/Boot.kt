@@ -1,5 +1,6 @@
 package cf.nathanpb.dogo.core.boot
 
+import cf.nathanpb.dogo.commands.Help
 import cf.nathanpb.dogo.core.DogoBot
 import cf.nathanpb.dogo.core.DogoData
 import cf.nathanpb.dogo.core.Logger
@@ -19,22 +20,18 @@ fun main(args : Array<String>){
 
 class Boot {
     var phaseList = listOf(
-            Phase("Initializing JDA",
-                    {
+            Phase("Initializing JDA", {
                         DogoBot.jda = JDABuilder(AccountType.BOT)
                                 .setToken(DogoBot.data?.getString("BOT_TOKEN"))
                                 .setGame(Game.watching("myself starting"))
+                                .addEventListener(DogoBot.eventBus)
                                 .buildBlocking()
-                    }
-            ),
-            Phase("Connecting to Database",
-                    {
+                    }),
+            Phase("Connecting to Database", {
                         DogoBot.mongoClient = MongoClient(MongoClientURI(DogoBot.data?.getString("MONGO_URI")))
                         DogoBot.db = DogoBot.mongoClient?.getDatabase(DogoBot.data?.getString("DB_NAME"))
-                    }
-            ),
-            Phase("Checking Database",
-                    {
+                    }),
+            Phase("Checking Database", {
                         if (!DogoBot.db!!.hasCollection("USERS")) {
                             DogoBot.logger?.info("USERS collection doesn't exists! Creating one...")
                             DogoBot.db?.createCollection("USERS")
@@ -43,9 +40,54 @@ class Boot {
                             DogoBot.logger?.info("GUILDS collection doesn't exists! Creating one...")
                             DogoBot.db?.createCollection("GUILDS")
                         }
-                    }
-            )
+                    }),
+            Phase("Registering Commands",{
+                DogoBot.cmdFactory.commands.put(
+                        Help::class,
+                        Help(DogoBot.cmdFactory)
+                )
+            }),
+            Phase("Setting up Queues", {
+                DogoBot.ocWatcher.run = {
+                    for(t in DogoBot.threads.values){
+                        var queue = t.queue()
+                        var clk = 1
 
+                        //Increases 10Hz every 10 items in queue;
+                        while (queue > 10){
+                            queue-=10
+                            clk+=10
+                        }
+                        //clk is in Hz, NOT FUCKING PERIOD
+
+                        //Fix the overclock multiplier if its wrong
+                        if(clk < t.defaultClock){
+                            clk = t.defaultClock;
+                        }
+
+                        //Fix the queue clock if its wrong
+                        if(t.clk < t.defaultClock){
+                            t.clk = t.defaultClock;
+                        }
+
+                        //Reduces the overclock to ONLY THE NECESSARY
+                        clk =- t.clk
+                        if(clk < 0) clk = 0
+
+                        //Applies the overclock (if necessary)
+                        if(t.overclock < clk) {
+                            DogoBot.logger?.info("Queue ${t.name} overclocked from ${t.clk}Hz (+${t.overclock}Hz oc) to ${t.clk + clk}Hz (+${clk}Hz oc)", ConsoleColors.YELLOW)
+                            t.overclock = clk
+                            if ((t.overclock / t.defaultClock) > 10) {
+                                DogoBot.logger?.warn("Overclock from ${t.name} is TOO FUCKING HIGH!!! Something is really wrong")
+                            }
+                        } else if(t.overclock > clk){
+                            DogoBot.logger?.info("Queue ${t.name} downclocked from ${t.clk}Hz (+${t.overclock}Hz oc) to ${t.clk + clk}Hz (+${clk}Hz oc)", ConsoleColors.GREEN)
+                            t.overclock = clk
+                        }
+                    }
+                }
+            })
     )
 
     val init = File("init.json")
@@ -74,6 +116,7 @@ class Boot {
             DogoBot.logger?.getPrintStream()?.print(ConsoleColors.RED_BOLD)
             ex.printStackTrace(DogoBot.logger?.getPrintStream())
             DogoBot.logger?.getPrintStream()?.print(ConsoleColors.RESET)
+            System.exit(1)
         }
     }
 
@@ -102,7 +145,7 @@ class Boot {
         }
 
         DogoBot.ready = true
-        DogoBot.jda?.presence?.game = Game.playing("in ${DogoBot.jda?.guilds?.size} | dg!help")
+        DogoBot.jda?.presence?.game = Game.playing("in ${DogoBot.jda?.guilds?.size} guilds| dg!help")
         DogoBot.logger?.info("Dogo is Done! ${DogoBot.initTime.timeSince()}", ConsoleColors.GREEN_BACKGROUND)
     }
 

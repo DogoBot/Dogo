@@ -8,13 +8,13 @@ class LanguageEntry constructor(registry : String){
     private val default =LanguageEntry::class.java.getResource("/assets/lang/en_US.lang").readText().toLang()
 
 
-    fun getText(lang : String, entry : String) : String{
+    fun getText(lang : String, entry : String, vararg args : Any) : String{
         var text = LanguageEntry::class.java.getResource("/assets/lang/${lang.split("_")[0].toLowerCase()}_${lang.split("_")[1].toUpperCase()}.lang")?.readText()?.toLang()
         if(text == null){
            text = default
         }
         if(text.containsKey(entry)){
-            return text.get(entry) as String
+            return String.format(text.get(entry) as String, args)
         } else {
             return "NO_TEXT"
         }

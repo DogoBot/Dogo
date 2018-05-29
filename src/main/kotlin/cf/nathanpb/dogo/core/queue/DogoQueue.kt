@@ -1,45 +1,50 @@
 package cf.nathanpb.dogo.core.queue
 
 import cf.nathanpb.dogo.core.DogoBot
-import java.util.*
+import cf.nathanpb.dogo.utils.UnitUtils
 import java.util.concurrent.LinkedBlockingQueue
 
 
-open class DogoQueue(name : String) : TimerTask() {
+open class DogoQueue(name : String) : Thread(name) {
     private val queue = LinkedBlockingQueue<QueueAction>()
+
     private var lastTick01 = System.currentTimeMillis()
     private var lastTick02 = System.currentTimeMillis()
-    public val name = name
+
+    var defaultClock = 10
+    var clk = defaultClock
+    var overclock = 0
+
     open var run = {
         if(!queue.isEmpty()){
             queue.poll().run()
         }
     }
-    private var timer = Timer(name)
-    var minClock = 100
 
     init {
-        DogoBot.threads.put(name, this)
+        DogoBot.threads[name] = this
+        start()
     }
 
     override fun run() {
-        kotlin.run(run)
-        lastTick02 = lastTick01
-        lastTick01 = System.currentTimeMillis()
+        while(true) {
+            Thread.sleep(UnitUtils().hzToMs(getCurrentClock()+1))
+            lastTick02 = lastTick01
+            lastTick01 = System.currentTimeMillis()
+            kotlin.run(run)
+        }
+    }
+
+    fun getCurrentClock() : Int {
+        return clk + overclock
     }
 
     fun getTps() : Int {
-        if(lastTick01.equals(lastTick02)) {
+        if(lastTick01 == lastTick02) {
             return 0
         }
-        return 1000 / (lastTick01 - lastTick02).toInt()
+        return UnitUtils().msToHz(lastTick01 - lastTick02)
     }
-
-    open fun shedule(period : Long) {
-        timer.schedule(this, 0, period-1)
-    }
-
-
 
     open fun submit(action : () -> Unit) {
         queue.add(QueueAction(action))
