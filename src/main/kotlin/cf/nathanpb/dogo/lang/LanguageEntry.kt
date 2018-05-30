@@ -13,10 +13,10 @@ class LanguageEntry constructor(registry : String){
         if(text == null){
            text = default
         }
-        if(text.containsKey(entry)){
-            return String.format(text.get(entry) as String, args)
+        if(text.containsKey("$registry.$entry")){
+            return String.format(text["$registry.$entry"] as String, args)
         } else {
-            return "NO_TEXT"
+            return "$registry.$entry"
         }
     }
 
@@ -26,9 +26,11 @@ class LanguageEntry constructor(registry : String){
     private fun String.toLang() : HashMap<String, String> {
         val hm = HashMap<String, String>()
         if(this != null) {
-            val array = ConcurrentLinkedDeque<String>(this.split("="))
+
+            var array = ConcurrentLinkedDeque<String>(this.split("=", "\n"))
+            array = ConcurrentLinkedDeque(array.filter { t -> t.isNotEmpty() && !t.equals("\r") && !t.startsWith("#")}.map { t -> t.replace("\r", "") })
             while (array.size >= 2) {
-                hm.put(array.poll(), array.poll())
+                hm[array.poll()] = array.poll()
             }
         }
         return hm
