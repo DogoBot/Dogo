@@ -6,3 +6,5 @@ cmdcategory.music=:musical_keyboard: Music
 cmdcategory.guild_administration=:newspaper: Guild Administration
 cmdcategory.nsfw=:ok_hand: NSFW
 cmdcategory.minigames=:black_joker: Minigames
+
+command.help.helproot=Hey there! how can I help you?

@@ -7,6 +7,7 @@ class CommandTree(factory : CommandFactory) : ArrayList<DogoCommand>(){
     var args  = ArrayList<String>()
 
     constructor(args : String, factory : CommandFactory) : this(factory){
+        if(args.isEmpty()) return
         var lastCmd : ArrayList<DogoCommand> = ArrayList(factory.commands.values)
         var index = 0
 

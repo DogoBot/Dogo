@@ -1,6 +1,5 @@
 package cf.nathanpb.dogo.core.eventBus
 
-import cf.nathanpb.dogo.core.DogoBot
 import cf.nathanpb.dogo.core.queue.DogoQueue
 import net.dv8tion.jda.core.events.Event
 import net.dv8tion.jda.core.hooks.EventListener
