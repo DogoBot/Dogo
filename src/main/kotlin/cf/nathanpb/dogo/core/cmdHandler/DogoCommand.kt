@@ -12,6 +12,7 @@ abstract class DogoCommand(name : String, factory : CommandFactory) {
     abstract val category : CommandCategory
     val lang = LanguageEntry(getPermission(factory))
     val children = ArrayList<DogoCommand>()
+    val factory = factory
 
     @Throws(CommandException::class)
     abstract fun execute(cmd : CommandContext)
