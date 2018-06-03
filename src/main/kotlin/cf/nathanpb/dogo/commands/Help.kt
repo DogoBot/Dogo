@@ -38,9 +38,9 @@ class Help(factory : CommandFactory) : DogoCommand("help", factory){
                 s+="\n";
                 embed.addField(e.key.getDisplay(cmd.sender.lang), s, false)
             }
-            DogoBot.jdaOutputThread.submit { cmd.msg.channel.sendMessage(embed.build()).queue({}, {}) }
+            cmd.reply(embed.build())
         } else {
-            DogoBot.jdaOutputThread.submit { cmd.msg.channel.sendMessage(getHelpFor(tree.last(), cmd).build()).queue({}, {}) }
+            cmd.reply(getHelpFor(tree.last(), cmd).build())
         }
     }
 

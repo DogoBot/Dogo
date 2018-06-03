@@ -4,6 +4,7 @@ import cf.nathanpb.dogo.core.DogoBot
 import cf.nathanpb.dogo.lang.LanguageEntry
 import net.dv8tion.jda.core.entities.Message
 import net.dv8tion.jda.core.entities.MessageChannel
+import net.dv8tion.jda.core.entities.MessageEmbed
 import java.util.*
 
 interface IRepliable {
@@ -22,8 +23,14 @@ interface IRepliable {
         if(preset){
             langEntry().getText(lang(), text)
         } else {
-            text = String.format(text, Arrays.copyOfRange(content, 1, content.size-1))
+            if(content[0] is String) {
+                text = String.format(text, Arrays.copyOfRange(content, 1, content.size - 1))
+            }
         }
-        return replyChannel().sendMessage(text).complete()
+        if(content[0] is MessageEmbed) {
+            return replyChannel().sendMessage(content[0] as MessageEmbed).complete()
+        } else {
+            return replyChannel().sendMessage(text).complete()
+        }
     }
 }
