@@ -14,7 +14,7 @@ class LanguageEntry constructor(registry : String){
            text = default
         }
         if(text.containsKey("$registry.$entry")){
-            return String.format(text["$registry.$entry"] as String, args)
+            return String.format(text["$registry.$entry"] as String, *args)
         } else {
             return "$registry.$entry"
         }
