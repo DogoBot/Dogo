@@ -50,7 +50,19 @@ class Help(factory : CommandFactory) : DogoCommand("help", factory){
                 .setAuthor(lang.getText(cnt.sender.lang, "helpfor", cmd.name), null, HELP_IMAGE)
 
         embed.addField(lang.getText(cnt.sender.lang, "category"), cmd.category.getDisplay(cnt.sender.lang), false)
-        embed.addField(lang.getText(cnt.sender.lang, "examples"), if(cmd.usage.isNotEmpty()) cmd.usage else lang.getText(cnt.sender.lang, "noexamples"), true)
+
+        var usage = ""
+        if(cmd.usage.contains("\n")){
+            cmd.usage.split("\n")
+                    .forEach { e -> usage+=DogoBot.instance.getCommandPrefixes().first()+e+"\n" }
+        } else {
+            usage = DogoBot.instance.getCommandPrefixes().first()+cmd.usage
+        }
+        if(usage.endsWith("\n")){
+            usage = usage.substring(0, usage.length-1)
+        }
+
+        embed.addField(lang.getText(cnt.sender.lang, "examples"), if(cmd.usage.isNotEmpty()) usage else lang.getText(cnt.sender.lang, "noexamples"), true)
         embed.addField(lang.getText(cnt.sender.lang, "cmddescription"), lang.getText(cnt.sender.lang, "description"), true)
 
         var subcommands = ""
