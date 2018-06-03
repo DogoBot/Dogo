@@ -1,3 +1,6 @@
+############
+#CATEGORIES#
+############
 cmdcategory.utility=:hammer_pick: Utility
 cmdcategory.fun=:video_game: Fun
 cmdcategory.bot=:desktop: Bot
@@ -7,4 +10,14 @@ cmdcategory.guild_administration=:newspaper: Guild Administration
 cmdcategory.nsfw=:ok_hand: NSFW
 cmdcategory.minigames=:black_joker: Minigames
 
-command.help.helproot=Hey there! how can I help you?
+##############
+#HELP COMMAND#
+##############
+command.help.helproot=Hey there! How can I help you?
+command.help.helpfor=What do you want to know about %s?
+command.help.category=:soccer: Category
+command.help.examples=:bookmark: Examples
+command.help.cmddescription=:book: Description
+command.help.subcommands=:books: Subcommands
+command.help.permission=:closed_lock_with_key: Permission
+command.help.description=This command will help you with anything!\n ~~(not included your depression, i can't handle with mine)~~
