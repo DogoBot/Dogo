@@ -20,4 +20,4 @@ command.help.examples=:bookmark: Examples
 command.help.cmddescription=:book: Description
 command.help.subcommands=:books: Subcommands
 command.help.permission=:closed_lock_with_key: Permission
-command.help.description=This command will help you with anything!\n ~~(not included your depression, i can't handle with mine)~~
+command.help.description=This command will help you with anything!\n~~(not included your depression, i can't handle with mine)~~
