@@ -44,7 +44,7 @@ class CommandFactory (bus : EventBus){
                 val pgs = user.getPermGroups()
                 if (guild != null) pgs.addAll(guild.permgroups.filterApplied(user.id))
                 for (cmd in tree) {
-                    if (pgs.can(cmd.getPermission(this))) {
+                    if (pgs.can(cmd.getPermission())) {
                         if (tree.args.size >= cmd.minArgumentsSize) {
                             if(cmd.category == CommandCategory.NSFW){
                                 if(!(event.channel is PrivateChannel)){
@@ -87,7 +87,7 @@ class CommandFactory (bus : EventBus){
                                     EmbedBuilder()
                                             .setColor(Color.YELLOW)
                                             .setTitle(lang.getText(user.lang, "error.commandforbidden.title"))
-                                            .setDescription(lang.getText(user.lang, "error.commandforbidden.description", user.usr?.name as Any, cmd.getPermission(this)))
+                                            .setDescription(lang.getText(user.lang, "error.commandforbidden.description", user.usr?.name as Any, cmd.getPermission()))
                                             .build()
                             ).queue({}, {})
                         }

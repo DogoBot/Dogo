@@ -9,6 +9,7 @@ import com.mongodb.MongoClient
 import com.mongodb.client.MongoDatabase
 import net.dv8tion.jda.core.JDA
 import org.json.JSONArray
+import java.awt.Color
 import kotlin.collections.HashMap
 
 class DogoBot {
@@ -30,6 +31,8 @@ class DogoBot {
 
         val cmdFactory = CommandFactory(eventBus)
         val instance = DogoBot()
+
+        val themeColor = arrayOf(Color(245, 214, 143), Color(229, 168, 63))
     }
 
     fun isAvailable() : Boolean {

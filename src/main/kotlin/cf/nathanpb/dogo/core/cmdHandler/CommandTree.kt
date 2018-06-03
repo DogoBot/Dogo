@@ -20,8 +20,8 @@ class CommandTree(factory : CommandFactory) : ArrayList<DogoCommand>(){
         }
 
         if(args.contains(" ")) {
-            for (arg in Arrays.copyOfRange(args.split(" ").toTypedArray(), index, args.split(" ").size - 1)) {
-                this.args.add(arg)
+            for(i in index..args.split(" ").size-1){
+                this.args.add(args.split(" ")[i])
             }
         }
     }
@@ -30,7 +30,7 @@ class CommandTree(factory : CommandFactory) : ArrayList<DogoCommand>(){
         var cmd : DogoCommand?= cmd;
         while (cmd != null){
             this.add(cmd)
-            cmd = cmd.getParent(factory);
+            cmd = cmd.getParent()
         }
     }
 }

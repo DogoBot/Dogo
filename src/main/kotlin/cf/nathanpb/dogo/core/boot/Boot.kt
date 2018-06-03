@@ -167,7 +167,7 @@ class Boot {
         }
 
         DogoBot.ready = true
-        DogoBot.jda?.presence?.game = Game.playing("in ${DogoBot.jda?.guilds?.size} guilds| dg!help")
+        DogoBot.jda?.presence?.game = Game.watching("${DogoBot.jda?.guilds?.size} guilds| dg!help")
         DogoBot.logger?.info("Dogo is Done! ${DogoBot.initTime.timeSince()}", ConsoleColors.GREEN_BACKGROUND)
     }
 
