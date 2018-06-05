@@ -97,6 +97,14 @@ class DogoData constructor(file : File){
         return getAny(key) as Boolean
     }
 
+    /**
+     * Returns a JSONObject from the data
+     * @param key Value's key
+     */
+    fun getJson(key : String) : JSONObject {
+        return getAny(key) as JSONObject
+    }
+
 
     /**
      * Returns a value from the data

@@ -21,6 +21,10 @@ class CommandFactory (bus : EventBus){
     val busId = bus.register(this).first()
     val commands = HashMap<KClass<*>, DogoCommand>()
 
+    fun registerCommand(cmd : DogoCommand) {
+        commands[cmd::class] = cmd
+    }
+
 
     @EventBus.Listener(0)
     fun onMessage(event : MessageReceivedEvent){

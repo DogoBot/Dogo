@@ -3,7 +3,7 @@
 ############
 cmdcategory.utility=:hammer_pick: Utility
 cmdcategory.fun=:video_game: Fun
-cmdcategory.bot=:desktop: Bot
+cmdcategory.bot=<:nathanbb:390267731846627329> Bot
 cmdcategory.user=:bust_in_silhouette: User
 cmdcategory.music=:musical_keyboard: Music
 cmdcategory.guild_administration=:newspaper: Guild Administration
@@ -21,3 +21,14 @@ command.help.cmddescription=:book: Description
 command.help.subcommands=:books: Subcommands
 command.help.permission=:closed_lock_with_key: Permission
 command.help.description=This command will help you with anything!\n~~(not included your depression, i can't handle with mine)~~
+
+###############
+#STATS COMMAND#
+###############
+command.stats.amihealthy=Am I Healthy?
+command.stats.users=:busts_in_silhouette: Users
+command.stats.guilds=:homes: Guilds
+command.stats.cpu=<:dogocpu:410953416475541508> CPU Usage
+command.stats.ram=<:dogoram:410953417884827648> Memory Usage
+command.stats.ping=:ping_pong: Ping
+command.stats.uptime=:timer: Uptime

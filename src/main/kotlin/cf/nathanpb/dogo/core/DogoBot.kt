@@ -2,6 +2,7 @@ package cf.nathanpb.dogo.core
 
 import cf.nathanpb.dogo.core.boot.Boot
 import cf.nathanpb.dogo.core.cmdHandler.CommandFactory
+import cf.nathanpb.dogo.core.cmdHandler.DogoCommand
 import cf.nathanpb.dogo.core.entities.DogoGuild
 import cf.nathanpb.dogo.core.eventBus.EventBus
 import cf.nathanpb.dogo.core.queue.DogoQueue
@@ -10,6 +11,7 @@ import com.mongodb.client.MongoDatabase
 import net.dv8tion.jda.core.JDA
 import org.json.JSONArray
 import java.awt.Color
+import java.lang.management.ManagementFactory
 import kotlin.collections.HashMap
 
 class DogoBot {
@@ -47,5 +49,17 @@ class DogoBot {
         guilds.forEach { g -> list.addAll(g.prefix) }
         list.sortedBy { a -> -a.length}
         return list
+    }
+
+    fun usedMemory() : Long {
+        return (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024 * 1024)
+    }
+
+    fun maxMemory() : Long {
+        return Runtime.getRuntime().totalMemory() / (1024 * 1024)
+    }
+
+    fun usedCPU() : Double {
+        return ManagementFactory.getOperatingSystemMXBean().getSystemLoadAverage()/ManagementFactory.getOperatingSystemMXBean().getAvailableProcessors()
     }
 }

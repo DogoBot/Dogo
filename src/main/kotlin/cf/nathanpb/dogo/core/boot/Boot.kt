@@ -1,6 +1,7 @@
 package cf.nathanpb.dogo.core.boot
 
 import cf.nathanpb.dogo.commands.Help
+import cf.nathanpb.dogo.commands.Stats
 import cf.nathanpb.dogo.core.DogoBot
 import cf.nathanpb.dogo.core.DogoData
 import cf.nathanpb.dogo.core.Logger
@@ -49,7 +50,8 @@ class Boot {
                         }
                     }),
             Phase("Registering Commands",{
-                DogoBot.cmdFactory.commands[Help::class] = Help(DogoBot.cmdFactory)
+                DogoBot.cmdFactory.registerCommand(Help(DogoBot.cmdFactory))
+                DogoBot.cmdFactory.registerCommand(Stats(DogoBot.cmdFactory))
             }),
             Phase("Setting up Queues", {
                 DogoBot.ocWatcher.run = {
