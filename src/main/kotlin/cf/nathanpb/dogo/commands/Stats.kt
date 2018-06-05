@@ -8,7 +8,7 @@ import cf.nathanpb.dogo.core.cmdHandler.DogoCommand
 import cf.nathanpb.dogo.utils.DisplayUtils
 import net.dv8tion.jda.core.EmbedBuilder
 
-class Stats(factory : CommandFactory) : DogoCommand("help", factory) {
+class Stats(factory : CommandFactory) : DogoCommand("stats", factory) {
     override val minArgumentsSize = 0
     override val usage = ""
     override val aliases = "status"
