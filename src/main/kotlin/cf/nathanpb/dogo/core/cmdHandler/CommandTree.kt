@@ -8,20 +8,25 @@ class CommandTree(factory : CommandFactory) : ArrayList<DogoCommand>(){
 
     constructor(args : String, factory : CommandFactory) : this(factory){
         if(args.isEmpty()) return
-        var lastCmd : ArrayList<DogoCommand> = ArrayList(factory.commands.values)
-        var index = 0
+        var dept = 0
+        var next = factory.commands.values
 
-        for(cmd in lastCmd){
-            if(cmd.getTriggers().contains(args.split(" ")[index])){
-                lastCmd = cmd.children
-                this.add(cmd)
-                index++
+        root@ while (!next.isEmpty()) {
+            val i = next.iterator()
+            while (i.hasNext()) {
+                val r = i.next()
+                if (args.split(" ").size > dept && r.getTriggers().contains(args.split(" ")[dept].toLowerCase())) {
+                    next = r.children
+                    this.add(r)
+                    dept++
+                    break
+                } else if (!i.hasNext()) break@root
             }
         }
 
         if(args.contains(" ")) {
-            for(i in index..args.split(" ").size-1){
-                this.args.add(args.split(" ")[i])
+            for(i in dept..args.split(" ").size){
+                this.args.add(args.split(" ")[i-1])
             }
         }
     }

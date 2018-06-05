@@ -10,7 +10,7 @@ class Help(factory : CommandFactory) : DogoCommand("help", factory){
 
     override val minArgumentsSize = 0
     override val usage = "help\nhelp command\nhelp command subcommand ... subcommand"
-    override val aliases = "help plsSendHelp"
+    override val aliases = "plsSendHelp"
     override val category = CommandCategory.BOT
 
     override fun execute(cmd : CommandContext) {

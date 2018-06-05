@@ -19,7 +19,7 @@ abstract class DogoCommand(name : String, factory : CommandFactory) {
     abstract fun execute(cmd : CommandContext)
 
     fun getTriggers() : List<String> {
-        return ("$aliases ").split(" ")
+        return ("$aliases $name").split(" ")
     }
 
     fun getPermission() : String {
