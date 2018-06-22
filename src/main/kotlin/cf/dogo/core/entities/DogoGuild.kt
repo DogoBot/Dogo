@@ -18,7 +18,7 @@ class DogoGuild (id : String){
 
     init {
         if((col?.count(Document("ID", id)) as Long) < 1){
-            col?.insertOne(Document("ID", id))
+            col.insertOne(Document("ID", id))
         }
     }
 

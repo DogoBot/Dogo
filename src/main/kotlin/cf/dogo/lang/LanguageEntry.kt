@@ -1,7 +1,6 @@
 package cf.dogo.lang
 
 import java.util.concurrent.ConcurrentLinkedDeque
-import kotlin.collections.HashMap
 
 class LanguageEntry constructor(registry : String){
     private val registry = registry
@@ -13,10 +12,10 @@ class LanguageEntry constructor(registry : String){
         if(text == null){
            text = default
         }
-        if(text.containsKey("$registry.$entry")){
-            return String.format(text["$registry.$entry"] as String, *args).replace("\\n", "\n")
+        return if(text.containsKey("$registry.$entry")){
+            String.format(text["$registry.$entry"] as String, *args).replace("\\n", "\n")
         } else {
-            return "$registry.$entry"
+            "$registry.$entry"
         }
     }
 
@@ -25,12 +24,10 @@ class LanguageEntry constructor(registry : String){
      */
     private fun String.toLang() : HashMap<String, String> {
         val hm = HashMap<String, String>()
-        if(this != null) {
-            var array = ConcurrentLinkedDeque<String>(this.split("=", "\n"))
-            array = ConcurrentLinkedDeque(array.filter { t -> t.isNotEmpty() && !t.equals("\r") && !t.startsWith("#")}.map { t -> t.replace("\r", "") })
-            while (array.size >= 2) {
-                hm[array.poll()] = array.poll()
-            }
+        var array = ConcurrentLinkedDeque<String>(this.split("=", "\n"))
+        array = ConcurrentLinkedDeque(array.filter { t -> t.isNotEmpty() && !t.equals("\r") && !t.startsWith("#")}.map { t -> t.replace("\r", "") })
+        while (array.size >= 2) {
+            hm[array.poll()] = array.poll()
         }
         return hm
     }

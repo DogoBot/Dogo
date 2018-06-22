@@ -24,63 +24,63 @@ class PermGroup(id : String? = null) {
             var rand : String
             do {
                 rand = Random().nextLong().toString()
-            } while (rand.toLong() > 0 && col?.count(Document("ID", rand)) != 0L)
+            } while (rand.toLong() > 0 && col.count(Document("ID", rand)) != 0L)
             this.id = rand
-            col?.insertOne(Document("ID", this.id))
+            col.insertOne(Document("ID", this.id))
         }
         if(col.count(Document("ID", this.id)) == 0L){
-            col?.insertOne(Document("ID", this.id))
+            col.insertOne(Document("ID", this.id))
         }
-        doc = col?.find(Document("ID", this.id))?.first() as Document
+        doc = col.find(Document("ID", this.id))?.first() as Document
     }
 
     var name : String
         get() {
-            val doc = col?.find(Document("ID", this.id))?.first() as Document
+            val doc = col.find(Document("ID", this.id))?.first() as Document
             return if(doc.containsKey("name")) doc.getString("name") else "UNNAMED"
         }
         set(value) {
-            col?.updateOne(Document("ID", this.id), Document("\$set", Document("name", value)))
+            col.updateOne(Document("ID", this.id), Document("\$set", Document("name", value)))
         }
 
-    var priotiry : Int //Less is better
+    var priority : Int //Less is better
         get() {
-            val doc = col?.find(Document("ID", this.id))?.first() as Document
+            val doc = col.find(Document("ID", this.id))?.first() as Document
             return if(doc.containsKey("priority")) doc.getInteger("priority") else 0
         }
         set(value) {
             if(id?.toLong() as Long >= 0 && value < 0){
-                col?.updateOne(Document("ID", this.id), Document("\$set", Document("priority", 1)))
+                col.updateOne(Document("ID", this.id), Document("\$set", Document("priority", 1)))
             } else {
-                col?.updateOne(Document("ID", this.id), Document("\$set", Document("priority", value)))
+                col.updateOne(Document("ID", this.id), Document("\$set", Document("priority", value)))
             }
         }
 
     var include : ArrayList<String>
         get() {
-            val doc = col?.find(Document("ID", this.id))?.first() as Document
+            val doc = col.find(Document("ID", this.id))?.first() as Document
             return if(doc.containsKey("include")) doc["include"] as ArrayList<String> else ArrayList()
         }
         set(value) {
-            col?.updateOne(Document("ID", this.id), Document("\$set", Document("include", value)))
+            col.updateOne(Document("ID", this.id), Document("\$set", Document("include", value)))
         }
 
     var exclude : ArrayList<String>
         get() {
-            val doc = col?.find(Document("ID", this.id))?.first() as Document
+            val doc = col.find(Document("ID", this.id))?.first() as Document
             return if(doc.containsKey("exclude")) doc["exclude"] as ArrayList<String> else ArrayList()
         }
         set(value) {
-            col?.updateOne(Document("ID", this.id), Document("\$set", Document("exclude", value)))
+            col.updateOne(Document("ID", this.id), Document("\$set", Document("exclude", value)))
         }
 
     var applyTo : ArrayList<String>
         get() {
-            val doc = col?.find(Document("ID", this.id))?.first() as Document
+            val doc = col.find(Document("ID", this.id))?.first() as Document
             return if(doc.containsKey("apply")) doc["apply"] as ArrayList<String> else ArrayList()
         }
         set(value) {
-            col?.updateOne(Document("ID", this.id), Document("\$set", Document("apply", value)))
+            col.updateOne(Document("ID", this.id), Document("\$set", Document("apply", value)))
         }
 
     fun hasIncluded(perm: String) : Boolean {

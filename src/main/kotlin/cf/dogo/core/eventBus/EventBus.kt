@@ -7,7 +7,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.LinkedHashMap
 import kotlin.reflect.KFunction
-import kotlin.reflect.full.*
+import kotlin.reflect.full.functions
 
 class EventBus(name : String) : DogoQueue(name), EventListener {
     private val listeners = LinkedHashMap<Long, EventBus.EventListener>()
@@ -20,7 +20,6 @@ class EventBus(name : String) : DogoQueue(name), EventListener {
 
     fun submitSink(element : Any) {
         for(listener in ArrayList(listeners.values)){
-            val parameter = listener.func.parameters.first()
             try{
                 listener.func.call(listener.instance, element)
             }catch (ex : IllegalArgumentException) {}

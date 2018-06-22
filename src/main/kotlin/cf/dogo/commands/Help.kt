@@ -31,11 +31,11 @@ class Help(factory : CommandFactory) : DogoCommand("help", factory){
                 (hm[c.category] as ArrayList).add(c)
             }
             hm.forEach{e ->
-                var s = ""
-                e.value.forEach { c -> s+="``${c.name}``, " }
-                s = s.substring(0, s.length-2)
-                s+="\n";
-                embed.addField(e.key.getDisplay(cmd.sender.lang), s, false)
+                var s = StringBuilder()
+                e.value.forEach { c -> s.append("``${c.name}``, ") }
+                s = StringBuilder(s.substring(0, s.length-2))
+                s.append("\n")
+                embed.addField(e.key.getDisplay(cmd.sender.lang), s.toString(), false)
             }
             cmd.reply(embed.build())
         } else {

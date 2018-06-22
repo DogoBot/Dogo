@@ -1,11 +1,9 @@
 package cf.dogo.core.cmdHandler
 
-import kotlin.collections.ArrayList
-
-class CommandTree(factory : CommandFactory) : ArrayList<DogoCommand>(){
+class CommandTree() : ArrayList<DogoCommand>(){
     var args  = ArrayList<String>()
 
-    constructor(args : String, factory : CommandFactory) : this(factory){
+    constructor(args : String, factory : CommandFactory) : this(){
         if(args.isEmpty()) return
         var dept = 0
         var next = factory.commands.values
@@ -30,7 +28,7 @@ class CommandTree(factory : CommandFactory) : ArrayList<DogoCommand>(){
         }
     }
 
-    constructor(cmd : DogoCommand, factory: CommandFactory) : this(factory){
+    constructor(cmd : DogoCommand, factory: CommandFactory) : this(){
         var cmd : DogoCommand?= cmd;
         while (cmd != null){
             this.add(cmd)

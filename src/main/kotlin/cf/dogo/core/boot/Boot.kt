@@ -96,17 +96,17 @@ class Boot {
                     default.applyTo = arrayListOf("everyone")
                     default.include = arrayListOf("command.*")
                     default.exclude = arrayListOf("command.admin.*")
-                    default.priotiry = 0
+                    default.priority = 0
                 val admins = PermGroup("-1")
                     admins.name = "admin"
                     admins.include = arrayListOf("command.admin.*")
                     admins.exclude = arrayListOf("command.admin.root.*")
-                    admins.priotiry = -1
+                    admins.priority = -1
                 val root = PermGroup("-2")
                     root.name = "root"
                     root.applyTo = arrayListOf(cf.dogo.core.DogoBot?.data?.getString("OWNER_ID") as String)
                     root.include = arrayListOf("*")
-                    root.priotiry = -2
+                    root.priority = -2
             }),
             Phase("Initializing API", {
 

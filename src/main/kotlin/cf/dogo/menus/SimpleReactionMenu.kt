@@ -9,8 +9,7 @@ import net.dv8tion.jda.core.entities.PrivateChannel
 import net.dv8tion.jda.core.events.message.react.GenericMessageReactionEvent
 import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent
 import net.dv8tion.jda.core.events.message.react.MessageReactionRemoveEvent
-
-import java.util.ArrayList
+import java.util.*
 
 /**
  * Created by nathanpb on 12/2/17.
@@ -46,7 +45,7 @@ class SimpleReactionMenu(val context: CommandContext) {
     }
 
     fun send() {
-        eventbusId = cf.dogo.core.DogoBot.eventBus?.register(this)
+        eventbusId = cf.dogo.core.DogoBot.eventBus.register(this)
         if(msg == null) {
             msg = context.replySynk(embed.build())
         } else {
@@ -82,9 +81,7 @@ class SimpleReactionMenu(val context: CommandContext) {
             if (msg != null && e.messageId == msg!!.id && e.user.id == target) {
                 for (ac in actions) {
                     if (e.reactionEmote.name == ac.emote.id) {
-                        if (ac.action != null) {
-                            kotlin.run(ac.action)
-                        }
+                        kotlin.run(ac.action)
                         break
                     }
                 }

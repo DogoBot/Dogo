@@ -12,7 +12,7 @@ class PermGroupSet() : ArrayList<PermGroup>(){
     }
 
     fun sort() {
-        val ar = sortedBy { g -> -g.priotiry }
+        val ar = sortedBy { g -> -g.priority }
         clear()
         for(g in ar) add(g)
     }
