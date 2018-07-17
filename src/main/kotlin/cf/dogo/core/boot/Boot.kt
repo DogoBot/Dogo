@@ -1,6 +1,8 @@
 package cf.dogo.core.boot
 
+import cf.dogo.core.DogoBot
 import cf.dogo.core.profiles.PermGroup
+import cf.dogo.server.APIServer
 import com.mongodb.MongoClient
 import com.mongodb.MongoClientURI
 import com.mongodb.client.MongoDatabase
@@ -22,6 +24,8 @@ class Boot {
                                 .setGame(Game.watching("myself starting"))
                                 .addEventListener(cf.dogo.core.DogoBot.eventBus)
                                 .buildBlocking()
+
+
                     }),
             Phase("Connecting to Database", {
                         cf.dogo.core.DogoBot.mongoClient = MongoClient(MongoClientURI(cf.dogo.core.DogoBot.data?.getString("MONGO_URI")))
@@ -81,7 +85,7 @@ class Boot {
                             //DogoBot.logger?.info("Queue ${t.name} overclocked from ${t.clk}Hz (+${t.overclock}Hz oc) to ${t.clk + clk}Hz (+${clk}Hz oc)", ConsoleColors.YELLOW)
                             t.overclock = clk
                             if ((t.overclock / t.defaultClock) > 10) {
-                                cf.dogo.core.DogoBot.logger?.warn("Overclock from ${t.name} is TOO FUCKING HIGH!!! Something is really wrong")
+                                cf.dogo.core.DogoBot.logger?.warn("Overclock from ${t.name} is TOO HIGH!!!")
                             }
                         } else if(t.overclock > clk){
                             //DogoBot.logger?.info("Queue ${t.name} downclocked from ${t.clk}Hz (+${t.overclock}Hz oc) to ${t.clk + clk}Hz (+${clk}Hz oc)", ConsoleColors.GREEN)
@@ -109,7 +113,8 @@ class Boot {
                     root.priority = -2
             }),
             Phase("Initializing API", {
-
+                DogoBot.apiServer = APIServer()
+                DogoBot.apiServer?.start()
             })
     )
 
@@ -135,9 +140,9 @@ class Boot {
             startup()
         }catch (ex : java.lang.Exception){
             cf.dogo.core.DogoBot.logger?.error("STARTUP FAILED")
-            cf.dogo.core.DogoBot.logger?.getPrintStream()?.print(cf.dogo.utils.ConsoleColors.RED_BOLD)
-            ex.printStackTrace(cf.dogo.core.DogoBot.logger?.getPrintStream())
-            cf.dogo.core.DogoBot.logger?.getPrintStream()?.print(cf.dogo.utils.ConsoleColors.RESET)
+            cf.dogo.core.DogoBot.logger?.print(cf.dogo.utils.ConsoleColors.RED_BOLD)
+            ex.printStackTrace(cf.dogo.core.DogoBot.logger)
+            cf.dogo.core.DogoBot.logger?.print(cf.dogo.utils.ConsoleColors.RESET)
             System.exit(1)
         }
     }

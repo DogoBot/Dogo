@@ -32,3 +32,6 @@ command.stats.cpu=<:dogocpu:410953416475541508> CPU
 command.stats.ram=<:dogoram:410953417884827648> Memory
 command.stats.ping=:ping_pong: Ping
 command.stats.uptime=:timer: Uptime
+command.stats.threadinfo=Want to go deeper?
+command.stats.advancedinfo=Advanced Info
+command.stats.basicinfo=Basic Info

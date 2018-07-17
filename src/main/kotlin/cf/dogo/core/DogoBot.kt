@@ -11,7 +11,6 @@ import com.mongodb.client.MongoDatabase
 import net.dv8tion.jda.core.JDA
 import java.awt.Color
 import java.lang.management.ManagementFactory
-import kotlin.collections.HashMap
 
 class DogoBot {
     companion object {
@@ -33,7 +32,7 @@ class DogoBot {
 
         val cmdFactory = CommandFactory(eventBus)
         val instance = DogoBot()
-        val apiServer = APIServer()
+        var apiServer : APIServer? = null
 
         val themeColor = arrayOf(Color(245, 214, 143), Color(229, 168, 63))
     }
