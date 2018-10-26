@@ -1,6 +1,7 @@
 package cf.dogo.commands
 
 import cf.dogo.core.cmdHandler.*
+import cf.dogo.utils.ThemeColor
 import net.dv8tion.jda.core.EmbedBuilder
 
 class Help(factory : CommandFactory) : DogoCommand("help", factory){
@@ -22,7 +23,7 @@ class Help(factory : CommandFactory) : DogoCommand("help", factory){
 
         if(tree.isEmpty()){
             val embed = EmbedBuilder()
-                    .setColor(cf.dogo.core.DogoBot.themeColor[1])
+                    .setColor(ThemeColor.PRIMARY)
                     .setAuthor(lang.getText(cmd.sender.lang, "helproot"), null, HELP_IMAGE)
 
             val hm = HashMap<CommandCategory, ArrayList<DogoCommand>>()
@@ -45,7 +46,7 @@ class Help(factory : CommandFactory) : DogoCommand("help", factory){
 
     fun getHelpFor(cmd : DogoCommand, cnt : CommandContext) : EmbedBuilder {
         val embed = EmbedBuilder()
-                .setColor(cf.dogo.core.DogoBot.themeColor[1])
+                .setColor(ThemeColor.PRIMARY)
                 .setAuthor(lang.getText(cnt.sender.lang, "helpfor", cmd.name), null, HELP_IMAGE)
 
         embed.addField(lang.getText(cnt.sender.lang, "category"), cmd.category.getDisplay(cnt.sender.lang), false)

@@ -7,6 +7,7 @@ import cf.dogo.core.cmdHandler.DogoCommand
 import cf.dogo.menus.SimpleReactionMenu
 import cf.dogo.utils.DisplayUtils
 import cf.dogo.utils.EmoteReference
+import cf.dogo.utils.ThemeColor
 import net.dv8tion.jda.core.EmbedBuilder
 
 class Stats(factory : CommandFactory) : DogoCommand("stats", factory) {
@@ -40,7 +41,7 @@ class Stats(factory : CommandFactory) : DogoCommand("stats", factory) {
 
     fun getBasicInfo(l : String) : EmbedBuilder {
         return EmbedBuilder()
-                .setColor(cf.dogo.core.DogoBot.themeColor[1])
+                .setColor(ThemeColor.PRIMARY)
                 .setTitle(lang.getText(l, "amihealthy"))
                 .setThumbnail("https://i.imgur.com/9rmyKUk.png")
                 .addField(lang.getText(l, "users"), cf.dogo.core.DogoBot?.jda?.users?.size.toString(),true)
@@ -52,13 +53,13 @@ class Stats(factory : CommandFactory) : DogoCommand("stats", factory) {
                 //.addBlankField(true)
 
                 .addField(lang.getText(l, "ping"), "${cf.dogo.core.DogoBot.jda?.ping}ms", true)
-                .addField(lang.getText(l, "uptime"), DisplayUtils().formatTimeSimple(System.currentTimeMillis() - cf.dogo.core.DogoBot.initTime), true)
+                .addField(lang.getText(l, "uptime"), DisplayUtils.formatTimeSimple(System.currentTimeMillis() - cf.dogo.core.DogoBot.initTime), true)
                 //.addBlankField(true)
     }
 
     fun getThreadInfo(l : String) : EmbedBuilder {
         val embed = EmbedBuilder()
-                .setColor(cf.dogo.core.DogoBot.themeColor[1])
+                .setColor(ThemeColor.PRIMARY)
                 .setThumbnail("https://i.imgur.com/9rmyKUk.png")
                 .setTitle(lang.getText(l, "threadinfo"))
         cf.dogo.core.DogoBot.threads.values.forEach { t -> embed.addField(t.name, "TPS: ${t.getTps()}Hz | Queue: ${t.queue()}", true) }

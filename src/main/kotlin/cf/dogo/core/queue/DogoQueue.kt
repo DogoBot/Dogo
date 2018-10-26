@@ -27,7 +27,7 @@ open class DogoQueue(name : String) : Thread(name) {
 
     override fun run() {
         while(true) {
-            Thread.sleep(UnitUtils().hzToMs(getCurrentClock()+1))
+            Thread.sleep(UnitUtils.hzToMs(getCurrentClock()+1))
             lastTick02 = lastTick01
             lastTick01 = System.currentTimeMillis()
             kotlin.run(run)
@@ -42,7 +42,7 @@ open class DogoQueue(name : String) : Thread(name) {
         if(lastTick01 == lastTick02) {
             return 0
         }
-        return UnitUtils().msToHz(lastTick01 - lastTick02)
+        return UnitUtils.msToHz(lastTick01 - lastTick02)
     }
 
     open fun submit(action : () -> Unit) {

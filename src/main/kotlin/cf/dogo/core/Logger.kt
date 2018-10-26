@@ -9,10 +9,9 @@ import java.io.PrintStream
 import java.text.SimpleDateFormat
 import java.util.*
 
-class Logger constructor(os : OutputStream?, name : String) : PrintStream(os) {
+class Logger constructor(os : OutputStream?, private val name : String) : PrintStream(os) {
     val format = SimpleDateFormat("HH:mm:ss - dd/MM/YYYY")
-    private val name = name
-    private val file = File(File(cf.dogo.core.DogoBot.data?.getString("LOG_PATH")), "$name _${format.format(Date()).replace("/", "-").replace(":", "-")}.log")
+    private val file = File(File(cf.dogo.core.DogoBot.data.load().getNode("LOG_PATH").string), "$name _${format.format(Date()).replace("/", "-").replace(":", "-")}.log")
     val fwqueue = DogoQueue("LOGGER_FW_QUEUE")
     init {
         if(!file.exists()) {

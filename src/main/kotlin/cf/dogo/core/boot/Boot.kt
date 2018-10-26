@@ -5,11 +5,14 @@ import cf.dogo.core.profiles.PermGroup
 import cf.dogo.server.APIServer
 import com.mongodb.MongoClient
 import com.mongodb.MongoClientURI
+import com.mongodb.MongoCredential
+import com.mongodb.ServerAddress
 import com.mongodb.client.MongoDatabase
 import net.dv8tion.jda.core.AccountType
 import net.dv8tion.jda.core.JDABuilder
 import net.dv8tion.jda.core.entities.Game
 import java.io.File
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 fun main(args : Array<String>){
@@ -18,43 +21,51 @@ fun main(args : Array<String>){
 
 class Boot {
     var phaseList = listOf(
-            Phase("Initializing JDA", {
-                        cf.dogo.core.DogoBot.jda = JDABuilder(AccountType.BOT)
-                                .setToken(cf.dogo.core.DogoBot.data?.getString("BOT_TOKEN"))
-                                .setGame(Game.watching("myself starting"))
-                                .addEventListener(cf.dogo.core.DogoBot.eventBus)
-                                .buildBlocking()
-
-
-                    }),
-            Phase("Connecting to Database", {
-                        cf.dogo.core.DogoBot.mongoClient = MongoClient(MongoClientURI(cf.dogo.core.DogoBot.data?.getString("MONGO_URI")))
-                        cf.dogo.core.DogoBot.db = cf.dogo.core.DogoBot.mongoClient?.getDatabase(cf.dogo.core.DogoBot.data?.getString("DB_NAME"))
-                    }),
-            Phase("Checking Database", {
-                        if (!cf.dogo.core.DogoBot.db!!.hasCollection("USERS")) {
-                            cf.dogo.core.DogoBot.logger?.info("USERS collection doesn't exists! Creating one...")
-                            cf.dogo.core.DogoBot.db?.createCollection("USERS")
-                        }
-                        if (!cf.dogo.core.DogoBot.db!!.hasCollection("GUILDS")) {
-                            cf.dogo.core.DogoBot.logger?.info("GUILDS collection doesn't exists! Creating one...")
-                            cf.dogo.core.DogoBot.db?.createCollection("GUILDS")
-                        }
-                        if(!cf.dogo.core.DogoBot.db!!.hasCollection("PERMGROUPS")) {
-                            cf.dogo.core.DogoBot.logger?.info("PERMGROUPS collection doesn't exists! Creating one...")
-                            cf.dogo.core.DogoBot.db?.createCollection("PERMGROUPS")
-                        }
-                        if(!cf.dogo.core.DogoBot.db!!.hasCollection("STATS")) {
-                            cf.dogo.core.DogoBot.logger?.info("STATS collection doesn't exists! Creating one...")
-                            cf.dogo.core.DogoBot.db?.createCollection("STATS")
-                        }
-                    }),
-            Phase("Registering Commands",{
-                cf.dogo.core.DogoBot.cmdFactory.registerCommand(cf.dogo.commands.Help(cf.dogo.core.DogoBot.cmdFactory))
-                cf.dogo.core.DogoBot.cmdFactory.registerCommand(cf.dogo.commands.Stats(cf.dogo.core.DogoBot.cmdFactory))
-            }),
-            Phase("Setting up Queues", {
-                cf.dogo.core.DogoBot.ocWatcher.run = {
+            Phase("Initializing Default Configurations"){
+                //todo init default configurations on init.json
+            },
+            Phase("Initializing JDA") {
+                cf.dogo.core.DogoBot.jda = JDABuilder(AccountType.BOT)
+                        .setToken(cf.dogo.core.DogoBot.data.load().getNode("BOT_TOKEN").string)
+                        .setGame(Game.watching("myself starting"))
+                        .addEventListener(cf.dogo.core.DogoBot.eventBus)
+                        .build().awaitReady()
+            },
+            Phase("Connecting to Database") {
+                DogoBot.mongoClient = MongoClient(
+                        ServerAddress(DogoBot.data.load().getNode("DB_HOST").string, DogoBot.data.load().getNode("DB_PORT").int),
+                        Arrays.asList(MongoCredential.createCredential(
+                                DogoBot.data.load().getNode("DB_USER").string,
+                                DogoBot.data.load().getNode("DB_NAME").string,
+                                DogoBot.data.load().getNode("DB_PWD").string?.toCharArray()
+                        ))
+                )
+                DogoBot.db = DogoBot.mongoClient?.getDatabase(DogoBot.data.load().getNode("DB_NAME").string)
+            },
+            Phase("Checking Database") {
+                if (!DogoBot.db!!.hasCollection("USERS")) {
+                    DogoBot.logger?.info("USERS collection doesn't exists! Creating one...")
+                    DogoBot.db?.createCollection("USERS")
+                }
+                if (!DogoBot.db!!.hasCollection("GUILDS")) {
+                    DogoBot.logger?.info("GUILDS collection doesn't exists! Creating one...")
+                    DogoBot.db?.createCollection("GUILDS")
+                }
+                if(!DogoBot.db!!.hasCollection("PERMGROUPS")) {
+                    DogoBot.logger?.info("PERMGROUPS collection doesn't exists! Creating one...")
+                    DogoBot.db?.createCollection("PERMGROUPS")
+                }
+                if(!DogoBot.db!!.hasCollection("STATS")) {
+                    DogoBot.logger?.info("STATS collection doesn't exists! Creating one...")
+                    DogoBot.db?.createCollection("STATS")
+                }
+            },
+            Phase("Registering Commands"){
+               DogoBot.cmdFactory.registerCommand(cf.dogo.commands.Help(cf.dogo.core.DogoBot.cmdFactory))
+                DogoBot.cmdFactory.registerCommand(cf.dogo.commands.Stats(cf.dogo.core.DogoBot.cmdFactory))
+            },
+            Phase("Setting up Queues"){
+               DogoBot.ocWatcher.run = {
                     for(t in cf.dogo.core.DogoBot.threads.values){
                         var queue = t.queue()
                         var clk = 1
@@ -93,56 +104,48 @@ class Boot {
                         }
                     }
                 }
-            }),
-            Phase("Setting up Permgroups", {
+            },
+            Phase("Setting up Permgroups") {
                 val default = PermGroup("0")
-                    default.name = "default"
-                    default.applyTo = arrayListOf("everyone")
-                    default.include = arrayListOf("command.*")
-                    default.exclude = arrayListOf("command.admin.*")
-                    default.priority = 0
+                default.name = "default"
+                default.applyTo = arrayListOf("everyone")
+                default.include = arrayListOf("command.*")
+                default.exclude = arrayListOf("command.admin.*")
+                default.priority = 0
                 val admins = PermGroup("-1")
-                    admins.name = "admin"
-                    admins.include = arrayListOf("command.admin.*")
-                    admins.exclude = arrayListOf("command.admin.root.*")
-                    admins.priority = -1
+                admins.name = "admin"
+                admins.include = arrayListOf("command.admin.*")
+                admins.exclude = arrayListOf("command.admin.root.*")
+                admins.priority = -1
                 val root = PermGroup("-2")
-                    root.name = "root"
-                    root.applyTo = arrayListOf(cf.dogo.core.DogoBot?.data?.getString("OWNER_ID") as String)
-                    root.include = arrayListOf("*")
-                    root.priority = -2
-            }),
-            Phase("Initializing API", {
+                root.name = "root"
+                root.applyTo = arrayListOf(cf.dogo.core.DogoBot?.data.load().getNode("OWNER_ID").string as String)
+                root.include = arrayListOf("*")
+                root.priority = -2
+            },
+            Phase("Initializing API"){
                 DogoBot.apiServer = APIServer()
                 DogoBot.apiServer?.start()
-            })
+            }
     )
 
-    val init = File("init.json")
     init {
         Thread.currentThread().name = "Boot"
         println("Starting Dogo")
-        cf.dogo.core.DogoBot.data = cf.dogo.core.DogoData(init)
-        if(!init.exists()){
-           println(init.path+" was not found. Creating a blank one...")
-            init.createNewFile()
-        }
-        println("Data successfully loaded")
-        cf.dogo.core.DogoBot.logger = cf.dogo.core.Logger(System.out, "console")
+        DogoBot.logger = cf.dogo.core.Logger(System.out, "console")
         println("Logger successfully created")
 
-        val debug = cf.dogo.core.DogoBot.data?.getBoolean("DEBUG_PROFILE")
-        if(debug != null && debug){
+        if(DogoBot.data.load().getNode("DEBUG_PROFILE").boolean){
             cf.dogo.core.DogoBot.logger?.info("DEBUG PROFILE IS ACTIVE")
         }
 
         try {
             startup()
-        }catch (ex : java.lang.Exception){
-            cf.dogo.core.DogoBot.logger?.error("STARTUP FAILED")
-            cf.dogo.core.DogoBot.logger?.print(cf.dogo.utils.ConsoleColors.RED_BOLD)
-            ex.printStackTrace(cf.dogo.core.DogoBot.logger)
-            cf.dogo.core.DogoBot.logger?.print(cf.dogo.utils.ConsoleColors.RESET)
+        } catch (ex : java.lang.Exception){
+            DogoBot.logger?.error("STARTUP FAILED")
+            DogoBot.logger?.print(cf.dogo.utils.ConsoleColors.RED_BOLD)
+            ex.printStackTrace(DogoBot.logger)
+            DogoBot.logger?.print(cf.dogo.utils.ConsoleColors.RESET)
             System.exit(1)
         }
     }
