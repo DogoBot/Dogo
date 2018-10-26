@@ -10,10 +10,9 @@ import com.google.common.reflect.TypeToken
 import com.mongodb.MongoClient
 import com.mongodb.client.MongoDatabase
 import net.dv8tion.jda.core.JDA
-import ninja.leaping.configurate.ConfigurationOptions
 import ninja.leaping.configurate.json.JSONConfigurationLoader
-import ninja.leaping.configurate.loader.ConfigurationLoader
-import java.awt.Color
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.io.File
 import java.lang.management.ManagementFactory
 
@@ -22,7 +21,7 @@ class DogoBot {
         var jda: JDA? = null
         var mongoClient: MongoClient? = null
         var db: MongoDatabase? = null
-        val data = JSONConfigurationLoader.builder()
+        val dataLoader = JSONConfigurationLoader.builder()
                 .setSource{{
                     val file = File("init.json")
                     if(!file.exists()){
@@ -30,11 +29,17 @@ class DogoBot {
                     }
                     file.bufferedReader()
                 }()}
+                .setFile(File("init.json"))
                 .setIndent(3)
-                .setDefaultOptions(ConfigurationOptions.defaults())
                 .build()
+        var data = dataLoader.load()
         var boot: Boot? = null
-        var logger: cf.dogo.core.Logger? = null
+
+        val logger: Logger
+            get() = LoggerFactory.getLogger(DogoBot::class.java)
+
+
+
         val initTime = System.currentTimeMillis()
         var ready = false
         val threads = HashMap<String, DogoQueue>()
@@ -55,7 +60,7 @@ class DogoBot {
     }
 
     fun getCommandPrefixes(vararg guilds : DogoGuild) : List<String> {
-        val list = data.load().getNode("COMMAND_PREFIX").getList(TypeToken.of(String::class.java))
+        val list = data.getNode("COMMAND_PREFIX").getList(TypeToken.of(String::class.java))
         guilds.forEach { g -> list.addAll(g.prefix) }
         list.sortedBy { a -> -a.length}
         return list
