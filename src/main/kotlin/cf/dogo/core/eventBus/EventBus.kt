@@ -54,7 +54,7 @@ class EventBus(name : String) : DogoQueue(name), EventListener {
 
     @Retention(AnnotationRetention.RUNTIME)
     @Target(AnnotationTarget.FUNCTION)
-    annotation class Listener(val value : Int)
+    annotation class Listener(val value : Int = 0)
 
     private class EventListener constructor( func : KFunction<Any?>, bus : EventBus, instance : Any) {
         val func = func

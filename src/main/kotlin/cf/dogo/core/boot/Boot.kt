@@ -5,12 +5,15 @@ import cf.dogo.core.profiles.PermGroup
 import cf.dogo.server.APIServer
 import cf.dogo.utils.ConsoleColors
 import com.mongodb.MongoClient
+import com.mongodb.MongoClientOptions
 import com.mongodb.MongoCredential
 import com.mongodb.ServerAddress
 import com.mongodb.client.MongoDatabase
 import net.dv8tion.jda.core.AccountType
 import net.dv8tion.jda.core.JDABuilder
 import net.dv8tion.jda.core.entities.Game
+import java.text.SimpleDateFormat
+import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -19,52 +22,26 @@ fun main(args : Array<String>){
 }
 
 class Boot {
-    var phaseList = listOf(
-            Phase("Initializing Default Configurations"){
-                if(DogoBot.data.getNode("BOT_TOKEN").string == null){
-                    DogoBot.data.getNode("BOT_TOKEN").value = "Token Here"
-                }
-                if(DogoBot.data.getNode("OWNER_ID").string == null){
-                    DogoBot.data.getNode("OWNER_ID").value = "Your User ID Here"
-                }
-                if(DogoBot.data.getNode("DB_HOST").string == null){
-                    DogoBot.data.getNode("DB_HOST").value = "localhost"
-                }
-                if(DogoBot.data.getNode("DB_PORT").int == 0){
-                    DogoBot.data.getNode("DB_PORT").value = 27017
-                }
-                if(DogoBot.data.getNode("DB_NAME").string == null){
-                    DogoBot.data.getNode("DB_NAME").value = "Dogo"
-                }
-                if(DogoBot.data.getNode("DB_USER").string == null){
-                    DogoBot.data.getNode("DB_USER").value = "root"
-                }
-                if(DogoBot.data.getNode("DB_PWD").string == null){
-                    DogoBot.data.getNode("DB_PWD").value = "root"
-                }
-                if(DogoBot.data.getNode("DEBUG_PROFILE").isVirtual){
-                    DogoBot.data.getNode("DEBUG_PROFILE").value = false
-                }
-
-                DogoBot.dataLoader.save(DogoBot.data)
-            },
+    private val phaseList = listOf(
             Phase("Initializing JDA") {
                 cf.dogo.core.DogoBot.jda = JDABuilder(AccountType.BOT)
-                        .setToken(cf.dogo.core.DogoBot.data.getNode("BOT_TOKEN").string)
+                        .setToken(DogoBot.data.BOT_TOKEN)
                         .setGame(Game.watching("myself starting"))
-                        .addEventListener(cf.dogo.core.DogoBot.eventBus)
+                        .addEventListener(DogoBot.eventBus)
                         .build().awaitReady()
             },
             Phase("Connecting to Database") {
                 DogoBot.mongoClient = MongoClient(
-                        ServerAddress(DogoBot.data.getNode("DB_HOST").string, DogoBot.data.getNode("DB_PORT").int),
-                        Arrays.asList(MongoCredential.createCredential(
-                                DogoBot.data.getNode("DB_USER").string,
-                                DogoBot.data.getNode("DB_NAME").string,
-                                DogoBot.data.getNode("DB_PWD").string?.toCharArray()
-                        ))
-                )
-                DogoBot.db = DogoBot.mongoClient?.getDatabase(DogoBot.data.getNode("DB_NAME").string)
+                        ServerAddress(DogoBot.data.DB_HOST, DogoBot.data.DB_PORT),
+                        MongoCredential.createCredential(
+                                DogoBot.data.DB_USER,
+                                DogoBot.data.DB_NAME,
+                                DogoBot.data.DB_PWD.toCharArray()
+                        ),
+                        MongoClientOptions.builder().build()
+                ).also {
+                    DogoBot.db = it.getDatabase(DogoBot.data.DB_NAME)
+                }
             },
             Phase("Checking Database") {
                 if (!DogoBot.db!!.hasCollection("USERS")) {
@@ -103,12 +80,12 @@ class Boot {
 
                         //Fix the overclock multiplier if its wrong
                         if(clk < t.defaultClock){
-                            clk = t.defaultClock;
+                            clk = t.defaultClock
                         }
 
                         //Fix the queue clock if its wrong
                         if(t.clk < t.defaultClock){
-                            t.clk = t.defaultClock;
+                            t.clk = t.defaultClock
                         }
 
                         //Reduces the overclock to ONLY THE NECESSARY
@@ -143,7 +120,7 @@ class Boot {
                 admins.priority = -1
                 val root = PermGroup("-2")
                 root.name = "root"
-                root.applyTo = arrayListOf(cf.dogo.core.DogoBot?.data.getNode("OWNER_ID").string as String)
+                root.applyTo = arrayListOf(DogoBot.data.OWNER_ID)
                 root.include = arrayListOf("*")
                 root.priority = -2
             },
@@ -155,14 +132,10 @@ class Boot {
 
     init {
         Thread.currentThread().name = "Boot"
-        println("Starting Dogo")
-        if(DogoBot.data.getNode("LOG_PATH").isVirtual){
-            DogoBot.data.getNode("LOG_PATH").value = "logs"
-        }
-        DogoBot.dataLoader.save(DogoBot.data)
+        DogoBot.logger.info("Starting Dogo v${DogoBot.version}")
 
-        if(DogoBot.data.getNode("DEBUG_PROFILE").boolean){
-            cf.dogo.core.DogoBot.logger.info("DEBUG PROFILE IS ACTIVE")
+        if(DogoBot.data.DEBUG_PROFILE){
+            DogoBot.logger.info("DEBUG PROFILE IS ACTIVE")
         }
 
         try {
@@ -175,7 +148,7 @@ class Boot {
 
     @Throws(Exception::class)
     fun startup() {
-        cf.dogo.core.DogoBot.logger.info(
+        DogoBot.logger.info(
                 "\n  _____                    ____        _   \n" +
                 " |  __ \\                  |  _ \\      | |  \n" +
                 " | |  | | ___   __ _  ___ | |_) | ___ | |_ \n" +
@@ -190,16 +163,16 @@ class Boot {
 
         for(phase in phaseList){
             val time = System.currentTimeMillis()
-            cf.dogo.core.DogoBot.logger.info("["+count+"/"+phaseList.size+"] " + phase.getDisplay(), cf.dogo.utils.ConsoleColors.YELLOW)
-            cf.dogo.core.DogoBot.jda?.presence?.game = Game.watching("myself starting - "+phase.getDisplay())
+            DogoBot.logger.info("["+count+"/"+phaseList.size+"] " + phase.getDisplay(), cf.dogo.utils.ConsoleColors.YELLOW)
+            DogoBot.jda?.presence?.game = Game.watching("myself starting - "+phase.getDisplay())
             phase.start()
-            cf.dogo.core.DogoBot.logger.info("["+count+"/"+phaseList.size+"] Done in ${time.timeSince()}", cf.dogo.utils.ConsoleColors.GREEN)
+            DogoBot.logger.info("["+count+"/"+phaseList.size+"] Done in ${time.timeSince()}", cf.dogo.utils.ConsoleColors.GREEN)
             count++
         }
 
-        cf.dogo.core.DogoBot.ready = true
-        cf.dogo.core.DogoBot.jda?.presence?.game = Game.watching("${cf.dogo.core.DogoBot.jda?.guilds?.size} guilds| dg!help")
-        cf.dogo.core.DogoBot.logger.info("Dogo is Done! ${cf.dogo.core.DogoBot.initTime.timeSince()}", cf.dogo.utils.ConsoleColors.GREEN_BACKGROUND)
+        DogoBot.ready = true
+        DogoBot.jda?.presence?.game = Game.watching("${cf.dogo.core.DogoBot.jda?.guilds?.size} guilds| dg!help")
+        DogoBot.logger.info("Dogo is Done! ${cf.dogo.core.DogoBot.initTime.timeSince()}", cf.dogo.utils.ConsoleColors.GREEN_BACKGROUND)
     }
 
 
@@ -207,11 +180,11 @@ class Boot {
      extension shit
      */
 
-    fun MongoDatabase.hasCollection(name : String) : Boolean {
+    private fun MongoDatabase.hasCollection(name : String) : Boolean {
         return this.listCollectionNames().contains(name)
     }
 
-    fun Long.timeSince() : String {
+    private fun Long.timeSince() : String {
         val time = System.currentTimeMillis() - this;
         if(time < 1000){
             return time.toString()+"ms"

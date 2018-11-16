@@ -5,6 +5,7 @@ import cf.dogo.core.cmdHandler.CommandContext
 import cf.dogo.core.cmdHandler.CommandFactory
 import cf.dogo.core.cmdHandler.DogoCommand
 import cf.dogo.menus.SimpleReactionMenu
+import cf.dogo.utils.BeamUtils
 import cf.dogo.utils.DisplayUtils
 import cf.dogo.utils.EmoteReference
 import cf.dogo.utils.ThemeColor
@@ -48,8 +49,8 @@ class Stats(factory : CommandFactory) : DogoCommand("stats", factory) {
                 .addField(lang.getText(l, "guilds"), cf.dogo.core.DogoBot?.jda?.guilds?.size.toString(), true)
                 //.addBlankField(true)
 
-                .addField(lang.getText(l, "cpu"), cf.dogo.core.DogoBot.instance.usedCPU().toString()+"%", true)
-                .addField(lang.getText(l, "ram"), "${cf.dogo.core.DogoBot.instance.usedMemory()}MB | ${cf.dogo.core.DogoBot.instance.maxMemory()}MB", true)
+                .addField(lang.getText(l, "cpu"), BeamUtils.usedCPU().toString()+"%", true)
+                .addField(lang.getText(l, "ram"), "${BeamUtils.usedMemory()}MB | ${BeamUtils.maxMemory()}MB", true)
                 //.addBlankField(true)
 
                 .addField(lang.getText(l, "ping"), "${cf.dogo.core.DogoBot.jda?.ping}ms", true)

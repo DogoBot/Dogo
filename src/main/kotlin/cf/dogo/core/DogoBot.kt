@@ -10,30 +10,41 @@ import com.google.common.reflect.TypeToken
 import com.mongodb.MongoClient
 import com.mongodb.client.MongoDatabase
 import net.dv8tion.jda.core.JDA
+import ninja.leaping.configurate.ConfigurationOptions
 import ninja.leaping.configurate.json.JSONConfigurationLoader
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
-import java.lang.management.ManagementFactory
+import java.io.FileWriter
 
 class DogoBot {
     companion object {
+        val version = "1.0"
+        var boot: Boot? = null
         var jda: JDA? = null
         var mongoClient: MongoClient? = null
         var db: MongoDatabase? = null
+
         val dataLoader = JSONConfigurationLoader.builder()
-                .setSource{{
-                    val file = File("init.json")
-                    if(!file.exists()){
-                        file.createNewFile()
+                .setFile(File("init.json").also { if(!it.exists()){
+                    it.createNewFile()
+                    FileWriter(it).let {
+                        it.write("{}")
+                        it.close()
                     }
-                    file.bufferedReader()
-                }()}
-                .setFile(File("init.json"))
+                }})
                 .setIndent(3)
                 .build()
-        var data = dataLoader.load()
-        var boot: Boot? = null
+
+        val data : DogoData = {
+            val config = dataLoader.load(
+                    ConfigurationOptions.defaults()
+                    .setShouldCopyDefaults(true)
+            )
+            val it = config.getValue(TypeToken.of(DogoData::class.java), DogoData())
+            DogoBot.dataLoader.save(config)
+            it
+        }()
 
         val logger: Logger
             get() = LoggerFactory.getLogger(DogoBot::class.java)
@@ -41,7 +52,6 @@ class DogoBot {
 
 
         val initTime = System.currentTimeMillis()
-        var ready = false
         val threads = HashMap<String, DogoQueue>()
 
         val eventBus = EventBus("EVENT BUS")
@@ -51,30 +61,17 @@ class DogoBot {
         val statsWatcher = DogoQueue("STATS WATCHER")
 
         val cmdFactory = CommandFactory(eventBus)
-        val instance = DogoBot()
         var apiServer : APIServer? = null
-    }
 
-    fun isAvailable() : Boolean {
-        return ready
-    }
 
-    fun getCommandPrefixes(vararg guilds : DogoGuild) : List<String> {
-        val list = data.getNode("COMMAND_PREFIX").getList(TypeToken.of(String::class.java))
-        guilds.forEach { g -> list.addAll(g.prefix) }
-        list.sortedBy { a -> -a.length}
-        return list
-    }
 
-    fun usedMemory() : Long {
-        return (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024 * 1024)
-    }
+        var ready = false
+        fun isAvailable() = ready
 
-    fun maxMemory() : Long {
-        return Runtime.getRuntime().totalMemory() / (1024 * 1024)
-    }
-
-    fun usedCPU() : Double {
-        return ManagementFactory.getOperatingSystemMXBean().systemLoadAverage/ManagementFactory.getOperatingSystemMXBean().availableProcessors
+        fun getCommandPrefixes(vararg guilds : DogoGuild) : List<String> {
+            val list = data.COMMAND_PREFIX.toMutableList()
+            guilds.map { it.prefix }.forEach { list.addAll(it)}
+            return list.sortedBy { -it.length }
+        }
     }
 }

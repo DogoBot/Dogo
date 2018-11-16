@@ -20,12 +20,13 @@ class CommandFactory (bus : EventBus){
     }
 
 
-    @EventBus.Listener(0)
+    @EventBus.Listener
     fun onMessage(event : MessageReceivedEvent){
         var prefix : String? = null
-        var prefixes = cf.dogo.core.DogoBot.instance.getCommandPrefixes()
+
+        var prefixes = cf.dogo.core.DogoBot.getCommandPrefixes()
         if(event.guild != null){
-            prefixes = cf.dogo.core.DogoBot.instance.getCommandPrefixes(DogoGuild(event.guild))
+            prefixes = cf.dogo.core.DogoBot.getCommandPrefixes(DogoGuild(event.guild))
         }
         for(p in prefixes){
             if(event.message.contentRaw.startsWith(p)){

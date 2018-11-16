@@ -1,5 +1,6 @@
 package cf.dogo.commands
 
+import cf.dogo.core.DogoBot
 import cf.dogo.core.cmdHandler.*
 import cf.dogo.utils.ThemeColor
 import net.dv8tion.jda.core.EmbedBuilder
@@ -54,9 +55,9 @@ class Help(factory : CommandFactory) : DogoCommand("help", factory){
         var usage = ""
         if(cmd.usage.contains("\n")){
             cmd.usage.split("\n")
-                    .forEach { e -> usage+= cf.dogo.core.DogoBot.instance.getCommandPrefixes().first()+e+"\n" }
+                    .forEach { e -> usage+= DogoBot.getCommandPrefixes().first()+e+"\n" }
         } else {
-            usage = cf.dogo.core.DogoBot.instance.getCommandPrefixes().first()+cmd.usage
+            usage = DogoBot.getCommandPrefixes().first()+cmd.usage
         }
         if(usage.endsWith("\n")){
             usage = usage.substring(0, usage.length-1)
@@ -66,7 +67,7 @@ class Help(factory : CommandFactory) : DogoCommand("help", factory){
         embed.addField(lang.getText(cnt.sender.lang, "cmddescription"), lang.getText(cnt.sender.lang, "description"), true)
 
         var subcommands = ""
-        cmd.children.forEach { c -> subcommands+="``${cf.dogo.core.DogoBot?.instance.getCommandPrefixes().first()}${c.getFullName()}``\n" }
+        cmd.children.forEach { c -> subcommands+="``${DogoBot.getCommandPrefixes().first()}${c.getFullName()}``\n" }
         if(subcommands.isNotEmpty()) embed.addField(lang.getText(cnt.sender.lang, "subcommands"), subcommands, false)
         embed.addField(lang.getText(cnt.sender.lang, "permission"), cmd.getPermission(), false)
         return embed

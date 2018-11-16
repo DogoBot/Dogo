@@ -11,7 +11,7 @@ import java.util.*
 
 class Logger constructor(os : OutputStream?, private val name : String) : PrintStream(os) {
     val format = SimpleDateFormat("HH:mm:ss - dd/MM/YYYY")
-    private val file = File(File(cf.dogo.core.DogoBot.data.getNode("LOG_PATH").string), "$name _${format.format(Date()).replace("/", "-").replace(":", "-")}.log")
+    private val file = File(File(DogoBot.data.LOGGER_PATH), "$name _${format.format(Date()).replace("/", "-").replace(":", "-")}.log")
     val fwqueue = DogoQueue("LOGGER_FW_QUEUE")
     init {
         if(!file.exists()) {
