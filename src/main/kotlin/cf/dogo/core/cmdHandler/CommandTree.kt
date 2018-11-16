@@ -28,8 +28,8 @@ class CommandTree() : ArrayList<DogoCommand>(){
         }
     }
 
-    constructor(cmd : DogoCommand, factory: CommandFactory) : this(){
-        var cmd : DogoCommand?= cmd;
+    constructor(cmd : DogoCommand) : this(){
+        var cmd : DogoCommand?= cmd
         while (cmd != null){
             this.add(cmd)
             cmd = cmd.getParent()

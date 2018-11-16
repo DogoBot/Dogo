@@ -24,7 +24,7 @@ abstract class DogoCommand(name : String, factory : CommandFactory) {
 
     fun getPermission() : String {
         var perm = "command"
-        for(cmd in CommandTree(this, factory)){
+        for(cmd in CommandTree(this)){
             perm+=".${cmd.name}"
         }
         return perm
@@ -46,9 +46,10 @@ abstract class DogoCommand(name : String, factory : CommandFactory) {
 
     fun getFullName() : String {
         var s = ""
-        var cmd = this
+        var cmd : DogoCommand? = this
         do {
-            s = " ${cmd.name} $s"
+            s = " ${cmd?.name} $s"
+            cmd = cmd?.getParent()
         }while (!isRoot())
         if(s.startsWith(" ")) s.substring(1, s.length-1)
         return s

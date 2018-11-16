@@ -7,9 +7,7 @@ import cf.dogo.lang.LanguageEntry
 import net.dv8tion.jda.core.entities.Message
 import net.dv8tion.jda.core.entities.MessageChannel
 
-class CommandContext (msg : Message, tree : CommandTree) : IRepliable {
-    val tree = tree
-    val msg = msg
+class CommandContext (val msg : Message, val tree : CommandTree) : IRepliable {
     val guild = if (msg.guild == null) null else DogoGuild(msg.guild)
     val sender = DogoUser(msg.author)
     var actual: DogoCommand? = tree.first()
@@ -28,10 +26,10 @@ class CommandContext (msg : Message, tree : CommandTree) : IRepliable {
 
     fun next() {
         val index = tree.indexOf(actual)
-        if (tree.size < index) {
-            actual = tree[index + 1]
+        actual = if (tree.size < index) {
+            tree[index + 1]
         } else {
-            actual = null
+            null
         }
     }
 }

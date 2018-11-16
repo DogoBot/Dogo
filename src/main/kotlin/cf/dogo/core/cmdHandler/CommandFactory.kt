@@ -36,7 +36,7 @@ class CommandFactory (bus : EventBus){
         }
         if(prefix != null) {
             cf.dogo.core.DogoBot.cmdProcessorThread.submit {
-                var text = event.message.contentRaw.replaceFirst(prefix, "")
+                val text = event.message.contentRaw.replaceFirst(prefix, "")
                 val tree = CommandTree(text, this)
                 val user = DogoUser(event.author)
                 val guild: DogoGuild? = if (event.guild == null) null else DogoGuild(event.guild)

@@ -3,7 +3,7 @@ package cf.dogo.core.cmdHandler
 import cf.dogo.lang.LanguageEntry
 
 
-enum class CommandCategory() {
+enum class CommandCategory {
     UTILITY,
     FUN,
     BOT,
