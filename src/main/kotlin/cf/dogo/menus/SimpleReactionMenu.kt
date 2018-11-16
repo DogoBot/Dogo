@@ -1,5 +1,6 @@
 package cf.dogo.menus
 
+import cf.dogo.core.DogoBot
 import cf.dogo.core.cmdHandler.CommandContext
 import cf.dogo.core.eventBus.EventBus
 import cf.dogo.utils.EmoteReference
@@ -15,11 +16,20 @@ import java.util.*
  * Created by nathanpb on 12/2/17.
  */
 class SimpleReactionMenu(val context: CommandContext) {
+    companion object {
+        val instances = mutableListOf<SimpleReactionMenu>()
+    }
+    init {
+        instances.add(this)
+    }
+
     protected var actions: ArrayList<Action> = ArrayList()
     var embed = EmbedBuilder()
-    private var deleteOnClick = true
     protected val target = context.sender.id
     var msg: Message? = null
+
+    var timeout = 0L
+    var lastSend = 0L
 
     protected var eventbusId : Array<Long> = emptyArray()
 
@@ -35,7 +45,8 @@ class SimpleReactionMenu(val context: CommandContext) {
     }
 
     fun end(delete : Boolean = true) {
-        cf.dogo.core.DogoBot.eventBus.unregister(eventbusId)
+        DogoBot.eventBus.unregister(eventbusId)
+        instances.remove(this)
         if(delete) {
             msg?.delete()?.queue()
             msg = null
@@ -45,7 +56,7 @@ class SimpleReactionMenu(val context: CommandContext) {
     }
 
     fun send() {
-        eventbusId = cf.dogo.core.DogoBot.eventBus.register(this)
+        eventbusId = DogoBot.eventBus.register(this)
         if(msg == null) {
             msg = context.replySynk(embed.build())
         } else {
@@ -54,7 +65,8 @@ class SimpleReactionMenu(val context: CommandContext) {
                 (msg as Message).clearReactions().complete()
             }
         }
-        actions.forEach { a -> msg!!.addReaction(a.emote.id).queue({}, {}) }
+        actions.forEach { msg?.addReaction(it.emote.id)?.queue({}, {}) }
+        this.lastSend = System.currentTimeMillis()
     }
 
     fun addAction(emote: EmoteReference, description: String, action: () -> Unit): SimpleReactionMenu {
@@ -81,7 +93,7 @@ class SimpleReactionMenu(val context: CommandContext) {
             if (msg != null && e.messageId == msg!!.id && e.user.id == target) {
                 for (ac in actions) {
                     if (e.reactionEmote.name == ac.emote.id) {
-                        kotlin.run(ac.action)
+                        ac.action()
                         break
                     }
                 }

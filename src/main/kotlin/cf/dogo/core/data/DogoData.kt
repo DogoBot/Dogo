@@ -1,4 +1,4 @@
-package cf.dogo.core
+package cf.dogo.core.data
 
 import ninja.leaping.configurate.objectmapping.Setting
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable
@@ -35,6 +35,9 @@ class DogoData {
 
     @Setting
     var LOGGER_PATH = "logs"
+
+    @Setting
+    var TIMEOUTS = Timeouts()
 
 
 }

@@ -5,6 +5,6 @@ import net.dv8tion.jda.core.hooks.EventListener
 
 class JDAListener : EventListener{
     override fun onEvent(event: Event?) {
-        if(event != null) cf.dogo.core.DogoBot.eventBus.submit(event)
+        event?.let { DogoBot.eventBus.submit(it) }
     }
 }

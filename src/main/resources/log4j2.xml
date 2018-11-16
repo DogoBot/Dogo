@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration xmlns="http://logging.apache.org/log4j/2.0/config">
+
+    <Appenders>
+        <!-- File Appender -->
+        <File name="FILE" fileName="${sys:logFile}.log" append="true">
+            <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss}] [%-5p] [%t] %C (%F:%L) - %m%n" />
+        </File>
+
+        <!-- Console Appender -->
+        <Console name="ConsoleDebug" target="SYSTEM_OUT">
+            <PatternLayout pattern="[1;34m [%d{yyyy-MM-dd HH:mm:ss}] [%-5p] [%t] %C (%F:%L) - %m%n"></PatternLayout>
+        </Console>
+        <Console name="ConsoleInfo" target="">
+            <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss}] [%-5p] [%t] - %m%n"></PatternLayout>
+        </Console>
+        <Console name="ConsoleWarning" target="">
+            <PatternLayout pattern="[1;33m [%d{yyyy-MM-dd HH:mm:ss}] [%-5p] [%t] - %m%n"></PatternLayout>
+        </Console>
+        <Console name="ConsoleError" target="">
+            <PatternLayout pattern="[1;31m [%d{yyyy-MM-dd HH:mm:ss}] [%-5p] [%t] %C (%F:%L) - %m%n"></PatternLayout>
+        </Console>
+        <Console name="ConsoleFatal" target="">
+            <PatternLayout pattern="[41m [%d{yyyy-MM-dd HH:mm:ss}] [%-5p] [%t] %C (%F:%L) - %m%n"></PatternLayout>
+        </Console>
+
+        <Routing name="Routing">
+            <Routes>
+                <Script name="RoutingInit" language="JavaScript"><![CDATA[
+                    logEvent.getLevel();]]>
+                </Script>
+                <Route ref="ConsoleDebug" key="DEBUG" />
+                <Route ref="ConsoleInfo" key="INFO" />
+                <Route ref="ConsoleWarning" key="WARN" />
+                <Route ref="ConsoleError" key="ERROR" />
+                <Route ref="ConsoleFatal" key="FATAL" />
+            </Routes>
+        </Routing>
+    </Appenders>
+    <Loggers>
+        <Logger name="com.jcg" level="debug" />
+        <Root level="info">
+            <AppenderRef ref="Routing" />
+            <AppenderRef ref="FILE" />
+        </Root>
+    </Loggers>
+</Configuration>
