@@ -127,8 +127,8 @@ class Boot {
 
         for(phase in phaseList){
             val time = System.currentTimeMillis()
-            DogoBot.logger.info("["+count+"/"+phaseList.size+"] " + phase.getDisplay())
-            DogoBot.jda?.presence?.game = Game.watching("myself starting - "+phase.getDisplay())
+            DogoBot.logger.info("["+count+"/"+phaseList.size+"] " + phase.display)
+            DogoBot.jda?.presence?.game = Game.watching("myself starting - "+phase.display)
             phase.start()
             DogoBot.logger.info("["+count+"/"+phaseList.size+"] Done in ${time.timeSince()}")
             count++

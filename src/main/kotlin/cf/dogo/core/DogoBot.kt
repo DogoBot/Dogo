@@ -14,13 +14,14 @@ import net.dv8tion.jda.core.JDA
 import ninja.leaping.configurate.ConfigurationOptions
 import ninja.leaping.configurate.json.JSONConfigurationLoader
 import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 import java.io.File
 import java.io.FileWriter
 import java.util.*
 
 class DogoBot {
     companion object {
-        val version = "1.0"
+        const val version = "1.0"
         var jda: JDA? = null
         var mongoClient: MongoClient? = null
         var db: MongoDatabase? = null
@@ -46,7 +47,7 @@ class DogoBot {
             it
         }()
 
-        val logger
+        val logger : Logger
             get() = LogManager.getLogger(Throwable().stackTrace[1].className)
 
         val initTime = System.currentTimeMillis()
