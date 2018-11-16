@@ -4,9 +4,7 @@ import cf.dogo.exceptions.CommandException
 import cf.dogo.lang.LanguageEntry
 import kotlin.reflect.full.allSuperclasses
 
-abstract class DogoCommand(name : String, factory : CommandFactory) {
-    val name  = name
-    val factory = factory
+abstract class DogoCommand(val name : String, val factory : CommandFactory) {
     abstract val minArgumentsSize : Int
     abstract val usage : String
     abstract val aliases : String
