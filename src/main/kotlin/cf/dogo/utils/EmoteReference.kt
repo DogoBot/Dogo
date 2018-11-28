@@ -1,6 +1,7 @@
 package cf.dogo.utils
 
-enum class EmoteReference(id : String, external : Boolean = false) {
+enum class EmoteReference(val id : String, val external : Boolean = false, val equivalentChar: Char? = null) {
+
     /*
         EXTERNAL
      */
@@ -12,16 +13,16 @@ enum class EmoteReference(id : String, external : Boolean = false) {
     /*
        REGIONAL
     */
-    ZERO("0⃣"),
-    ONE("1⃣"),
-    TWO("2⃣"),
-    THREE("3⃣"),
-    FOUR("4⃣"),
-    FIVE("5⃣"),
-    SIX("6⃣"),
-    SEVEN("7⃣"),
-    EIGHT("8⃣"),
-    NINE("9⃣"),
+    ZERO("0⃣", equivalentChar = '0'),
+    ONE("1⃣", equivalentChar = '1'),
+    TWO("2⃣", equivalentChar = '2'),
+    THREE("3⃣", equivalentChar = '3'),
+    FOUR("4⃣", equivalentChar = '4'),
+    FIVE("5⃣", equivalentChar = '5'),
+    SIX("6⃣", equivalentChar = '6'),
+    SEVEN("7⃣", equivalentChar = '7'),
+    EIGHT("8⃣", equivalentChar = '8'),
+    NINE("9⃣", equivalentChar = '9'),
 
     REGIONAL_INDICATOR_A("\uD83C\uDDE6"),
     REGIONAL_INDICATOR_B("\uD83C\uDDE7"),
@@ -99,13 +100,6 @@ enum class EmoteReference(id : String, external : Boolean = false) {
     NEUTRAL_FACE("\uD83D\uDE10"),
     RAGE("\uD83D\uDE21");
 
-
-    val id : String
-    val external = external
-    init{
-        this.id = id;
-    }
-
     fun getName() : String {
         return name.toLowerCase()
     }
@@ -116,5 +110,13 @@ enum class EmoteReference(id : String, external : Boolean = false) {
         } else {
             ":${getName()}:"
         }
+    }
+
+    fun getChar() : Char {
+        return this.equivalentChar ?: '?'
+    }
+
+    companion object {
+        fun getRegional(char: Char) = EmoteReference.values().firstOrNull { it.equivalentChar == char } ?: EmoteReference.DOGOHELP
     }
 }

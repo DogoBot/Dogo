@@ -7,28 +7,13 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable
 class DogoData {
 
     @Setting
-    val COMMAND_PREFIX = mutableListOf("dg!")
-
-    @Setting
     var BOT_TOKEN = "BOT_TOKEN"
 
     @Setting
     var OWNER_ID = "214173547965186048"
 
     @Setting
-    var DB_HOST = "localhost"
-
-    @Setting
-    var DB_PORT = 27017
-
-    @Setting
-    var DB_NAME = "Dogo"
-
-    @Setting
-    var DB_USER = "root"
-
-    @Setting
-    var DB_PWD = "root"
+    val COMMAND_PREFIX = mutableListOf("dg!")
 
     @Setting
     var DEBUG_PROFILE = false
@@ -37,7 +22,12 @@ class DogoData {
     var LOGGER_PATH = "logs"
 
     @Setting
-    var TIMEOUTS = Timeouts()
+    val TIMEOUTS = Timeouts()
 
+    @Setting
+    val DB = Database()
+
+    @Setting
+    val API = API()
 
 }

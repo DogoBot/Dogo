@@ -32,12 +32,12 @@ class Help(factory : CommandFactory) : DogoCommand("help", factory){
                 if(!hm.containsKey(c.category)) hm[c.category] = ArrayList()
                 (hm[c.category] as ArrayList).add(c)
             }
-            hm.forEach{e ->
+            hm.forEach{
                 var s = StringBuilder()
-                e.value.forEach { c -> s.append("``${c.name}``, ") }
+                it.value.forEach {s.append("``${it.name}``, ") }
                 s = StringBuilder(s.substring(0, s.length-2))
                 s.append("\n")
-                embed.addField(e.key.getDisplay(cmd.sender.lang), s.toString(), false)
+                embed.addField(it.key.getDisplay(cmd.sender.lang), s.toString(), false)
             }
             cmd.reply(embed.build())
         } else {

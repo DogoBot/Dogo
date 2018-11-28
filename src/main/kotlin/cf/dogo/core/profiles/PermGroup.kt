@@ -10,7 +10,7 @@ class PermGroup(id : String? = null) {
     companion object {
         val col: MongoCollection<Document>
             get() {
-                return cf.dogo.core.DogoBot.db?.getCollection("PERMGROUPS") as MongoCollection
+                return cf.dogo.core.DogoBot.db?.getCollection("permgroups") as MongoCollection
             }
     }
 

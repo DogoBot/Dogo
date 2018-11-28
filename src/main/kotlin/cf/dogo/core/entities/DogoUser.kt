@@ -8,7 +8,7 @@ import org.bson.Document
 class DogoUser (id : String){
     val id = id
     companion object {
-        val col = cf.dogo.core.DogoBot.db?.getCollection("USERS")
+        val col = cf.dogo.core.DogoBot.db?.getCollection("users")
     }
 
     constructor(usr : User) : this(usr.id)
@@ -42,6 +42,14 @@ class DogoUser (id : String){
                         .filter { g -> (g.id as String).toLong() <= 0 }
                         .filter { g -> g.affectsEveryone() || g.applyTo.contains(id) }
         )
+    }
+
+    fun formatName(g: DogoGuild? = null) : String {
+        return if(g?.g?.isMember(this.usr) == true){
+            g.g.getMember(this.usr).effectiveName
+        } else {
+            this.usr?.name
+        }+"#${this.usr?.discriminator}"
     }
 
 }

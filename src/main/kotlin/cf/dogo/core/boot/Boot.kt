@@ -31,38 +31,28 @@ class Boot {
             },
             Phase("Connecting to Database") {
                 DogoBot.mongoClient = MongoClient(
-                        ServerAddress(DogoBot.data.DB_HOST, DogoBot.data.DB_PORT),
+                        ServerAddress(DogoBot.data.DB.HOST, DogoBot.data.DB.PORT),
                         MongoCredential.createCredential(
-                                DogoBot.data.DB_USER,
-                                DogoBot.data.DB_NAME,
-                                DogoBot.data.DB_PWD.toCharArray()
+                                DogoBot.data.DB.USER,
+                                DogoBot.data.DB.NAME,
+                                DogoBot.data.DB.PWD.toCharArray()
                         ),
                         MongoClientOptions.builder().build()
                 ).also {
-                    DogoBot.db = it.getDatabase(DogoBot.data.DB_NAME)
+                    DogoBot.db = it.getDatabase(DogoBot.data.DB.NAME)
                 }
             },
             Phase("Checking Database") {
-                if (!DogoBot.db!!.hasCollection("USERS")) {
-                    DogoBot.logger.info("USERS collection doesn't exists! Creating one...")
-                    DogoBot.db?.createCollection("USERS")
-                }
-                if (!DogoBot.db!!.hasCollection("GUILDS")) {
-                    DogoBot.logger.info("GUILDS collection doesn't exists! Creating one...")
-                    DogoBot.db?.createCollection("GUILDS")
-                }
-                if(!DogoBot.db!!.hasCollection("PERMGROUPS")) {
-                    DogoBot.logger.info("PERMGROUPS collection doesn't exists! Creating one...")
-                    DogoBot.db?.createCollection("PERMGROUPS")
-                }
-                if(!DogoBot.db!!.hasCollection("STATS")) {
-                    DogoBot.logger.info("STATS collection doesn't exists! Creating one...")
-                    DogoBot.db?.createCollection("STATS")
-                }
+                DogoBot.db?.checkCollection("users")
+                DogoBot.db?.checkCollection("guilds")
+                DogoBot.db?.checkCollection("permgroups")
+                DogoBot.db?.checkCollection("stats")
+                DogoBot.db?.checkCollection("tokens")
             },
             Phase("Registering Commands"){
-                DogoBot.cmdFactory.registerCommand(cf.dogo.commands.Help(cf.dogo.core.DogoBot.cmdFactory))
-                DogoBot.cmdFactory.registerCommand(cf.dogo.commands.Stats(cf.dogo.core.DogoBot.cmdFactory))
+                DogoBot.cmdFactory.registerCommand(cf.dogo.commands.Help(DogoBot.cmdFactory))
+                DogoBot.cmdFactory.registerCommand(cf.dogo.commands.Stats(DogoBot.cmdFactory))
+                DogoBot.cmdFactory.registerCommand(cf.dogo.commands.TicTacToe(DogoBot.cmdFactory))
             },
             Phase("Setting up Permgroups") {
                 PermGroup("0").apply {
@@ -87,7 +77,7 @@ class Boot {
             },
             Phase("Initializing API"){
                 DogoBot.apiServer = APIServer().also {
-                    it.start()
+                    it.server.start()
                 }
             }
     )
@@ -154,6 +144,13 @@ class Boot {
             time < 1000 -> time.toString()+"ms"
             time < 60000 -> TimeUnit.MILLISECONDS.toSeconds(time).toString()+"sec"
             else -> TimeUnit.MILLISECONDS.toMinutes(time).toString()+"min"
+        }
+    }
+
+    private fun MongoDatabase.checkCollection(collection: String) {
+        if(!this.hasCollection(collection)) {
+            DogoBot.logger.info("'$collection' collection doesn't exists! Creating one...")
+            this.createCollection(collection)
         }
     }
 }

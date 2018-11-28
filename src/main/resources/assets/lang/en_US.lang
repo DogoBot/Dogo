@@ -35,3 +35,10 @@ command.stats.uptime=:timer: Uptime
 command.stats.threadinfo=Want to go deeper?
 command.stats.advancedinfo=Advanced Info
 command.stats.basicinfo=Basic Info
+
+#############
+#TTT COMMAND#
+#############
+command.tictactoe.winner=:tada: **Winner: **%s
+command.tictactoe.tie=:tada: **Tie!**
+command.tictactoe.turn=**Turn: **%s

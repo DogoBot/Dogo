@@ -21,7 +21,7 @@ class CommandContext (val msg : Message, val tree : CommandTree) : IRepliable {
     }
 
     override fun langEntry(): LanguageEntry {
-        return actual?.lang as LanguageEntry
+        return actual?.lang ?: tree.first().lang
     }
 
     fun next() {

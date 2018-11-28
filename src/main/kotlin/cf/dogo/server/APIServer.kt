@@ -1,71 +1,90 @@
 package cf.dogo.server
 
 import cf.dogo.core.DogoBot
-import cf.dogo.server.bridge.Server
-import cf.dogo.server.processors.ProcessorAddToken
-import cf.dogo.server.processors.ProcessorGuildMultiple
-import cf.dogo.server.processors.ProcessorGuildSingle
+import cf.dogo.core.entities.DogoUser
+import cf.dogo.exceptions.APIException
+import cf.dogo.server.token.Token
+import cf.dogo.utils.DiscordAPI
+import io.ktor.application.call
+import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
+import io.ktor.request.host
+import io.ktor.response.respondText
+import io.ktor.routing.get
+import io.ktor.routing.routing
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.netty.Netty
 import org.json.JSONObject
-import java.net.Socket
+import java.util.*
 
-class APIServer : Server(4676, "API Server"){
-    val tokens = ArrayList<Token>()
-    val processors = HashMap<String, APIRequestProcessor>()
+class APIServer {
 
-    init {
-        processors["addtoken"] = ProcessorAddToken()
-        processors["guild"] = ProcessorGuildSingle()
-        processors["guilds"] = ProcessorGuildMultiple()
-        //processors["miner"] = ProcessorAuthMiner()
-    }
+    val tokensHash = mutableListOf<String>()
 
-    override fun onRequest(reqid: Int, data: JSONObject, sck: Socket) : JSONObject {
-        return if(!data.has("iwant")){
-            JSONObject().put("error", "missing instruction").put("status", 422)
-        } else if(!processors.containsKey(data.getString("iwant"))){
-            JSONObject().put("error", "missing implementation").put("status", 503)
-        } else {
-            try {
-                val tk : Token? = if(data.has("token")) {
-                    if(tokens.filter { it.token.equals(data.getString("token")) }.isEmpty()){
-                        addToken(data.getString("token"))
+    val ROUTE = DogoBot.data.API.ROUTE
+
+    val server = embeddedServer(Netty, port= DogoBot.data.API.PORT){
+        routing {
+            get("$ROUTE/token/add/fromdiscord") {
+                var allow = true
+                val rand = Random().nextLong().let { if(it<0) it*(-1) else it}.toString()
+                APIRequestProcessor {
+                    if(DogoBot.data.API.ALLOWED_TOKEN_ADD.contains("${call.request.host()}")) {
+                        tokensHash.add(rand)
+                    } else {
+                        allow = false
+                        throw APIException(HttpStatusCode.Forbidden, "${call.request.host()} is not authorized to add tokens")
                     }
-                    tokens.filter { it.token.equals(data.getString("token")) }.firstOrNull()
-                } else {
-                    null
                 }
-                processors[data.getString("iwant")]?.proccess(RequestResponse(data, reqid), sck, tk, this) as JSONObject
-            }catch (ex : Exception) {
-                //TODO report when reporters are done
-                DogoBot.logger?.error("An error occurs while processing Bridge request: ${ex.message}")
-                return JSONObject().put("error", "unknown error").put("status", 500)
+                if(allow) {
+                    call.respondText(
+                            APIServer::class.java.getResource("/assets/api/token-redirect.html")
+                                    ?.readText()
+                                    .orEmpty()
+                                    .replace("%redirect%", "${ROUTE}token/add/")
+                                    .replace("%rand%", rand),
+                            ContentType.Text.Html
+                    )
+                }
+            }
+            get("$ROUTE/token/add/"){
+                val data = JSONObject()
+                APIRequestProcessor(data) {
+                    if(tokensHash.contains(call.parameters["hash"].orEmpty())){
+                        tokensHash.remove(call.parameters["hash"].orEmpty())
+
+                        if(!call.parameters.contains("hash")) throw APIException(HttpStatusCode.BadRequest, "hash not provided")
+
+                        arrayOf("access_token", "token_type", "expires_in", "scope")
+                                .forEach {
+                                    if(!call.parameters.contains(it)){
+                                        DogoBot.logger.error("Required argument $it not provided by ${call.request.host()}")
+                                        throw APIException(HttpStatusCode.BadRequest, "required argument $it not provided")
+                                    }
+                                }
+                        val fetch = DiscordAPI.fetchUser(call.parameters["access_token"].orEmpty(), call.parameters["token_type"].orEmpty())
+                        if(fetch.has("id")){
+                            Token(
+                                    call.parameters["access_token"].orEmpty(),
+                                    DogoUser(fetch.getString("id")),
+                                    call.parameters["scope"].orEmpty().split(" ").toTypedArray(),
+                                    Date(),
+                                    Date(Date().time + call.parameters["expires_in"].orEmpty().toLong()),
+                                    call.parameters["token_type"].orEmpty()
+                            ).also {
+                                it.update()
+                                it.export().let {
+                                    it.keys.forEach { k -> data.put(k, it[k]) }
+                                }
+                            }
+                        } else {
+                            throw APIException(HttpStatusCode.Unauthorized, "token or token type is not valid")
+                        }
+                    } else {
+                        throw APIException(HttpStatusCode.Forbidden, "${call.request.host()} is not authorized to add tokens")
+                    }
+                }.also { call.respondText(it.toString()) }
             }
         }
     }
-
-    fun addToken(token : String){
-        val t = Token(token)
-        if(t.isValid()) tokens.add(t)
-        checkTokens()
-    }
-
-    fun removeToken(token: String){
-        tokens.removeAll(tokens.filter { t -> t.token.equals(token) })
-        checkTokens()
-    }
-
-    fun hasToken(token: String) : Boolean{
-        checkTokens()
-        return tokens.any { t -> t.token.equals(token) }
-    }
-
-    fun checkTokens(){
-        tokens.removeAll(tokens.filter { t -> !t.isValid() })
-    }
-
-
-
-
-
-
 }

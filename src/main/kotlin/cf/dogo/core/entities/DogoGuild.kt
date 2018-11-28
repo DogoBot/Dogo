@@ -10,7 +10,7 @@ import kotlin.collections.ArrayList
 class DogoGuild (id : String){
     val id = id;
     companion object {
-        val col = cf.dogo.core.DogoBot.db?.getCollection("GUILDS")
+        val col = cf.dogo.core.DogoBot.db?.getCollection("guilds")
     }
 
     constructor(g : Guild) : this(g.id)

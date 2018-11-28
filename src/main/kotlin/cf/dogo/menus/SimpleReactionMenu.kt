@@ -15,7 +15,7 @@ import java.util.*
 /**
  * Created by nathanpb on 12/2/17.
  */
-class SimpleReactionMenu(val context: CommandContext) {
+open class SimpleReactionMenu(val context: CommandContext) {
     companion object {
         val instances = mutableListOf<SimpleReactionMenu>()
     }
@@ -25,7 +25,7 @@ class SimpleReactionMenu(val context: CommandContext) {
 
     protected var actions: ArrayList<Action> = ArrayList()
     var embed = EmbedBuilder()
-    protected val target = context.sender.id
+    var target = context.sender.id
     var msg: Message? = null
 
     var timeout = 0L
@@ -55,13 +55,13 @@ class SimpleReactionMenu(val context: CommandContext) {
         }
     }
 
-    fun send() {
+    open fun send() {
         eventbusId = DogoBot.eventBus.register(this)
         if(msg == null) {
             msg = context.replySynk(embed.build())
         } else {
             (msg as Message).editMessage(embed.build()).queue()
-            if(!(context.replyChannel() is PrivateChannel)) {
+            if(context.replyChannel() !is PrivateChannel) {
                 (msg as Message).clearReactions().complete()
             }
         }
