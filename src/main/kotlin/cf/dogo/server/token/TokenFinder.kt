@@ -31,13 +31,15 @@ class TokenFinder : Document() {
         set(it) = set("type", it)
 
     fun find(): Token? {
-       return Token.col?.find(this)?.firstOrNull()?.let {
+       return Token.col.find(this)?.firstOrNull()?.let {
            Token.parse(it)
        }
     }
 
     fun findAll() : List<Token> {
-        return (Token.col?.find(this)?.toList() ?: emptyList<Document>())
+        return (Token.col.find(this)?.toList() ?: emptyList<Document>())
                 .map { Token.parse(it) }
     }
+
+    fun count() = Token.col.count(this)
 }

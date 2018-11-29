@@ -3,6 +3,7 @@ package cf.dogo.server.token
 import cf.dogo.core.DogoBot
 import cf.dogo.core.entities.DogoUser
 import cf.dogo.statistics.Statistic
+import cf.dogo.utils.DiscordAPI
 import com.mongodb.client.MongoCollection
 import org.bson.Document
 import java.util.*
@@ -20,6 +21,11 @@ data class Token(val token: String, val owner: DogoUser, val scopes: Array<Strin
                 doc.getString("type")
         )
     }
+
+    fun isValid() : Boolean {
+        return Date().before(expiresIn) && DiscordAPI.fetchUser(this).has("id")
+    }
+
 
     fun update() {
         Token.col.insertOne(export())
