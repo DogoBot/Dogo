@@ -1,10 +1,11 @@
 package cf.dogo.server.token
 
 import cf.dogo.core.entities.DogoUser
+import cf.dogo.interfaces.IFinder
 import org.bson.Document
 import java.util.*
 
-class TokenFinder : Document() {
+class TokenFinder : Document(), IFinder<Token> {
 
     var token: String
         get() = getString("token")
@@ -30,16 +31,8 @@ class TokenFinder : Document() {
         get() = getString("type")
         set(it) = set("type", it)
 
-    fun find(): Token? {
-       return Token.col.find(this)?.firstOrNull()?.let {
-           Token.parse(it)
-       }
-    }
+    override fun col() = Token.col
+    override fun query() = this
+    override fun map(doc: Document) = Token.parse(doc)
 
-    fun findAll() : List<Token> {
-        return (Token.col.find(this)?.toList() ?: emptyList<Document>())
-                .map { Token.parse(it) }
-    }
-
-    fun count() = Token.col.count(this)
 }

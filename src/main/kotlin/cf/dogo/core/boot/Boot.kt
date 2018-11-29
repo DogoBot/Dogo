@@ -48,6 +48,7 @@ class Boot {
                 DogoBot.db?.checkCollection("permgroups")
                 DogoBot.db?.checkCollection("stats")
                 DogoBot.db?.checkCollection("tokens")
+                DogoBot.db?.checkCollection("badwords")
             },
             Phase("Registering Commands"){
                 DogoBot.cmdFactory.registerCommand(cf.dogo.commands.Help(DogoBot.cmdFactory))
