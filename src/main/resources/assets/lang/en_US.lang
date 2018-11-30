@@ -42,3 +42,10 @@ command.stats.basicinfo=Basic Info
 command.tictactoe.winner=:tada: **Winner: **%s
 command.tictactoe.tie=:tada: **Tie!**
 command.tictactoe.turn=**Turn: **%s
+
+##################
+#BADWORDS COMMAND#
+##################
+command.badwords.empty=:warning: This guild has no defined badwords
+command.badwords.pagetitle=Page %s of %s
+command.badwords.removed=Removed Words:

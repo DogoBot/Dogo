@@ -6,10 +6,6 @@ import org.bson.Document
 
 class BadwordFinder : Document(), IFinder<BadwordProfile> {
 
-    var id: Int
-        get() = getInteger("id")
-        set(it) = set("id", it)
-
     var guild: DogoGuild
         get() = DogoGuild(getString("guild"))
         set(it) = set("guild", it.id)
@@ -21,5 +17,4 @@ class BadwordFinder : Document(), IFinder<BadwordProfile> {
     override fun col() = BadwordProfile.col
     override fun query() = this
     override fun map(doc: Document) = BadwordProfile.parse(doc)
-
 }

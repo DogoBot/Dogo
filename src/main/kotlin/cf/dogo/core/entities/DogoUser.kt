@@ -54,9 +54,9 @@ data class DogoUser (val id : String){
     fun getPermGroups() : PermGroupSet {
         return PermGroupSet(
                 PermGroup.col.find()
-                        .map { g -> PermGroup(g.getString("ID")) }
-                        .filter { g -> (g.id as String).toLong() <= 0 }
-                        .filter { g -> g.affectsEveryone() || g.applyTo.contains(id) }
+                        .map { PermGroup(it.getString("ID")) }
+                        .filter { (it.id as String).toLong() <= 0 }
+                        .filter { it.affectsEveryone() || it.applyTo.contains(id) }
         )
     }
 

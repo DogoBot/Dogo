@@ -1,5 +1,6 @@
 package cf.dogo.core.eventBus
 
+import cf.dogo.core.DogoBot
 import cf.dogo.core.queue.DogoQueue
 import net.dv8tion.jda.core.events.Event
 import net.dv8tion.jda.core.hooks.EventListener
@@ -78,6 +79,6 @@ class EventBus(name : String) : DogoQueue(name), EventListener {
     }
 
     override fun onEvent(event: Event?) {
-        if(event != null) submit(event)
+        if(event != null && DogoBot.ready) submit(event)
     }
 }

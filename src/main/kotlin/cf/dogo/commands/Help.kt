@@ -28,7 +28,7 @@ class Help(factory : CommandFactory) : DogoCommand("help", factory){
                     .setAuthor(lang.getText(cmd.sender.lang, "helproot"), null, HELP_IMAGE)
 
             val hm = HashMap<CommandCategory, ArrayList<DogoCommand>>()
-            factory.commands.values.forEach { c ->
+            factory.commands.values.filter{it.isRoot()}.forEach { c ->
                 if(!hm.containsKey(c.category)) hm[c.category] = ArrayList()
                 (hm[c.category] as ArrayList).add(c)
             }

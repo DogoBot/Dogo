@@ -69,6 +69,9 @@ enum class EmoteReference(val id : String, val external : Boolean = false, val e
     ARROW_FORWARD("▶"),
     ARROW_BACKWARD("◀"),
 
+    TRACK_PREVIOUS("⏮"),
+    TRACK_NEXT("⏭"),
+
     ARROW_COUNTERCLOCKWISE("\uD83D\uDD04"),
 
     WARNING("⚠"),

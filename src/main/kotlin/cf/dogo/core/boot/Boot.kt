@@ -1,5 +1,6 @@
 package cf.dogo.core.boot
 
+import cf.dogo.badwords.BadwordProfile
 import cf.dogo.core.DogoBot
 import cf.dogo.core.profiles.PermGroup
 import cf.dogo.server.APIServer
@@ -54,6 +55,9 @@ class Boot {
                 DogoBot.cmdFactory.registerCommand(cf.dogo.commands.Help(DogoBot.cmdFactory))
                 DogoBot.cmdFactory.registerCommand(cf.dogo.commands.Stats(DogoBot.cmdFactory))
                 DogoBot.cmdFactory.registerCommand(cf.dogo.commands.TicTacToe(DogoBot.cmdFactory))
+
+                DogoBot.cmdFactory.registerCommand(cf.dogo.commands.Badwords(DogoBot.cmdFactory))
+                DogoBot.cmdFactory.registerCommand(cf.dogo.commands.Badwords.Add(DogoBot.cmdFactory))
             },
             Phase("Setting up Permgroups") {
                 PermGroup("0").apply {
@@ -65,7 +69,7 @@ class Boot {
                 }
                 PermGroup("-1").apply {
                     name = "admin"
-                    include = arrayListOf("command.admin.*")
+                    include = arrayListOf("command.admin.*", "badword.bypass")
                     exclude = arrayListOf("command.admin.root.*")
                     priority = -1
                 }
@@ -80,6 +84,9 @@ class Boot {
                 DogoBot.apiServer = APIServer().also {
                     it.server.start()
                 }
+            },
+            Phase("Registering Random Event Listeners"){
+                DogoBot.eventBus.register(BadwordProfile.listener)
             }
     )
 

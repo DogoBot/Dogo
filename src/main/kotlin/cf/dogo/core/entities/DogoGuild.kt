@@ -1,5 +1,7 @@
 package cf.dogo.core.entities
 
+import cf.dogo.badwords.BadwordProfile
+import cf.dogo.core.DogoBot
 import cf.dogo.core.profiles.PermGroup
 import cf.dogo.core.profiles.PermGroupSet
 import net.dv8tion.jda.core.entities.Guild
@@ -7,18 +9,17 @@ import org.bson.Document
 import java.util.*
 import kotlin.collections.ArrayList
 
-class DogoGuild (id : String){
-    val id = id;
+class DogoGuild (val id : String){
     companion object {
-        val col = cf.dogo.core.DogoBot.db?.getCollection("guilds")
+        val col = DogoBot.db?.getCollection("guilds")
     }
 
     constructor(g : Guild) : this(g.id)
     val g = cf.dogo.core.DogoBot.jda?.getGuildById(id)
 
     init {
-        if((col?.count(Document("ID", id)) as Long) < 1){
-            col.insertOne(Document("ID", id))
+        if(col?.count(Document("ID", id)) == 0L){
+            col?.insertOne(Document("ID", id))
         }
     }
 
@@ -44,6 +45,9 @@ class DogoGuild (id : String){
             val maped = ArrayList(Arrays.asList(value.map { v -> v.id }.toTypedArray()))
             update(Document("\$set", Document("permgroups", maped)))
         }
+
+    val badwords: BadwordProfile
+        get() = BadwordProfile.cachedEntry(this)
 
 
 
