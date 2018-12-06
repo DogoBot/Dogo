@@ -13,7 +13,7 @@ interface IRepliable {
 
     fun reply(vararg content : Any, preset : Boolean = false){
         cf.dogo.core.DogoBot.jdaOutputThread.submit {
-            replySynk(*content, preset)
+            replySynk(*content, preset = preset)
         }
     }
 
@@ -22,10 +22,11 @@ interface IRepliable {
             return replyChannel().sendMessage(content[0] as MessageEmbed).complete()
         } else {
             var text = content[0].toString()
-            if(preset){
-                text = langEntry().getText(lang(), text)
-            }
+            text = if(preset){
+                langEntry().getText(lang(), text, *Arrays.copyOfRange(content, 1, content.size))
+            } else {
                 String.format(text, *Arrays.copyOfRange(content, 1, content.size - 1))
+            }
             return replyChannel().sendMessage(text).complete()
         }
     }
