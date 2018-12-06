@@ -36,7 +36,7 @@ open class SimpleReactionMenu(val context: CommandContext) {
     fun build(preset : EmbedBuilder? = null): SimpleReactionMenu {
         if(preset == null) {
             for (ac in actions) {
-                embed.setDescription(embed.descriptionBuilder.toString() + ac.emote + " " + ac.description + "\n")
+                embed.appendDescription("${ac.emote.getAsMention()} ${ac.description}\n")
             }
         } else {
             this.embed = preset
