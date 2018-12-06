@@ -1,6 +1,6 @@
 package cf.dogo.core
 
-import cf.dogo.core.cmdHandler.CommandFactory
+import cf.dogo.core.command.CommandFactory
 import cf.dogo.core.data.DogoData
 import cf.dogo.core.entities.DogoGuild
 import cf.dogo.core.eventBus.EventBus
@@ -107,7 +107,7 @@ class DogoBot {
         }
         val statsWatcher = DogoQueue("STATS WATCHER")
 
-        val cmdFactory = CommandFactory(eventBus)
+        val cmdFactory = CommandFactory().also { eventBus.register(it) }
         var apiServer : APIServer? = null
 
 

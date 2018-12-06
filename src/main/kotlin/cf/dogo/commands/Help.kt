@@ -1,75 +1,82 @@
 package cf.dogo.commands
 
 import cf.dogo.core.DogoBot
-import cf.dogo.core.cmdHandler.*
+import cf.dogo.core.command.*
+import cf.dogo.utils.Holder
 import cf.dogo.utils.ThemeColor
 import net.dv8tion.jda.core.EmbedBuilder
 
-class Help(factory : CommandFactory) : DogoCommand("help", factory){
+class Help : ReferencedCommand(
 
-    val HELP_IMAGE = "https://i.imgur.com/7HF9zwb.png"
+        CommandReference(
+                "help",
+                usage = "help\nhelp command\n help command subcommand ... subcommand",
+                aliases = "plsSendHelp",
+                category = CommandCategory.BOT
+        ),
+        { cmd ->
 
-    override val minArgumentsSize = 0
-    override val usage = "help\nhelp command\nhelp command subcommand ... subcommand"
-    override val aliases = "plsSendHelp"
-    override val category = CommandCategory.BOT
+                val route = if(cmd.args.isNotEmpty()){
+                    var s = ""
+                    cmd.args.forEach { a -> s+="$a " }
+                    if(s.isNotEmpty()) {
+                        s = s.substring(0, s.length - 1)
+                    }
+                    DogoBot.cmdFactory.route.findRoute(s, Holder())
+                } else DogoBot.cmdFactory.route
 
-    override fun execute(cmd : CommandContext) {
-        var s = ""
-        cmd.tree.args.forEach { a -> s+="$a " }
-        if(s.isNotEmpty()) {
-            s = s.substring(0, s.length - 1)
-        }
-        val tree = CommandTree(s, factory)
+                if(route.reference == CommandRouter.root){
+                    val embed = EmbedBuilder()
+                            .setColor(ThemeColor.PRIMARY)
+                            .setAuthor(cmd.langEntry.getText(cmd.sender.lang, "helproot"), null, HELP_IMAGE)
 
-        if(tree.isEmpty()){
+                    val hm = HashMap<CommandCategory, ArrayList<CommandReference>>()
+
+                    DogoBot.cmdFactory.route.children.forEach { c ->
+                        if(!hm.containsKey(c.reference.category)) hm[c.reference.category] = ArrayList()
+                        (hm[c.reference.category] as ArrayList).add(c.reference)
+                    }
+                    hm.forEach{
+                        var s = StringBuilder()
+                        it.value.forEach {s.append("``${it.name}``, ") }
+                        s = StringBuilder(s.substring(0, s.length-2))
+                        s.append("\n")
+                        embed.addField(it.key.getDisplay(cmd.sender.lang), s.toString(), false)
+                    }
+                    cmd.reply(embed.build())
+                } else {
+                    cmd.reply(getHelpFor(route, cmd).build())
+                }
+            }
+) { companion object {
+        val HELP_IMAGE = "https://i.imgur.com/7HF9zwb.png"
+
+        fun getHelpFor(cmd : CommandRouter, cnt : CommandContext) : EmbedBuilder {
             val embed = EmbedBuilder()
                     .setColor(ThemeColor.PRIMARY)
-                    .setAuthor(lang.getText(cmd.sender.lang, "helproot"), null, HELP_IMAGE)
+                    .setAuthor(cnt.langEntry.getText(cnt.sender.lang, "helpfor", cmd.reference.name), null, HELP_IMAGE)
 
-            val hm = HashMap<CommandCategory, ArrayList<DogoCommand>>()
-            factory.commands.values.filter{it.isRoot()}.forEach { c ->
-                if(!hm.containsKey(c.category)) hm[c.category] = ArrayList()
-                (hm[c.category] as ArrayList).add(c)
+            embed.addField(cnt.langEntry.getText(cnt.sender.lang, "category"), cmd.reference.category.getDisplay(cnt.sender.lang), false)
+
+            var usage = ""
+            if(cmd.reference.usage.contains("\n")){
+                cmd.reference.usage.split("\n")
+                        .forEach { e -> usage+= DogoBot.getCommandPrefixes().first()+e+"\n" }
+            } else {
+                usage = DogoBot.getCommandPrefixes().first()+cmd.reference.usage
             }
-            hm.forEach{
-                var s = StringBuilder()
-                it.value.forEach {s.append("``${it.name}``, ") }
-                s = StringBuilder(s.substring(0, s.length-2))
-                s.append("\n")
-                embed.addField(it.key.getDisplay(cmd.sender.lang), s.toString(), false)
+            if(usage.endsWith("\n")){
+                usage = usage.substring(0, usage.length-1)
             }
-            cmd.reply(embed.build())
-        } else {
-            cmd.reply(getHelpFor(tree.last(), cmd).build())
+
+            embed.addField(cnt.langEntry.getText(cnt.sender.lang, "examples"), if(cmd.reference.usage.isNotEmpty()) usage else cnt.langEntry.getText(cnt.sender.lang, "noexamples"), true)
+            embed.addField(cnt.langEntry.getText(cnt.sender.lang, "cmddescription"), cmd.langEntry.getText(cnt.sender.lang, "description"), true)
+
+            val subcommands = cnt.route.children.joinToString {"``${DogoBot.getCommandPrefixes().first()}${it.getFullName()}``\n"}
+            if(subcommands.isNotEmpty()){
+                embed.addField(cnt.langEntry.getText(cnt.sender.lang, "subcommands"), subcommands, false)
+            }
+            embed.addField(cnt.langEntry.getText(cnt.sender.lang, "permission"), "``${cmd.getPermission()}``", false)
+            return embed
         }
-    }
-
-    fun getHelpFor(cmd : DogoCommand, cnt : CommandContext) : EmbedBuilder {
-        val embed = EmbedBuilder()
-                .setColor(ThemeColor.PRIMARY)
-                .setAuthor(lang.getText(cnt.sender.lang, "helpfor", cmd.name), null, HELP_IMAGE)
-
-        embed.addField(lang.getText(cnt.sender.lang, "category"), cmd.category.getDisplay(cnt.sender.lang), false)
-
-        var usage = ""
-        if(cmd.usage.contains("\n")){
-            cmd.usage.split("\n")
-                    .forEach { e -> usage+= DogoBot.getCommandPrefixes().first()+e+"\n" }
-        } else {
-            usage = DogoBot.getCommandPrefixes().first()+cmd.usage
-        }
-        if(usage.endsWith("\n")){
-            usage = usage.substring(0, usage.length-1)
-        }
-
-        embed.addField(lang.getText(cnt.sender.lang, "examples"), if(cmd.usage.isNotEmpty()) usage else lang.getText(cnt.sender.lang, "noexamples"), true)
-        embed.addField(lang.getText(cnt.sender.lang, "cmddescription"), lang.getText(cnt.sender.lang, "description"), true)
-
-        var subcommands = ""
-        cmd.children.forEach { c -> subcommands+="``${DogoBot.getCommandPrefixes().first()}${c.getFullName()}``\n" }
-        if(subcommands.isNotEmpty()) embed.addField(lang.getText(cnt.sender.lang, "subcommands"), subcommands, false)
-        embed.addField(lang.getText(cnt.sender.lang, "permission"), cmd.getPermission(), false)
-        return embed
-    }
-}
+    } }

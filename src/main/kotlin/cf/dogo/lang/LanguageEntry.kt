@@ -2,9 +2,8 @@ package cf.dogo.lang
 
 import java.util.concurrent.ConcurrentLinkedDeque
 
-class LanguageEntry constructor(registry : String){
-    private val registry = registry
-    private val default =LanguageEntry::class.java.getResource("/assets/lang/en_US.lang").readText().toLang()
+class LanguageEntry constructor(val registry : String){
+    private val default = LanguageEntry::class.java.getResource("/assets/lang/en_US.lang").readText().toLang()
 
 
     fun getText(lang : String, entry : String, vararg args : Any) : String{
@@ -13,7 +12,7 @@ class LanguageEntry constructor(registry : String){
            text = default
         }
         return if(text.containsKey("$registry.$entry")){
-            String.format(text["$registry.$entry"] as String, *args).replace("\\n", "\n")
+            java.lang.String.format(text["$registry.$entry"] as String, *args).replace("\\n", "\n")
         } else {
             "$registry.$entry"
         }

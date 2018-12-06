@@ -26,7 +26,7 @@ data class BadwordProfile(val guild: DogoGuild, val badwords: MutableList<String
 
     fun update(){
         if(BadwordFinder().also{ it.guild = guild}.count() >= 1) {
-            col.updateOne(Document().append("guild", guild.id), export())
+            col.updateOne(Document().append("guild", guild.id), Document("\$set", export()))
         } else {
             col.insertOne(export())
         }
@@ -39,6 +39,6 @@ data class BadwordProfile(val guild: DogoGuild, val badwords: MutableList<String
     }
 
     fun export() : Document {
-        return Document().append("guild", guild.id).append("badwords", badwords.toList())
+        return Document().append("guild", guild.id).append("badwords", badwords)
     }
 }

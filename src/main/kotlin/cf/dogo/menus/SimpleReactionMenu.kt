@@ -1,7 +1,7 @@
 package cf.dogo.menus
 
 import cf.dogo.core.DogoBot
-import cf.dogo.core.cmdHandler.CommandContext
+import cf.dogo.core.command.CommandContext
 import cf.dogo.core.eventBus.EventBus
 import cf.dogo.utils.EmoteReference
 import net.dv8tion.jda.core.EmbedBuilder

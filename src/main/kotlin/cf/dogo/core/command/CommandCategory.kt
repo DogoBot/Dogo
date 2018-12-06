@@ -1,4 +1,4 @@
-package cf.dogo.core.cmdHandler
+package cf.dogo.core.command
 
 import cf.dogo.lang.LanguageEntry
 
@@ -11,7 +11,9 @@ enum class CommandCategory {
     MUSIC,
     GUILD_ADMINISTRATION,
     NSFW,
-    MINIGAMES;
+    MINIGAMES,
+    HIDDEN,
+    OWNER;
 
     fun getDisplay(lang : String) : String {
         return LanguageEntry("cmdcategory").getText(lang, name.toLowerCase())

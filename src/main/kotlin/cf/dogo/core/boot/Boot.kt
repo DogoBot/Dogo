@@ -51,14 +51,6 @@ class Boot {
                 DogoBot.db?.checkCollection("tokens")
                 DogoBot.db?.checkCollection("badwords")
             },
-            Phase("Registering Commands"){
-                DogoBot.cmdFactory.registerCommand(cf.dogo.commands.Help(DogoBot.cmdFactory))
-                DogoBot.cmdFactory.registerCommand(cf.dogo.commands.Stats(DogoBot.cmdFactory))
-                DogoBot.cmdFactory.registerCommand(cf.dogo.commands.TicTacToe(DogoBot.cmdFactory))
-
-                DogoBot.cmdFactory.registerCommand(cf.dogo.commands.Badwords(DogoBot.cmdFactory))
-                DogoBot.cmdFactory.registerCommand(cf.dogo.commands.Badwords.Add(DogoBot.cmdFactory))
-            },
             Phase("Setting up Permgroups") {
                 PermGroup("0").apply {
                     name = "default"

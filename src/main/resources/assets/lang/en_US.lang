@@ -9,6 +9,17 @@ cmdcategory.music=:musical_keyboard: Music
 cmdcategory.guild_administration=:newspaper: Guild Administration
 cmdcategory.nsfw=:ok_hand: NSFW
 cmdcategory.minigames=:black_joker: Minigames
+cmdcategory.owner=:lock: Owner Only
+
+#######
+#TEXTS#
+#######
+text.error.argsmissing.title=Invalid Argumentation
+text.error.argsmissing.description=Hey! This command needs ``%2$s`` args to work, and you just supplied ``%1$s``
+text.error.notnsfwchannel=:underage: Hey! This channel is not a NSFW channel!
+text.error.guildrequired=:exclamation: Hey! This command need to be executed inside a guild!
+text.error.commandforbidden.title=Missing Permissions
+error.commandforbidden.description=:lock: Sadly you have no permissions to access this command and I can't allow you to execute it :frowing:\nRequired: ``%s``
 
 ##############
 #HELP COMMAND#
@@ -20,7 +31,8 @@ command.help.examples=:bookmark: Examples
 command.help.cmddescription=:book: Description
 command.help.subcommands=:books: Subcommands
 command.help.permission=:closed_lock_with_key: Permission
-command.help.description=This command will help you with anything!\n~~(not included your depression, i can't handle with mine)~~
+command.help.description=This command will help you with anything!\n~~(not included your depression, I can't even handle with my own)~~
+command.help.noexamples=:question: No examples available
 
 ###############
 #STATS COMMAND#
@@ -35,6 +47,7 @@ command.stats.uptime=:timer: Uptime
 command.stats.threadinfo=Want to go deeper?
 command.stats.advancedinfo=Advanced Info
 command.stats.basicinfo=Basic Info
+command.stats.description=Show my stats
 
 #############
 #TTT COMMAND#
@@ -42,10 +55,27 @@ command.stats.basicinfo=Basic Info
 command.tictactoe.winner=:tada: **Winner: **%s
 command.tictactoe.tie=:tada: **Tie!**
 command.tictactoe.turn=**Turn: **%s
+command.tictactoe.description=Invites a friend to play Tic Tac Toe! (or play with me :smiley:)
 
 ##################
 #BADWORDS COMMAND#
 ##################
+command.badwords.description=Lists all the badwords registered for the current guild
 command.badwords.empty=:warning: This guild has no defined badwords
 command.badwords.pagetitle=Page %s of %s
 command.badwords.removed=Removed Words:
+
+command.badwords.add.description=Add a badword to the list
+command.badwords.add.nothing=:warning: No badwords were added!
+command.badwords.add.pagetitle=Page %s of %s
+
+command.badwords.remove.description=Remove a badword from the list
+command.badwords.remove.nothing=:warning: No badwords were removed!
+command.badwords.remove.pagetitle=Page %s of %s
+
+###################
+#TRASLEITE COMMAND#
+###################
+command.trasleite.description=Gives you milk!
+command.trasleite.milk=:milk: There is your milk!
+command.trasleite.nope=Nope I don't like you

@@ -1,7 +1,7 @@
 package cf.dogo.minigames.tictactoe.discord
 
 import cf.dogo.core.DogoBot
-import cf.dogo.core.cmdHandler.CommandContext
+import cf.dogo.core.command.CommandContext
 import cf.dogo.core.entities.DogoUser
 import cf.dogo.menus.SimpleReactionMenu
 import cf.dogo.minigames.tictactoe.Player

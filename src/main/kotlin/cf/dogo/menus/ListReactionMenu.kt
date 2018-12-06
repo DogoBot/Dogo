@@ -1,6 +1,6 @@
 package cf.dogo.menus
 
-import cf.dogo.core.cmdHandler.CommandContext
+import cf.dogo.core.command.CommandContext
 import cf.dogo.utils.EmoteReference
 import cf.dogo.utils.ThemeColor
 import net.dv8tion.jda.core.EmbedBuilder
