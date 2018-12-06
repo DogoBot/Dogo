@@ -2,6 +2,7 @@ package cf.dogo.core.command
 
 import cf.dogo.commands.BadWords
 import cf.dogo.commands.Help
+import cf.dogo.commands.TicTacToe
 import cf.dogo.core.DogoBot
 import cf.dogo.core.entities.DogoGuild
 import cf.dogo.core.entities.DogoUser
@@ -17,40 +18,7 @@ import java.awt.Color
 class CommandFactory {
     var route : CommandRouter = CommandRouter(CommandRouter.root){}
 
-    init {
-        route {
-            route(Help())
-            route(CommandReference("trasleite", category = CommandCategory.FUN)){
-                execute {
-                    if(java.util.Random().nextInt(1000) == 1){
-                        it.reply(it.langEntry.getText(it.lang, "nope"))
-                    } else {
-                        it.reply(it.langEntry.getText(it.lang, "milk"))
-                    }
-                }
-            }
-            route(CommandReference("route", category = CommandCategory.OWNER)){
-                execute {
-                    if(it.args.isEmpty()){
-                        DogoBot.cmdFactory.route
-                    } else {
-                        var s = ""
-                        it.args.forEach { a -> s+="$a " }
-                        if(s.isNotEmpty()) {
-                            s = s.substring(0, s.length - 1)
-                        }
-                        DogoBot.cmdFactory.route.findRoute(s, Holder())
-                    }.let { r -> it.reply("```json\n$r\n```") }
-                }
-            }
-            route(BadWords()){
-                route(BadWords.Add())
-                route(BadWords.Remove())
-            }
-        }
-    }
-
-    fun CommandFactory.route(body: CommandRouter.()->Unit){
+    fun route(body: CommandRouter.()->Unit){
         CommandRouter(CommandRouter.root, body).also { route = it }
     }
 

@@ -1,9 +1,15 @@
 package cf.dogo.core.boot
 
 import cf.dogo.badwords.BadwordProfile
+import cf.dogo.commands.BadWords
+import cf.dogo.commands.Help
+import cf.dogo.commands.TicTacToe
 import cf.dogo.core.DogoBot
+import cf.dogo.core.command.CommandCategory
+import cf.dogo.core.command.CommandReference
 import cf.dogo.core.profiles.PermGroup
 import cf.dogo.server.APIServer
+import cf.dogo.utils.Holder
 import com.mongodb.MongoClient
 import com.mongodb.MongoClientOptions
 import com.mongodb.MongoCredential
@@ -50,6 +56,39 @@ class Boot {
                 DogoBot.db?.checkCollection("stats")
                 DogoBot.db?.checkCollection("tokens")
                 DogoBot.db?.checkCollection("badwords")
+            },
+            Phase("Registering Commands"){
+              DogoBot.cmdFactory.route {
+                  route(Help())
+                  route(CommandReference("trasleite", category = CommandCategory.FUN)){
+                      execute {
+                          if(java.util.Random().nextInt(1000) == 1){
+                              it.reply(it.langEntry.getText(it.lang, "nope"))
+                          } else {
+                              it.reply(it.langEntry.getText(it.lang, "milk"))
+                          }
+                      }
+                  }
+                  route(CommandReference("route", category = CommandCategory.OWNER)){
+                      execute {
+                          if(it.args.isEmpty()){
+                              DogoBot.cmdFactory.route
+                          } else {
+                              var s = ""
+                              it.args.forEach { a -> s+="$a " }
+                              if(s.isNotEmpty()) {
+                                  s = s.substring(0, s.length - 1)
+                              }
+                              DogoBot.cmdFactory.route.findRoute(s, Holder())
+                          }.let { r -> it.reply("```json\n$r\n```") }
+                      }
+                  }
+                  route(TicTacToe())
+                  route(BadWords()){
+                      route(BadWords.Add())
+                      route(BadWords.Remove())
+                  }
+              }
             },
             Phase("Setting up Permgroups") {
                 PermGroup("0").apply {
