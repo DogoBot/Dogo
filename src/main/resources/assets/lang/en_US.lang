@@ -56,6 +56,12 @@ command.tictactoe.winner=:tada: **Winner: **%s
 command.tictactoe.tie=:tada: **Tie!**
 command.tictactoe.turn=**Turn: **%s
 command.tictactoe.description=Invites a friend to play Tic Tac Toe! (or play with me :smiley:)
+command.tictactoe.accept=Accept
+command.tictactoe.deny=Deny
+command.tictactoe.refused=:frowing: **%s** refused to play with you
+command.tictactoe.inviting=Hey %s ! Someone is calling you!
+command.tictactoe.title=%s is inviting you to play Tic Tac Toe!
+
 
 ##################
 #BADWORDS COMMAND#
