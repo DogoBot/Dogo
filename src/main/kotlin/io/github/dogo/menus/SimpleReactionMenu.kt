@@ -57,18 +57,18 @@ open class SimpleReactionMenu(val context: CommandContext) {
 
     open fun send() {
         eventbusId = DogoBot.eventBus.register(this)
-        if(msg == null) {
-            msg = context.replySynk(embed.build())
+        msg = if(msg == null) {
+            context.replySynk(embed.build())
         } else {
-            (msg as Message).editMessage(embed.build()).queue()
-            msg = msg!!.channel.getMessageById(msg!!.id).complete()
+            msg!!.editMessage(embed.build()).queue()
+            msg!!.channel.getMessageById(msg!!.id).complete()
         }
 
         msg!!.reactions
                 .filter { !actions.any { ac -> ac.emote.id == if(it.reactionEmote.isEmote) it.reactionEmote.id else it.reactionEmote.name } }
                 .forEach { it.removeReaction().queue() }
 
-           val presentEmotes = msg!!.reactions.filter { r -> r.users.any { it.id == DogoBot.jda!!.selfUser.id } }
+        val presentEmotes = msg!!.reactions.filter { r -> r.users.any { it.id == DogoBot.jda!!.selfUser.id } }
                 .map { if(it.reactionEmote.isEmote) it.reactionEmote.id else it.reactionEmote.name}
         actions
                 .filter { !presentEmotes.contains(it.emote.id) }
