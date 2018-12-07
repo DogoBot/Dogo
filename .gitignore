@@ -83,6 +83,6 @@ fabric.properties
 logs
 .gradle
 out
-.init.json
+init.json
 
 # End of https://www.gitignore.io/api/intellij
