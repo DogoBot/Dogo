@@ -3,6 +3,7 @@ package cf.dogo.core.boot
 import cf.dogo.badwords.BadwordProfile
 import cf.dogo.commands.Badwords
 import cf.dogo.commands.Help
+import cf.dogo.commands.Stats
 import cf.dogo.commands.TicTacToe
 import cf.dogo.core.DogoBot
 import cf.dogo.core.command.CommandCategory
@@ -60,6 +61,8 @@ class Boot {
             Phase("Registering Commands"){
               DogoBot.cmdFactory.route {
                   route(Help())
+                  route(TicTacToe())
+                  route(Stats())
                   route(CommandReference("trasleite", category = CommandCategory.FUN)){
                       execute {
                           if(java.util.Random().nextInt(1000) == 1){
@@ -83,7 +86,6 @@ class Boot {
                           }.let { r -> it.reply("```json\n$r\n```") }
                       }
                   }
-                  route(TicTacToe())
                   route(Badwords()){
                       route(Badwords.Add())
                       route(Badwords.Remove())
@@ -164,7 +166,7 @@ class Boot {
         }
 
         DogoBot.ready = true
-        DogoBot.jda?.presence?.game = Game.watching("${cf.dogo.core.DogoBot.jda?.guilds?.size} guilds| dg!help")
+        DogoBot.jda?.presence?.game = Game.watching("${cf.dogo.core.DogoBot.jda?.guilds?.size} guilds | dg!help")
         DogoBot.logger.info("Dogo is Done! ${cf.dogo.core.DogoBot.initTime.timeSince()}")
     }
 
