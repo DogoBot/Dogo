@@ -39,7 +39,7 @@ dependencies {
     compile "io.ktor:ktor-server-core:$ktor_version"
     compile "io.ktor:ktor-server-netty:$ktor_version"
 
-    compile 'net.dv8tion:JDA:3.8.1_439'
+    compile 'net.dv8tion:JDA:3.8.1_447'
     compile 'org.mongodb:mongodb-driver:3.6.3'
     compile 'com.github.NathanPB:DogoBridge:-SNAPSHOT'
     compile 'org.spongepowered:configurate-json:3.6'
