@@ -18,17 +18,16 @@ interface IRepliable {
     }
 
     fun replySynk(vararg content : Any, preset : Boolean = false) : Message {
-        if(content[0] is MessageEmbed) {
-            return replyChannel().sendMessage(content[0] as MessageEmbed).complete()
+        return if(content[0] is MessageEmbed) {
+            replyChannel().sendMessage(content[0] as MessageEmbed).complete()
         } else {
             var text = content[0].toString()
 
-            text = when {
+            replyChannel().sendMessage(when {
                 preset -> langEntry().getText(lang(), text, *Arrays.copyOfRange(content, 1, content.size))
                 content.size > 1 -> String.format(text, *Arrays.copyOfRange(content, 1, content.size - 1))
                 else -> text
-            }
-            return replyChannel().sendMessage(text).complete()
+            }).complete()
         }
     }
 }
