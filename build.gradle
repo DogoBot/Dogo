@@ -59,7 +59,7 @@ compileTestKotlin {
 
 jar {
     manifest {
-        attributes 'Main-Class': 'cf.dogo.core.boot.BootKt'
+        attributes 'Main-Class': 'io.github.dogo.core.boot.BootKt'
     }
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
 }
