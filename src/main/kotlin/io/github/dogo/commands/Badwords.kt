@@ -8,9 +8,13 @@ class Badwords : ReferencedCommand(
         CommandReference("badwords", aliases = "bw badword", category = CommandCategory.GUILD_ADMINISTRATION),
         { cmd ->
             if(cmd.guild!!.badwords.badwords.isEmpty()) {
-                cmd.reply(cmd.langEntry.getText(cmd.lang, "empty"))
+                cmd.reply("empty", preset = true)
             } else {
-                ListReactionMenu(cmd, cmd.guild.badwords.badwords).let {
+                ListReactionMenu(
+                        cmd,
+                        cmd.guild.badwords.badwords,
+                        embedBuild = {it.setAuthor(cmd.langEntry.getText(cmd.lang(), "author"))}
+                ).let {
                     it.timeout = DogoBot.data.TIMEOUTS.GENERAL
                     it.showPage(0)
                 }
@@ -29,11 +33,12 @@ class Badwords : ReferencedCommand(
                                 it.update()
                             }
                         }.let {
-                            ListReactionMenu(cmd, it, embedBuild = {it.setTitle(cmd.langEntry.getText(cmd.lang(), "added"))})
-                                    .showPage(0)
+                            ListReactionMenu(cmd, it,
+                                    embedBuild = {it.setAuthor(cmd.langEntry.getText(cmd.lang(), "author"))}
+                            ).showPage(0)
                         }
                     } else {
-                        cmd.reply(cmd.langEntry.getText(cmd.lang, "nothing"))
+                        cmd.reply("nothing", preset = true)
                     }
                 }
     )
@@ -49,8 +54,9 @@ class Badwords : ReferencedCommand(
                                 it.update()
                             }
                         }.let {
-                            ListReactionMenu(cmd, it, embedBuild = {it.setTitle(cmd.langEntry.getText(cmd.lang(), "added"))})
-                                    .showPage(0)
+                            ListReactionMenu(cmd, it,
+                                    embedBuild = {it.setAuthor(cmd.langEntry.getText(cmd.lang(), "author"))}
+                            ).showPage(0)
                         }
                     } else {
                         cmd.reply(cmd.langEntry.getText(cmd.lang, "nothing"))

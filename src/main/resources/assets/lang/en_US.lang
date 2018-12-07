@@ -69,15 +69,17 @@ command.tictactoe.title=%s is inviting you to play Tic Tac Toe!
 command.badwords.description=Lists all the badwords registered for the current guild
 command.badwords.empty=:warning: This guild has no defined badwords
 command.badwords.pagetitle=Page %s of %s
-command.badwords.removed=Removed Words:
+command.badwords.author=Present Words:
 
 command.badwords.add.description=Add a badword to the list
 command.badwords.add.nothing=:warning: No badwords were added!
 command.badwords.add.pagetitle=Page %s of %s
+command.badwords.add.author=Added Badwords:
 
 command.badwords.remove.description=Remove a badword from the list
 command.badwords.remove.nothing=:warning: No badwords were removed!
 command.badwords.remove.pagetitle=Page %s of %s
+command.badwords.remove.author=Removed Words:
 
 ###################
 #TRASLEITE COMMAND#

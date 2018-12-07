@@ -22,10 +22,11 @@ interface IRepliable {
             return replyChannel().sendMessage(content[0] as MessageEmbed).complete()
         } else {
             var text = content[0].toString()
-            text = if(preset){
-                langEntry().getText(lang(), text, *Arrays.copyOfRange(content, 1, content.size))
-            } else {
-                String.format(text, *Arrays.copyOfRange(content, 1, content.size - 1))
+
+            text = when {
+                preset -> langEntry().getText(lang(), text, *Arrays.copyOfRange(content, 1, content.size))
+                content.size > 1 -> String.format(text, *Arrays.copyOfRange(content, 1, content.size - 1))
+                else -> text
             }
             return replyChannel().sendMessage(text).complete()
         }
