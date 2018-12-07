@@ -80,13 +80,7 @@ open class SimpleReactionMenu(val context: CommandContext) {
 
     fun addAction(emote: EmoteReference, description: String, action: () -> Unit): SimpleReactionMenu {
         if (!actions.stream().anyMatch { a -> a.emote == emote }) {
-            actions.add(
-                    object : Action {
-                        override val action = action
-                        override val description = description
-                        override val emote = emote
-                    }
-            )
+            actions.add( Action(action, description, emote))
         }
         return this
     }
@@ -118,9 +112,5 @@ open class SimpleReactionMenu(val context: CommandContext) {
         }
     }
 
-    protected interface Action {
-        val action: () -> Unit
-        val description: String
-        val emote: EmoteReference
-    }
+    data class Action(val action: () -> Unit, val description: String, val emote: EmoteReference)
 }
