@@ -1,7 +1,7 @@
 package cf.dogo.core.boot
 
 import cf.dogo.badwords.BadwordProfile
-import cf.dogo.commands.BadWords
+import cf.dogo.commands.Badwords
 import cf.dogo.commands.Help
 import cf.dogo.commands.TicTacToe
 import cf.dogo.core.DogoBot
@@ -84,9 +84,9 @@ class Boot {
                       }
                   }
                   route(TicTacToe())
-                  route(BadWords()){
-                      route(BadWords.Add())
-                      route(BadWords.Remove())
+                  route(Badwords()){
+                      route(Badwords.Add())
+                      route(Badwords.Remove())
                   }
               }
             },

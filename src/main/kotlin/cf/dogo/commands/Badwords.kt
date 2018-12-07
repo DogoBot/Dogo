@@ -4,7 +4,7 @@ import cf.dogo.core.DogoBot
 import cf.dogo.core.command.*
 import cf.dogo.menus.ListReactionMenu
 
-class BadWords : ReferencedCommand(
+class Badwords : ReferencedCommand(
         CommandReference("badwords", aliases = "bw badword", category = CommandCategory.GUILD_ADMINISTRATION),
         { cmd ->
             if(cmd.guild!!.badwords.badwords.isEmpty()) {

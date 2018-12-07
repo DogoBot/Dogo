@@ -1,8 +1,5 @@
 package cf.dogo.core.command
 
-import cf.dogo.commands.BadWords
-import cf.dogo.commands.Help
-import cf.dogo.commands.TicTacToe
 import cf.dogo.core.DogoBot
 import cf.dogo.core.entities.DogoGuild
 import cf.dogo.core.entities.DogoUser
