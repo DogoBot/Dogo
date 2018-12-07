@@ -74,7 +74,7 @@ class TicTacToeImp(context: CommandContext, val p1: DogoUser, val p2: DogoUser) 
                     .filter { !(it == EmoteReference.O || it == EmoteReference.X) }
                     .forEach {
                         this.addAction(it,  "") {
-                            this.ttt.play(it.getChar().toString().toInt())
+                            this.ttt.play(it.equivalentChar.toString().toInt())
                             if(!hasWinner){
                                 if(againstBot()){
                                     this.ttt.play({

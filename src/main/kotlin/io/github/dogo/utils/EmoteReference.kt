@@ -1,6 +1,16 @@
 package io.github.dogo.utils
 
-enum class EmoteReference(val id : String, val external : Boolean = false, val equivalentChar: Char? = null) {
+/**
+ * Emotes from Discord.
+ *
+ * @param[id] the emote ID or name.
+ * @param[external] must be true if the emote belongs to a guild (optional).
+ * @param[equivalentChar] some equivalent char to this emote (optional).
+ *
+ * @author NathanPB
+ * @since 26-09-2018
+ */
+enum class EmoteReference(val id : String, val external : Boolean = false, val equivalentChar: Char? = '?') {
 
     /*
         EXTERNAL
@@ -103,10 +113,17 @@ enum class EmoteReference(val id : String, val external : Boolean = false, val e
     NEUTRAL_FACE("\uD83D\uDE10"),
     RAGE("\uD83D\uDE21");
 
+
+    /**
+     * @return the [EmoteReference] name, as declared in the enum, but in lowercase.
+     */
     fun getName() : String {
         return name.toLowerCase()
     }
 
+    /**
+     * @return the emote as mention, ready to be printed on a [net.dv8tion.jda.core.entities.TextChannel]
+     */
     fun getAsMention() : String {
         return if(external) {
             "<:${getName()}:$id>"
@@ -115,11 +132,10 @@ enum class EmoteReference(val id : String, val external : Boolean = false, val e
         }
     }
 
-    fun getChar() : Char {
-        return this.equivalentChar ?: '?'
-    }
-
     companion object {
+        /**
+         * Gets the equivalent [EmoteReference] for a [Char]
+         */
         fun getRegional(char: Char) = EmoteReference.values().firstOrNull { it.equivalentChar == char } ?: EmoteReference.DOGOHELP
     }
 }

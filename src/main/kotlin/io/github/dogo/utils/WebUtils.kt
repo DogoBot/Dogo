@@ -7,8 +7,25 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
 
+/**
+ * Utility static methods about web.
+ *
+ * @author NathanPB
+ * @since 26-09-2018
+ */
 class WebUtils {
     companion object {
+
+        /**
+         * Sends a GET request to [url]. It can also be specified GET [args] and http [headers].
+         *
+         * @param[url] The URL to fetch
+         * @param[args] GET arguments (optional)
+         * @param[headers] HTTP Headers (optional)
+         *
+         * @return the body of the page.
+         * @throws java.io.IOException
+         */
         fun get(url: String, args: Array<Pair<String, String>> = emptyArray(), headers: Array<Pair<String, String>> = emptyArray()): String {
             var url = url
             if (args.isNotEmpty()) {
