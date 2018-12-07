@@ -61,11 +61,20 @@ open class SimpleReactionMenu(val context: CommandContext) {
             msg = context.replySynk(embed.build())
         } else {
             (msg as Message).editMessage(embed.build()).queue()
-            if(context.replyChannel() !is PrivateChannel) {
-                (msg as Message).clearReactions().complete()
-            }
+            msg = msg!!.channel.getMessageById(msg!!.id).complete()
         }
-        actions.forEach { msg?.addReaction(it.emote.id)?.queue({}, {}) }
+
+        msg!!.reactions
+                .filter { !actions.any { ac -> ac.emote.id == if(it.reactionEmote.isEmote) it.reactionEmote.id else it.reactionEmote.name } }
+                .forEach { it.removeReaction().queue() }
+
+           val presentEmotes = msg!!.reactions.filter { r -> r.users.any { it.id == DogoBot.jda!!.selfUser.id } }
+                .map { if(it.reactionEmote.isEmote) it.reactionEmote.id else it.reactionEmote.name}
+        actions
+                .filter { !presentEmotes.contains(it.emote.id) }
+                .forEach {
+                    msg!!.addReaction(it.emote.id).queue()
+                }
         this.lastSend = System.currentTimeMillis()
     }
 
@@ -89,12 +98,20 @@ open class SimpleReactionMenu(val context: CommandContext) {
 
     @EventBus.Listener(0)
     fun onReact(e: GenericMessageReactionEvent) {
-        if(e is MessageReactionAddEvent || (e is MessageReactionRemoveEvent && e.channel is PrivateChannel)) {
-            if (msg != null && e.messageId == msg!!.id && e.user.id == target) {
-                for (ac in actions) {
-                    if (e.reactionEmote.name == ac.emote.id) {
-                        ac.action()
-                        break
+        msg?.let {
+            if(e.messageId == it.id){
+                if(e.user.id != DogoBot.jda!!.selfUser.id && e is MessageReactionAddEvent && e.channel !is PrivateChannel){
+                    e.reaction.removeReaction(e.user).queue()
+                    if(e.user.id != target) return
+                }
+            }
+            if(e is MessageReactionAddEvent || (e is MessageReactionRemoveEvent && e.channel is PrivateChannel)) {
+                if (e.messageId == it.id && e.user.id == target) {
+                    for (ac in actions) {
+                        if (e.reactionEmote.name == ac.emote.id) {
+                            ac.action()
+                            break
+                        }
                     }
                 }
             }
