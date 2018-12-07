@@ -66,9 +66,9 @@ class Boot {
                   route(CommandReference("trasleite", category = CommandCategory.FUN)){
                       execute {
                           if(java.util.Random().nextInt(1000) == 1){
-                              it.reply(it.langEntry.getText(it.lang, "nope"))
+                              it.reply("nope", preset = true)
                           } else {
-                              it.reply(it.langEntry.getText(it.lang, "milk"))
+                              it.reply("milk", preset = true)
                           }
                       }
                   }
