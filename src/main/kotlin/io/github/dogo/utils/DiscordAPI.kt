@@ -7,7 +7,7 @@ import org.json.JSONObject
  * Utility static methods about Discord.
  *
  * @author NathanPB
- * @since 26-09-2018
+ * @since 3.1.0
  */
 class DiscordAPI {
     companion object {

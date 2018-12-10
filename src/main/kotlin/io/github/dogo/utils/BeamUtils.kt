@@ -6,7 +6,7 @@ import java.lang.management.ManagementFactory
  * Utility static methods about Java Beam.
  *
  * @author NathanPB
- * @since 26-09-2018
+ * @since 3.1.0
  */
 class BeamUtils {
     companion object {

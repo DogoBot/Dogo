@@ -2,7 +2,6 @@ package io.github.dogo.utils
 
 import java.io.BufferedReader
 import java.io.InputStreamReader
-import java.lang.StringBuilder
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
@@ -11,7 +10,7 @@ import java.net.URLEncoder
  * Utility static methods about web.
  *
  * @author NathanPB
- * @since 26-09-2018
+ * @since 3.1.0
  */
 class WebUtils {
     companion object {

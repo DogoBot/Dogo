@@ -8,7 +8,7 @@ import java.util.*
  * Utility static methods about the File System
  *
  * @author NathanPB
- * @since 26-09-2018
+ * @since 3.1.0
  */
 class FileUtils {
     companion object {

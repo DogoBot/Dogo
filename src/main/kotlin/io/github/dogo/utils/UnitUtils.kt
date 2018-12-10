@@ -4,7 +4,7 @@ package io.github.dogo.utils
  * Utility static methods about time unities.
  *
  * @author NathanPB
- * @since 26-09-2018
+ * @since 3.1.0
  */
 class UnitUtils {
     companion object {

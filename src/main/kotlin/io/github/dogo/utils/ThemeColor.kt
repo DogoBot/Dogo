@@ -6,7 +6,7 @@ import java.awt.Color
  * Holds some constants with Dogo's theme colors.
  *
  * @author NathanPB
- * @since 26-09-2018
+ * @since 3.1.0
  */
 class ThemeColor {
     companion object {

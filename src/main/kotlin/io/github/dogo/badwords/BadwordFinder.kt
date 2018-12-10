@@ -4,7 +4,7 @@ import io.github.dogo.core.entities.DogoGuild
 import io.github.dogo.interfaces.IFinder
 import org.bson.Document
 
-class BadwordFinder : Document(), IFinder<io.github.dogo.badwords.BadwordProfile> {
+class BadwordFinder : Document(), IFinder<BadwordProfile> {
 
     var guild: DogoGuild
         get() = DogoGuild(getString("guild"))
@@ -14,7 +14,7 @@ class BadwordFinder : Document(), IFinder<io.github.dogo.badwords.BadwordProfile
         get() = (get("badwords") as List<String>).toTypedArray()
         set(it) = set("badwords", it.toList())
 
-    override fun col() = io.github.dogo.badwords.BadwordProfile.Companion.col
+    override fun col() = BadwordProfile.col
     override fun query() = this
-    override fun map(doc: Document) = io.github.dogo.badwords.BadwordProfile.Companion.parse(doc)
+    override fun map(doc: Document) = BadwordProfile.parse(doc)
 }

@@ -8,7 +8,7 @@ package io.github.dogo.utils
  * @param[equivalentChar] some equivalent char to this emote (optional).
  *
  * @author NathanPB
- * @since 26-09-2018
+ * @since 3.1.0
  */
 enum class EmoteReference(val id : String, val external : Boolean = false, val equivalentChar: Char? = '?') {
 

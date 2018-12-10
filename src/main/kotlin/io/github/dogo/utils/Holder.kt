@@ -2,11 +2,11 @@ package io.github.dogo.utils
 
 /**
  * Simple container to hold Objects of the type [T].
+ *
+ * @author NathanPB
+ * @since 3.1.0
  */
 class Holder<T> {
-    /**
-     * The Container.
-     */
     private var hold: Any? = null
 
     /**

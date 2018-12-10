@@ -1,10 +1,9 @@
 package io.github.dogo.badwords
 
+import com.mongodb.client.MongoCollection
 import io.github.dogo.core.DogoBot
 import io.github.dogo.core.entities.DogoGuild
-import com.mongodb.client.MongoCollection
 import org.bson.Document
-import java.lang.Exception
 
 data class BadwordProfile(val guild: DogoGuild, val badwords: MutableList<String>) {
 
