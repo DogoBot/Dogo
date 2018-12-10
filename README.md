@@ -17,6 +17,7 @@ Dogo is an Open Source <a href="discordapp.com">Discord</a> Bot focused on guild
   <li>Personal IDE: <a href="https://www.jetbrains.com/idea/">Intellij Idea Ultimate</a> from <a href="https://www.jetbrains.com">JetBrains</a> (thank you JetBrains for Student Pack)</li>
   <li>License: <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache 2.0</a></li>
   <li>VCS: <a href="https://git-scm.com">Git</a> and <a href="https://github.com/">GitHub</a></li>
+  <li>SGBD: <a href="https://www.mongodb.com">MongoDB</a> from <a href="https://www.mongodb.com"">MongoDB, Inc.</a></li>
 </ul>
 
 # Educational
