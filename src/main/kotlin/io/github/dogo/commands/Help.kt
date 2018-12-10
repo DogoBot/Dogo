@@ -14,11 +14,10 @@ class Help : ReferencedCommand(
                 aliases = "plsSendHelp",
                 category = CommandCategory.BOT
         ),
-        { cmd ->
-
-                val route = if(cmd.args.isNotEmpty()){
+        {
+                val route = if(args.isNotEmpty()){
                     var s = ""
-                    cmd.args.forEach { a -> s+="$a " }
+                    args.forEach { a -> s+="$a " }
                     if(s.isNotEmpty()) {
                         s = s.substring(0, s.length - 1)
                     }
@@ -28,7 +27,7 @@ class Help : ReferencedCommand(
                 if(route.reference == CommandRouter.root){
                     val embed = EmbedBuilder()
                             .setColor(ThemeColor.PRIMARY)
-                            .setAuthor(cmd.langEntry.getText(cmd.sender.lang, "helproot"), null, io.github.dogo.commands.Help.Companion.HELP_IMAGE)
+                            .setAuthor(langEntry.getText(lang, "helproot"), null, io.github.dogo.commands.Help.HELP_IMAGE)
 
                     val hm = HashMap<CommandCategory, ArrayList<CommandReference>>()
 
@@ -41,17 +40,17 @@ class Help : ReferencedCommand(
                         it.value.forEach {s.append("``${it.name}``, ") }
                         s = StringBuilder(s.substring(0, s.length-2))
                         s.append("\n")
-                        embed.addField(it.key.getDisplay(cmd.sender.lang), s.toString(), false)
+                        embed.addField(it.key.getDisplay(sender.lang), s.toString(), false)
                     }
-                    cmd.reply(embed.build())
+                    reply(embed.build())
                 } else {
-                    cmd.reply(io.github.dogo.commands.Help.Companion.getHelpFor(route, cmd).build())
+                    reply(Help.getHelpFor(route, this).build())
                 }
             }
 ) { companion object {
-        val HELP_IMAGE = "https://i.imgur.com/7HF9zwb.png"
+        const val HELP_IMAGE = "https://i.imgur.com/7HF9zwb.png"
 
-        fun getHelpFor(cmd : CommandRouter, cnt : CommandContext) : EmbedBuilder {
+        fun getHelpFor(cmd: CommandRouter, cnt: CommandContext): EmbedBuilder {
             val embed = EmbedBuilder()
                     .setColor(ThemeColor.PRIMARY)
                     .setAuthor(cnt.langEntry.getText(cnt.sender.lang, "helpfor", cmd.reference.name), null, io.github.dogo.commands.Help.Companion.HELP_IMAGE)

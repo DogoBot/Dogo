@@ -13,26 +13,26 @@ import net.dv8tion.jda.core.EmbedBuilder
 
 class TicTacToe : ReferencedCommand(
         CommandReference("tictactoe", aliases = "ttt", usage = "@MyFriend", category = CommandCategory.FUN),
-        { cmd ->
-            var friend = cmd.msg.mentionedUsers.firstOrNull() ?: DogoBot.jda!!.selfUser
-            if(friend.id == cmd.sender.id) friend = DogoBot.jda!!.selfUser
+        {
+            var friend = msg.mentionedUsers.firstOrNull() ?: DogoBot.jda!!.selfUser
+            if(friend.id == sender.id) friend = DogoBot.jda!!.selfUser
 
             if(!friend.isBot && !friend.isFake) {
-                cmd.reply("inviting", friend.asMention, preset = true)
-                SimpleReactionMenu(cmd).also {
+                reply("inviting", friend.asMention, preset = true)
+                SimpleReactionMenu(this).also {
                     it.target = friend.id
                     it.timeout = DogoBot.data.TIMEOUTS.GENERAL
-                    it.embed = EmbedBuilder().setColor(ThemeColor.PRIMARY).setTitle(cmd.langEntry.getText(cmd.lang, "title", cmd.sender.formatName(cmd.guild)))
+                    it.embed = EmbedBuilder().setColor(ThemeColor.PRIMARY).setTitle(langEntry.getText(lang, "title", sender.formatName(guild)))
                     val refuse = {
                         it.end(true)
-                        cmd.reply("refused", DogoUser(friend).formatName(cmd.guild), preset = true)
+                        reply("refused", DogoUser(friend).formatName(guild), preset = true)
                     }
-                    it.addAction(EmoteReference.WHITE_CHECK_MARK, cmd.langEntry.getText(cmd.lang, "accept")){
-                        TicTacToeImp(cmd, cmd.sender, DogoUser(friend))
+                    it.addAction(EmoteReference.WHITE_CHECK_MARK, langEntry.getText(lang, "accept")){
+                        TicTacToeImp(this, sender, DogoUser(friend))
                         it.end(true)
                     }
-                    it.addAction(EmoteReference.NEGATIVE_SQUARED_CROSS_MARK, cmd.langEntry.getText(cmd.lang, "deny"), refuse)
+                    it.addAction(EmoteReference.NEGATIVE_SQUARED_CROSS_MARK, langEntry.getText(lang, "deny"), refuse)
                 }.build().send()
-            } else TicTacToeImp(cmd, cmd.sender, DogoUser(friend))
+            } else TicTacToeImp(this, sender, DogoUser(friend))
         }
 )

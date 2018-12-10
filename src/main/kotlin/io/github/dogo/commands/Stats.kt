@@ -14,14 +14,14 @@ import net.dv8tion.jda.core.EmbedBuilder
 
 class Stats : ReferencedCommand(
         CommandReference("stats", aliases = "status", category = CommandCategory.BOT),
-        { cmd->
-            val menu = SimpleReactionMenu(cmd).also {
+        {
+            val menu = SimpleReactionMenu(this).also {
                 it.timeout = DogoBot.data.TIMEOUTS.GENERAL
             }
             var basic = false
 
-            val embBasic = io.github.dogo.commands.Stats.Companion.getBasicInfo(cmd.sender.lang, cmd.langEntry).appendDescription(":arrows_counterclockwise: ${cmd.langEntry.getText(cmd.lang, "advancedinfo")}\n")
-            val embAdvanced = io.github.dogo.commands.Stats.Companion.getThreadInfo(cmd.sender.lang, cmd.langEntry).appendDescription(":arrows_counterclockwise: ${cmd.langEntry.getText(cmd.lang, "basicinfo")}\n")
+            val embBasic = Stats.getBasicInfo(lang, langEntry).appendDescription(":arrows_counterclockwise: ${langEntry.getText(lang, "advancedinfo")}\n")
+            val embAdvanced = Stats.getThreadInfo(sender.lang, langEntry).appendDescription(":arrows_counterclockwise: ${langEntry.getText(lang, "basicinfo")}\n")
 
             menu.addAction(EmoteReference.ARROW_COUNTERCLOCKWISE, "Info") {
                 menu.build(if(basic) embBasic else embAdvanced)

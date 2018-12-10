@@ -7,16 +7,13 @@ import java.lang.UnsupportedOperationException
 
 class CommandRouter(val reference: CommandReference, body: CommandRouter.()->Unit) {
     val children = mutableListOf<CommandRouter>()
-    val runs = mutableListOf<ReferencedCommand>()
+    var run: ReferencedCommand? = null
     lateinit var langEntry: LanguageEntry
     var parent: CommandRouter? = null
 
     init {
         body()
     }
-
-
-
 
     fun CommandRouter.route(reference: CommandReference, body: CommandRouter.()->Unit) : CommandRouter {
         return CommandRouter(reference, body)
@@ -31,10 +28,9 @@ class CommandRouter(val reference: CommandReference, body: CommandRouter.()->Uni
         return route(referenced.reference, body).also { it.execute(referenced.command);}
     }
 
-    fun CommandRouter.execute(execute: (CommandContext)->Unit){
-        runs.add(ReferencedCommand(reference) {execute(it)})
+    fun CommandRouter.execute(execute: CommandContext.()->Unit){
+        run = ReferencedCommand(reference, execute)
     }
-
 
     fun findRoute(str: String, holder: Holder<Int>) : CommandRouter {
         return findRoute(this, holder.also { it.hold(0) }, str.split(" "))
@@ -74,5 +70,5 @@ class CommandRouter(val reference: CommandReference, body: CommandRouter.()->Uni
         val root = CommandReference("")
     }
 
-    override fun toString() = JSONObject().put("reference", reference).put("runs", runs.size).put("children", children.size).put("parent", if(parent == null) null else JSONObject(parent.toString())).toString(4)
+    override fun toString() = JSONObject().put("reference", reference).put("children", children.size).put("parent", if(parent == null) null else JSONObject(parent.toString())).toString(4)
 }
