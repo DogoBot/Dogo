@@ -6,6 +6,7 @@ import com.mongodb.MongoCredential
 import com.mongodb.ServerAddress
 import com.mongodb.client.MongoDatabase
 import io.github.dogo.core.DogoBot
+import io.github.dogo.core.JDAListener
 import io.github.dogo.core.command.CommandCategory
 import io.github.dogo.core.command.CommandReference
 import io.github.dogo.core.profiles.PermGroup
@@ -29,7 +30,7 @@ class Boot {
                 io.github.dogo.core.DogoBot.jda = JDABuilder(AccountType.BOT)
                         .setToken(DogoBot.data.BOT_TOKEN)
                         .setGame(Game.watching("myself starting"))
-                        .addEventListener(DogoBot.eventBus)
+                        .addEventListener(JDAListener(DogoBot.eventBus))
                         .build().awaitReady()
             },
             Phase("Connecting to Database") {

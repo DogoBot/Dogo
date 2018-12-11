@@ -3,14 +3,13 @@ package io.github.dogo.core.eventBus
 import io.github.dogo.core.DogoBot
 import io.github.dogo.core.queue.DogoQueue
 import net.dv8tion.jda.core.events.Event
-import net.dv8tion.jda.core.hooks.EventListener
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.LinkedHashMap
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.functions
 
-class EventBus(name : String) : DogoQueue(name), EventListener {
+class EventBus(name : String) : DogoQueue(name) {
     private val listeners = LinkedHashMap<Long, EventBus.EventListener>()
 
     fun submit(element : Any) {
@@ -76,9 +75,5 @@ class EventBus(name : String) : DogoQueue(name), EventListener {
         override fun toString(): String {
             return "EventListener@"+id
         }
-    }
-
-    override fun onEvent(event: Event?) {
-        if(event != null && DogoBot.ready) submit(event)
     }
 }
