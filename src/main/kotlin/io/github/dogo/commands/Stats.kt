@@ -53,6 +53,13 @@ class Stats : ReferencedCommand(
         }
 ) {
     companion object {
+
+        /**
+         * Builds the basic information embed.
+         *
+         * @param[lang] the language.
+         * @param[langEntry] the [Stats] command [LanguageEntry].
+         */
         private fun getBasicInfo(lang : String, langEntry: LanguageEntry) : EmbedBuilder {
             return EmbedBuilder()
                     .setColor(ThemeColor.PRIMARY)
@@ -68,6 +75,12 @@ class Stats : ReferencedCommand(
                     .addField(langEntry.getText(lang, "uptime"), DisplayUtils.formatTimeSimple(System.currentTimeMillis() - io.github.dogo.core.DogoBot.initTime), true)
         }
 
+        /**
+         * Builds the thread information embed.
+         *
+         * @param[lang] the language.
+         * @param[langEntry] the [Stats] command [LanguageEntry].
+         */
         private fun getThreadInfo(lang : String, langEntry: LanguageEntry) : EmbedBuilder {
             val embed = EmbedBuilder()
                     .setColor(ThemeColor.PRIMARY)

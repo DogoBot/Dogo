@@ -66,9 +66,19 @@ class Help : ReferencedCommand(
                     reply(Help.getHelpFor(route, this).build())
                 }
             }
-) { companion object {
+) {
+    companion object {
+        /**
+         * Default *help* image.
+         */
         const val HELP_IMAGE = "https://i.imgur.com/7HF9zwb.png"
 
+        /**
+         * Builds the help embed.
+         *
+         * @param[cmd] the command to get help.
+         * @param[cnt] the context to get information like language and texts.
+         */
         fun getHelpFor(cmd: CommandRouter, cnt: CommandContext): EmbedBuilder {
             val embed = EmbedBuilder()
                     .setColor(ThemeColor.PRIMARY)
