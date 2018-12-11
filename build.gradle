@@ -20,7 +20,7 @@ apply plugin: 'application'
 apply plugin: 'maven'
 
 
-group 'cf.dogo'
+group 'io.github.dogo'
 version '1.0-SNAPSHOT'
 
 
