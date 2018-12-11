@@ -3,7 +3,6 @@ package io.github.dogo.core.command
 import io.github.dogo.lang.LanguageEntry
 import io.github.dogo.utils.Holder
 import org.json.JSONObject
-import java.lang.UnsupportedOperationException
 
 class CommandRouter(val reference: CommandReference, body: CommandRouter.()->Unit) {
     val children = mutableListOf<CommandRouter>()

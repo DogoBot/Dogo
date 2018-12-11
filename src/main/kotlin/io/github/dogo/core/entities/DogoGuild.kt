@@ -1,6 +1,5 @@
 package io.github.dogo.core.entities
 
-import io.github.dogo.badwords.BadwordProfile
 import io.github.dogo.core.DogoBot
 import io.github.dogo.core.profiles.PermGroup
 import io.github.dogo.core.profiles.PermGroupSet

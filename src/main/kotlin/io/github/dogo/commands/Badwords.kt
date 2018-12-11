@@ -1,7 +1,9 @@
 package io.github.dogo.commands
 
 import io.github.dogo.core.DogoBot
-import io.github.dogo.core.command.*
+import io.github.dogo.core.command.CommandCategory
+import io.github.dogo.core.command.CommandReference
+import io.github.dogo.core.command.ReferencedCommand
 import io.github.dogo.menus.ListReactionMenu
 
 class Badwords : ReferencedCommand(

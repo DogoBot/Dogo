@@ -44,7 +44,7 @@ class ListReactionMenu(context: CommandContext, val items: List<String>, val ren
         for(i in 0..getPageIndex(items.size)){
             val embed = EmbedBuilder()
                     .setColor(ThemeColor.PRIMARY)
-                    .setTitle(context.langEntry().getText(context.lang(), "pagetitle", i+1, getPageIndex(items.size)+1))
+                    .setTitle(context.langEntry.getText(context.lang, "pagetitle", i+1, getPageIndex(items.size)+1))
             embedBuild(embed)
             pages.add(embed)
         }

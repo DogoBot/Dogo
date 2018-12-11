@@ -20,8 +20,8 @@ class TicTacToeImp(context: CommandContext, val p1: DogoUser, val p2: DogoUser) 
         this.build(
                 createEmbed()
                 .appendDescription("\n"+when(it){
-                    Player.ENVIROMENT -> context.langEntry().getText(context.lang(), "tie")
-                    else -> context.langEntry().getText(context.lang(), "winner", getCurrentPlayer().formatName(context.guild))
+                    Player.ENVIROMENT -> context.langEntry.getText(context.lang, "tie")
+                    else -> context.langEntry.getText(context.lang, "winner", getCurrentPlayer().formatName(context.guild))
                 })
         )
         this.send(true)
@@ -43,7 +43,7 @@ class TicTacToeImp(context: CommandContext, val p1: DogoUser, val p2: DogoUser) 
             .setColor(ThemeColor.PRIMARY)
             .also {
                 if(!(againstBot() || hasWinner)){
-                    it.appendDescription(context.langEntry().getText(context.lang(), "turn", getCurrentPlayer().formatName(this.context.guild))+"\n\n")
+                    it.appendDescription(context.langEntry.getText(context.lang, "turn", getCurrentPlayer().formatName(this.context.guild))+"\n\n")
                 }
                 it.appendDescription(
                     getTableEmoted().mapIndexed { i, it ->

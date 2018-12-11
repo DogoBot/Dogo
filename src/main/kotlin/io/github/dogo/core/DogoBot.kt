@@ -1,5 +1,8 @@
 package io.github.dogo.core
 
+import com.google.common.reflect.TypeToken
+import com.mongodb.MongoClient
+import com.mongodb.client.MongoDatabase
 import io.github.dogo.core.command.CommandFactory
 import io.github.dogo.core.data.DogoData
 import io.github.dogo.core.entities.DogoGuild
@@ -7,9 +10,6 @@ import io.github.dogo.core.eventBus.EventBus
 import io.github.dogo.core.queue.DogoQueue
 import io.github.dogo.menus.SimpleReactionMenu
 import io.github.dogo.server.APIServer
-import com.google.common.reflect.TypeToken
-import com.mongodb.MongoClient
-import com.mongodb.client.MongoDatabase
 import net.dv8tion.jda.core.JDA
 import ninja.leaping.configurate.ConfigurationOptions
 import ninja.leaping.configurate.json.JSONConfigurationLoader

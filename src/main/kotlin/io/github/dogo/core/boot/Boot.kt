@@ -1,21 +1,16 @@
 package io.github.dogo.core.boot
 
-import io.github.dogo.badwords.BadwordProfile
-import io.github.dogo.commands.Badwords
-import io.github.dogo.commands.Help
-import io.github.dogo.commands.Stats
-import io.github.dogo.commands.TicTacToe
+import com.mongodb.MongoClient
+import com.mongodb.MongoClientOptions
+import com.mongodb.MongoCredential
+import com.mongodb.ServerAddress
+import com.mongodb.client.MongoDatabase
 import io.github.dogo.core.DogoBot
 import io.github.dogo.core.command.CommandCategory
 import io.github.dogo.core.command.CommandReference
 import io.github.dogo.core.profiles.PermGroup
 import io.github.dogo.server.APIServer
 import io.github.dogo.utils.Holder
-import com.mongodb.MongoClient
-import com.mongodb.MongoClientOptions
-import com.mongodb.MongoCredential
-import com.mongodb.ServerAddress
-import com.mongodb.client.MongoDatabase
 import net.dv8tion.jda.core.AccountType
 import net.dv8tion.jda.core.JDABuilder
 import net.dv8tion.jda.core.entities.Game
@@ -66,24 +61,24 @@ class Boot {
                   route(CommandReference("trasleite", category = CommandCategory.FUN)){
                       execute {
                           if(java.util.Random().nextInt(1000) == 1){
-                              it.reply("nope", preset = true)
+                              this.reply("nope", preset = true)
                           } else {
-                              it.reply("milk", preset = true)
+                              this.reply("milk", preset = true)
                           }
                       }
                   }
                   route(CommandReference("route", category = CommandCategory.OWNER)){
                       execute {
-                          if(it.args.isEmpty()){
+                          if(this.args.isEmpty()){
                               DogoBot.cmdFactory.route
                           } else {
                               var s = ""
-                              it.args.forEach { a -> s+="$a " }
+                              this.args.forEach { a -> s+="$a " }
                               if(s.isNotEmpty()) {
                                   s = s.substring(0, s.length - 1)
                               }
                               DogoBot.cmdFactory.route.findRoute(s, Holder())
-                          }.let { r -> it.reply("```json\n$r\n```") }
+                          }.let { r -> this.reply("```json\n$r\n```") }
                       }
                   }
                   route(io.github.dogo.commands.Badwords()){
