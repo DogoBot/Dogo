@@ -35,7 +35,8 @@ abstract class Statistic(val data: Document) {
     }
 
     /**
-     * Updates the statistic document on database. If the document already exists, its updated. The 'date' field will be always the current time (when [update] is invoked)
+     * Updates the statistic document on database. If the document already exists, its updated.
+     * The *date* field will be always the current time (when [update] is invoked).
      * Be careful on using this method: Statistics shouldn't be updated, just inserted.
      */
     fun update(){

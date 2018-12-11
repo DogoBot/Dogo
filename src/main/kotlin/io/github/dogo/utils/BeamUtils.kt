@@ -3,7 +3,7 @@ package io.github.dogo.utils
 import java.lang.management.ManagementFactory
 
 /**
- * Utility static methods about Java Beam.
+ * Utility static methods about Java Bean.
  *
  * @author NathanPB
  * @since 3.1.0

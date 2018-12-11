@@ -40,11 +40,12 @@ data class TicTacToeStatistics(val table: String, val p1: DogoUser, val p2: Dogo
 
     /**
      * Creates a [TicTacToeStatistics] instance from a [Document].
+     *
      * The [doc] must contains the following fields:
-     * -table: String
-     * -p1: String
-     * -p2: String
-     * -winner: String?
+     * - *table*: String
+     * - *p1*: String
+     * - *p2*: Sring
+     * - *winner*: String or null
      *
      * @param[doc] the document to parse.
      */

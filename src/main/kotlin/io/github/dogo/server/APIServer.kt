@@ -6,6 +6,7 @@ import io.github.dogo.core.entities.DogoUser
 import io.github.dogo.exceptions.APIException
 import io.github.dogo.server.token.Token
 import io.github.dogo.server.token.TokenFinder
+import io.github.dogo.statistics.Statistic
 import io.github.dogo.utils.DiscordAPI
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
@@ -18,18 +19,52 @@ import io.ktor.routing.route
 import io.ktor.routing.routing
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
-import org.json.JSONObject
+import org.bson.Document
 import java.util.*
 
+/*
+Copyright 2019 Nathan Bombana
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+/**
+ * Holds the embedded web server from kTor, that provides the Web API.
+ *
+ * # Configurations
+ *
+ * kTor web server is initialized with the route specified with information contained in [DogoBot.data].
+ * - Port: [io.github.dogo.core.data.API.PORT].
+ * - Route Root: [io.github.dogo.core.data.API.ROUTE].
+ *
+ * @author NathanPB
+ * @since 3.1.0
+ */
 class APIServer {
 
+    /**
+     * List of temporarily authorized hashes, generated from route '.../token/add/fromdiscord' and checked in '.../token/add'.
+     */
     val tokensHash = mutableListOf<String>()
 
+    /**
+     * The server.
+     */
     val server = embeddedServer(Netty, port= DogoBot.data.API.PORT){
         routing {
-            route(DogoBot.data.API.ROUTE){
-                route("token"){
-                    route("add"){
+            route(DogoBot.data.API.ROUTE) {
+                route("token") {
+                    route("add") {
                         get("fromdiscord") {
                             var allow = true
                             val rand = Random().nextLong().let { if(it<0) it*(-1) else it}.toString()
@@ -96,7 +131,7 @@ class APIServer {
                         }
                     }
                 }
-                route("user"){
+                route("user") {
                     route("{id}") {
                         get {
                             APIRequestProcessor {data ->
@@ -125,7 +160,7 @@ class APIServer {
                         }
                     }
                 }
-                route("guild"){
+                route("guild") {
                     route("{id}") {
                         get {
                             APIRequestProcessor { data ->
@@ -149,6 +184,22 @@ class APIServer {
     }
 
     companion object {
+
+        /**
+         * Finds the Authorization header on the request and get its token. Throws [APIException] if the Authorization header is not well formatted.
+         *
+         * @param[call] the application call from kTor.
+         * @param[validScopes] the required valid scopes (OR). Eg. email OR identify OR guilds. That means that the token is valid if the scopes contains 'email' OR contains 'identify' OR contains 'guilds'
+         *
+         * @return the token found that matches its Authorization. Null if:
+         * - The token wasn't found (or)
+         * - The token is invalid (or)
+         * - The token doesn't have the required scopes
+         *
+         * @see Token.isValid
+         *
+         * @throws [APIException]
+         */
         @Throws(APIException::class)
         fun getAuthorization(call: ApplicationCall, vararg validScopes: String) : Token? {
             return if(call.request.headers.contains("Authorization")){
@@ -161,7 +212,7 @@ class APIServer {
                 }.find()?.let {
                     if(it.scopes.any { validScopes.contains(it) } && it.isValid()) it else null
                 }
-            } else null
+            } else throw APIException(HttpStatusCode.BadRequest, "missing required header: Authorization")
         }
     }
 

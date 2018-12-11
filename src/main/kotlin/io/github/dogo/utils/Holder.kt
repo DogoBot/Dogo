@@ -7,6 +7,9 @@ package io.github.dogo.utils
  * @since 3.1.0
  */
 class Holder<T> {
+    /**
+     * The container.
+     */
     private var hold: Any? = null
 
     /**
