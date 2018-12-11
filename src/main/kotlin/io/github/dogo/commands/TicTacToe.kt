@@ -26,6 +26,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+/**
+ * @author NathanPB
+ * @since 3.1.0
+ */
 class TicTacToe : ReferencedCommand(
         CommandReference("tictactoe", aliases = "ttt", usage = "@MyFriend", category = CommandCategory.FUN),
         {
