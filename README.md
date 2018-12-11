@@ -30,6 +30,7 @@ Dogo is being made for didatical purposes, it is helping <b>me</b> to learn a lo
 The description of the commits <b>must</b> describe what you did, and should not fix more than one issue per commit;
 Everything should be written in English (not perfect, but a undersantable one);
 <h3><b>ALL METHODS, FUNCTIONS AND CLASSES MUST BE DOCUMENTED ACCORDING TO <a href="https://kotlinlang.org/docs/reference/kotlin-doc.html"a>kDoc</a>.</b></h3>
+<h5>Excluding overriden methods that its function is already explained on superclass. Anyway you should document it if the method do something that is not described on superclass</h5>
 
 ## Coding Styling
 <ul>
@@ -70,7 +71,7 @@ Everything should be written in English (not perfect, but a undersantable one);
     Use `it` as possible. Eg.
     
     (...).also { it.invoke() }
-    <b>NOT</b>
+<b>NOT</b>
     
     (...).also { m -> m.invoke() }
 </li>
