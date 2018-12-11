@@ -76,9 +76,10 @@ class CommandFactory {
                                 }
                                 return@let
                             }
-
-                            val context = CommandContext(event.message, route, args)
-                            cmd.run?.let { it.command(context) }
+                            if(!route.isRoot()){
+                                val context = CommandContext(event.message, route, args)
+                                cmd.run?.let { it.command(context) }
+                            }
 
                         } else {
                             DogoBot.jdaOutputThread.submit {
