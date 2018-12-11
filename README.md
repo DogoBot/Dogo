@@ -71,7 +71,7 @@ Everything should be written in English (not perfect, but a undersantable one);
     Use `it` as possible. Eg.
     
     (...).also { it.invoke() }
-    <b>NOT</b>
+<b>NOT</b>
     
     (...).also { m -> m.invoke() }
 </li>
