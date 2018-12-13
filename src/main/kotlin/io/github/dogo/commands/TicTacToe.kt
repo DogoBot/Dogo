@@ -51,7 +51,8 @@ class TicTacToe : ReferencedCommand(
                         it.end(true)
                     }
                     it.addAction(EmoteReference.NEGATIVE_SQUARED_CROSS_MARK, langEntry.getText(lang, "deny"), refuse)
-                }.build().send()
+                    it.build()
+                }.send()
             } else TicTacToeImp(this, sender, DogoUser(friend))
         }
 )
