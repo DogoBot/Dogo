@@ -5,11 +5,13 @@ import io.github.dogo.core.command.CommandContext
 import io.github.dogo.core.eventBus.EventBus
 import io.github.dogo.utils.EmoteReference
 import net.dv8tion.jda.core.EmbedBuilder
+import net.dv8tion.jda.core.Permission
 import net.dv8tion.jda.core.entities.Message
 import net.dv8tion.jda.core.entities.PrivateChannel
 import net.dv8tion.jda.core.events.message.react.GenericMessageReactionEvent
 import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent
 import net.dv8tion.jda.core.events.message.react.MessageReactionRemoveEvent
+import java.security.Permissions
 import java.util.*
 
 /**
@@ -33,26 +35,28 @@ open class SimpleReactionMenu(val context: CommandContext) {
 
     protected var eventbusId : Array<Long> = emptyArray()
 
-    fun build(preset : EmbedBuilder? = null): SimpleReactionMenu {
+    fun build(preset : EmbedBuilder? = null) {
         if(preset == null) {
-            for (ac in actions) {
-                embed.appendDescription("${ac.emote.getAsMention()} ${ac.description}\n")
+            actions.forEach {
+                embed.appendDescription("${it.emote.getAsMention()} ${it.description}\n")
             }
-        } else {
-            this.embed = preset
-        }
-        return this
+        } else this.embed = preset
+
     }
 
     fun end(delete : Boolean = true) {
         DogoBot.eventBus.unregister(eventbusId)
         instances.remove(this)
-        if(delete) {
-            msg?.delete()?.queue()
-            msg = null
-        } else {
-            msg?.clearReactions()?.queue()
+
+        val member = context.guild?.g?.getMember(DogoBot.jda!!.selfUser)
+        if(context.guild?.g != null && member?.hasPermission(Permission.MESSAGE_MANAGE) == true){
+            if(delete) {
+                msg?.delete()?.queue()
+            } else {
+                msg?.clearReactions()?.queue()
+            }
         }
+        msg = null
     }
 
     open fun send() {
@@ -78,19 +82,16 @@ open class SimpleReactionMenu(val context: CommandContext) {
         this.lastSend = System.currentTimeMillis()
     }
 
-    fun addAction(emote: EmoteReference, description: String, action: () -> Unit): SimpleReactionMenu {
+    fun addAction(emote: EmoteReference, description: String, action: () -> Unit) {
         if (!actions.stream().anyMatch { a -> a.emote == emote }) {
             actions.add( Action(action, description, emote))
-        }
-        return this
+        } else throw Exception("Action already exists")
     }
 
-    fun removeAction(emote: EmoteReference): SimpleReactionMenu {
-        actions = ArrayList(actions.filter { a -> a.emote != emote })
-        return this
-    }
+    fun removeAction(emote: EmoteReference) = actions.removeAll { it.emote == emote }
 
-    @EventBus.Listener(0)
+
+    @EventBus.Listener()
     fun onReact(e: GenericMessageReactionEvent) {
         msg?.let {
             if(e.messageId == it.id){

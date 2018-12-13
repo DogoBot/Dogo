@@ -24,21 +24,22 @@ limitations under the License.
  * @author NathanPB
  * @since 3.1.0
  */
-class OnePlayerTTT(onWin: (Player) -> Unit, override var currentPlayer: Player) : TicTacToe(onWin), ITTTImp{
+class OnePlayerTTT(onWin: (Player) -> Unit, override var currentPlayer: Player) : TicTacToe(onWin), ITTTImp {
 
     /**
      * runs [TicTacToe.play] with [player] as player.
      */
     override fun play(index: Int) {
         play(index, currentPlayer)
-        this.play({
-            val empty = table.toCharArray().mapIndexed{index, it ->
-                if(it == '0') index else -1
-            }.filter { it > -1 }
-            empty[Random().nextInt(empty.size)]
-        }(), if(currentPlayer == Player.P1) Player.P2 else Player.P1)
+        if(!hasWinner) {
+            this.play({
+                val empty = table.toCharArray().mapIndexed { index, it ->
+                    if (it == '0') index else -1
+                }.filter { it > -1 }
+                empty[Random().nextInt(empty.size)]
+            }(), if (currentPlayer == Player.P1) Player.P2 else Player.P1)
+        }
     }
-
 
     override fun forceWin(player: Player)= onWin(player)
 }

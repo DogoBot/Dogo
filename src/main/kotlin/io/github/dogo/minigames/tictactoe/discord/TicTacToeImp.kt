@@ -42,7 +42,6 @@ class TicTacToeImp(context: CommandContext, val p1: DogoUser, val p2: DogoUser) 
      * Runs when someone wins.
      */
     private val onWin: (Player)->Unit = {
-        hasWinner = true
         this.build(
                 createEmbed()
                         .appendDescription("\n"+when(it){
@@ -50,15 +49,10 @@ class TicTacToeImp(context: CommandContext, val p1: DogoUser, val p2: DogoUser) 
                             else -> context.langEntry.getText(context.lang, "winner", getCurrentPlayer().formatName(context.guild))
                         })
         )
-        this.send(true)
+        this.send()
         this.end(false)
         dumbSetStatistics(it)
     }
-
-    /**
-     * True if someone won the game.
-     */
-    var hasWinner = false
 
     /**
      * The game container.
@@ -80,7 +74,7 @@ class TicTacToeImp(context: CommandContext, val p1: DogoUser, val p2: DogoUser) 
 
     init {
         this.build(createEmbed())
-        this.send(false)
+        this.send()
     }
 
     /**
@@ -93,7 +87,7 @@ class TicTacToeImp(context: CommandContext, val p1: DogoUser, val p2: DogoUser) 
             .setTitle("Tic Tac Toe!")
             .setColor(ThemeColor.PRIMARY)
             .also {
-                if(!(ttt is OnePlayerTTT || hasWinner)){
+                if(!(ttt is OnePlayerTTT || ttt.hasWinner)){
                     it.appendDescription(context.langEntry.getText(context.lang, "turn", getCurrentPlayer().formatName(this.context.guild))+"\n\n")
                 }
                 it.appendDescription(
@@ -133,19 +127,19 @@ class TicTacToeImp(context: CommandContext, val p1: DogoUser, val p2: DogoUser) 
      * @see SimpleReactionMenu.Action
      * @see SimpleReactionMenu.send
      */
-    fun send(end: Boolean){
-    DogoBot.eventBus.unregister(this)
+    override fun send(){
+        DogoBot.eventBus.unregister(this)
         this.actions.clear()
-        if(!end){
+        if(!ttt.hasWinner){
             getTableEmoted()
                     .filter { !(it == EmoteReference.O || it == EmoteReference.X) }
                     .forEach {
                         this.addAction(it,  "") {
                             this.ttt.play(it.equivalentChar.toString().toInt())
-                            if(!hasWinner){
+                            if(!ttt.hasWinner){
                                 this.build(createEmbed())
                                 this.target = getCurrentPlayer().id
-                                this.send(false)
+                                this.send()
                             }
                         }
                     }

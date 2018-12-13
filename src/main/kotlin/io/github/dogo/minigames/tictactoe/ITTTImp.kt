@@ -31,6 +31,11 @@ interface ITTTImp {
     var currentPlayer: Player
 
     /**
+     * True if the game has a winner ([Player.ENVIROMENT] is included)
+     */
+    var hasWinner: Boolean
+
+    /**
      * The table
      */
     var table: String

@@ -40,6 +40,11 @@ open class TicTacToe(val onWin: (Player) -> Unit) {
     }
 
     /**
+     * True if the game is done.
+     */
+    var hasWinner = false
+
+    /**
      * The game table.
      *
      * Must be a 9 characters [String]. The following characters are allowed:
@@ -77,7 +82,7 @@ open class TicTacToe(val onWin: (Player) -> Unit) {
                         }
                 returner
             } else null
-        }())?.let { onWin(it) }
+        }())?.let { hasWinner = true; onWin(it) }
     }
 
     /**
