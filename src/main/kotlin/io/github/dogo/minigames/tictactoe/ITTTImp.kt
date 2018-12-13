@@ -7,7 +7,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-http://www.apache.org/licenses/LICENSE-2.0
+    http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,24 +17,26 @@ limitations under the License.
 */
 
 /**
- * The available players on TicTacToe.
+ * Simple interface to TicTacToe implementations.
  *
  * @author NathanPB
  * @since 3.1.0
  */
-enum class Player(val id: String) {
-    /**
-     * The enviroment, no player.
-     */
-    ENVIROMENT("0"),
+interface ITTTImp {
+    fun play(index: Int)
 
     /**
-     * The first player.
+     * The currentPlayer turn's owner.
      */
-    P1("1"),
+    var currentPlayer: Player
 
     /**
-     * The second player.
+     * The table
      */
-    P2("2")
+    var table: String
+
+    /**
+     * Forces someone to win the game.
+     */
+    fun forceWin(player: Player)
 }
