@@ -46,7 +46,7 @@ class TicTacToeImp(context: CommandContext, val p1: DogoUser, val p2: DogoUser) 
                 createEmbed()
                         .appendDescription("\n"+when(it){
                             Player.ENVIROMENT -> context.langEntry.getText(context.lang, "tie")
-                            else -> context.langEntry.getText(context.lang, "winner", getCurrentPlayer().formatName(context.guild))
+                            else -> context.langEntry.getText(context.lang, "winner", (if(it == Player.P1) p1 else p2).formatName(context.guild))
                         })
         )
         this.send()
