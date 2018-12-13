@@ -54,7 +54,7 @@ class UnitUtils {
          *
          *  @return the delay between [ms] and [now].
          */
-        fun getDelay(ms : Long, now : Long = System.currentTimeMillis()) : Long {
+        fun timeSince(ms : Long, now : Long = System.currentTimeMillis()) : Long {
             return now - ms
         }
     }
