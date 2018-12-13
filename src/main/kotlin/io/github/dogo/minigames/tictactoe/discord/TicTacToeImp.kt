@@ -144,7 +144,7 @@ class TicTacToeImp(context: CommandContext, val p1: DogoUser, val p2: DogoUser) 
                         }
                     }
             this.addAction(EmoteReference.OCTAGONAL_SIGN, "") {
-                ttt.forceWin(if(ttt.currentPlayer == Player.P1) Player.P1 else Player.P2)
+                ttt.forceWin(if(ttt.currentPlayer == Player.P1) Player.P2 else Player.P1)
             }
         }
         super.send()
