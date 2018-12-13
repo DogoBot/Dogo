@@ -5,14 +5,49 @@ import io.github.dogo.utils.EmoteReference
 import io.github.dogo.utils.ThemeColor
 import net.dv8tion.jda.core.EmbedBuilder
 
+
+/*
+Copyright 2019 Nathan Bombana
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+/**
+ * Creates an embed menu to display a list of Strings, with pagination.
+ *
+ * @param[context] a command context to extract information like sender, channel, etc.
+ * @param[items] the list of items to display.
+ * @param[render] the transformation that the strings should undergo before display.
+ * @param[render] the transformation that the embed should undergo before display.
+ *
+ *
+ * @author NathanPB
+ * @since 3.1.0
+ */
 class ListReactionMenu(context: CommandContext, val items: List<String>, val render: (String)->String = {"$it\n"}, val embedBuild: (EmbedBuilder)->Unit = {}) : SimpleReactionMenu(context) {
 
+    /**
+     * The list of pages to display.
+     */
     val pages = mutableListOf<EmbedBuilder>()
 
     init {
         update()
     }
 
+    /**
+     * Sends a page. It also adds buttons to navigate between pages.
+     * @see page
+     */
     fun showPage(page: Int) {
         end()
         build(pages[page])
@@ -39,6 +74,10 @@ class ListReactionMenu(context: CommandContext, val items: List<String>, val ren
         send()
     }
 
+    /**
+     * Updates all the pages reference.
+     * @see pages
+     */
     fun update() {
         pages.clear()
         for(i in 0..getPageIndex(items.size)){
@@ -54,6 +93,11 @@ class ListReactionMenu(context: CommandContext, val items: List<String>, val ren
         }
     }
 
+    /**
+     * Calculates the page number of an item index.
+     *
+     * @return the page number of an item index.
+     */
     fun getPageIndex(index: Int) : Int {
         return Math.ceil((index+1).toDouble().div(9)).toInt()-1
     }

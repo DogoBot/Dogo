@@ -14,27 +14,85 @@ import net.dv8tion.jda.core.events.message.react.MessageReactionRemoveEvent
 import java.security.Permissions
 import java.util.*
 
+
+/*
+Copyright 2019 Nathan Bombana
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 /**
- * Created by nathanpb on 12/2/17.
+ * Creates simple embed menus with reaction as buttons.
+ *
+ * @param[context] a command context to extract information like sender, channel, etc.
+ *
+ * @author NathanPB
+ * @since 3.1.0
  */
 open class SimpleReactionMenu(val context: CommandContext) {
     companion object {
+        /**
+         * The current running instances, used by timeout thread.
+         * @see DogoBot.menuTimeWatcher
+         */
         val instances = mutableListOf<SimpleReactionMenu>()
     }
     init {
         instances.add(this)
     }
 
+    /**
+     * The list of buttons on this menu.
+     */
     protected var actions: ArrayList<Action> = ArrayList()
+
+    /**
+     * The embed to send.
+     */
     var embed = EmbedBuilder()
+
+    /**
+     * The id from the to accept reactions.
+     */
     var target = context.sender.id
+
+    /**
+     * The last menu sent.
+     */
     var msg: Message? = null
 
+    /**
+     * The timeout (timestamp in millis).
+     */
     var timeout = 0L
+
+    /**
+     * The time when the last message was sent or edited (timestamp in millis).
+     */
     var lastSend = 0L
 
+    /**
+     * All the IDs registered on event bus for this instance.
+     */
     protected var eventbusId : Array<Long> = emptyArray()
 
+    /**
+     * Builds the embed to send.
+     *
+     * @param[preset] the embed. If empty it will automatically build an embed with action descriptions.
+     * @see Action.description
+     *
+     */
     fun build(preset : EmbedBuilder? = null) {
         if(preset == null) {
             actions.forEach {
@@ -44,6 +102,11 @@ open class SimpleReactionMenu(val context: CommandContext) {
 
     }
 
+    /**
+     * Ends a menu. It can be resendable.
+     *
+     * @param[delete] deletes the message if true. All is relative to the bot permissions on guild.
+     */
     fun end(delete : Boolean = true) {
         DogoBot.eventBus.unregister(eventbusId)
         instances.remove(this)
@@ -59,6 +122,11 @@ open class SimpleReactionMenu(val context: CommandContext) {
         msg = null
     }
 
+    /**
+     * Sends the [embed] and add its reactions. Also remove the old ones.
+     *
+     * Edit the message if it already exists.
+     */
     open fun send() {
         eventbusId = DogoBot.eventBus.register(this)
         msg = if(msg == null) {
@@ -82,15 +150,26 @@ open class SimpleReactionMenu(val context: CommandContext) {
         this.lastSend = System.currentTimeMillis()
     }
 
+    /**
+     * Adds a action to the button list.
+     * @see actions
+     */
     fun addAction(emote: EmoteReference, description: String, action: () -> Unit) {
         if (!actions.stream().anyMatch { a -> a.emote == emote }) {
             actions.add( Action(action, description, emote))
         } else throw Exception("Action already exists")
     }
 
+    /**
+     * Removes a action from the button list.
+     * @see actions
+     */
     fun removeAction(emote: EmoteReference) = actions.removeAll { it.emote == emote }
 
 
+    /**
+     * Listen to reactions and process it.
+     */
     @EventBus.Listener()
     fun onReact(e: GenericMessageReactionEvent) {
         msg?.let {
@@ -113,5 +192,12 @@ open class SimpleReactionMenu(val context: CommandContext) {
         }
     }
 
+    /**
+     * Just a class to hold button data.
+     *
+     * @param[action] the code to run when the button is triggered.
+     * @param[description] the button description.
+     * @param[emote] the button icon.
+     */
     data class Action(val action: () -> Unit, val description: String, val emote: EmoteReference)
 }
