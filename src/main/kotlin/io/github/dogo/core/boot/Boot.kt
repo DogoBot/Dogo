@@ -20,11 +20,36 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-fun main(args : Array<String>){
-   Boot()
-}
 
+/*
+Copyright 2019 Nathan Bombana
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+/**
+ *
+ * Class that initializes Dogo.
+ *
+ * @author NathanPB
+ * @since 3.1.0
+ */
 class Boot {
+    /**
+     * The list of phases on boot proccess.
+     *
+     * @see Phase
+     */
     private val phaseList = listOf(
             Phase("Initializing JDA") {
                 io.github.dogo.core.DogoBot.jda = JDABuilder(AccountType.BOT)
@@ -137,6 +162,10 @@ class Boot {
         }
     }
 
+    /**
+     * Executes each phase
+     * @see phaseList
+     */
     @Throws(Exception::class)
     fun startup() {
         DogoBot.logger.info(
@@ -171,10 +200,22 @@ class Boot {
      extension shit
      */
 
+    /**
+     * Checks if a database has a collection.
+     *
+     * @param[name] the collection name.
+     *
+     * @return true if exists, false if not.
+     */
     private fun MongoDatabase.hasCollection(name : String) : Boolean {
         return this.listCollectionNames().contains(name)
     }
 
+    /**
+     * Get the delay between a long and the current time and formats it to a human-readable format.
+     *
+     * @return the delay between [this] and the current time in a human-readable format.
+     */
     private fun Long.timeSince() : String {
         val time = System.currentTimeMillis() - this
         return when{
@@ -184,10 +225,22 @@ class Boot {
         }
     }
 
+    /**
+     * Creates a collection if it doesn't exists.
+     *
+     * @param[collection] the collection name.
+     */
     private fun MongoDatabase.checkCollection(collection: String) {
         if(!this.hasCollection(collection)) {
             DogoBot.logger.info("'$collection' collection doesn't exists! Creating one...")
             this.createCollection(collection)
         }
     }
+}
+
+/**
+ * Hello Java
+ */
+fun main(args : Array<String>){
+    Boot()
 }
