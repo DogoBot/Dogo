@@ -12,6 +12,7 @@ import io.github.dogo.core.command.CommandReference
 import io.github.dogo.core.profiles.PermGroup
 import io.github.dogo.server.APIServer
 import io.github.dogo.utils.Holder
+import io.github.dogo.utils.WebUtils
 import net.dv8tion.jda.core.AccountType
 import net.dv8tion.jda.core.JDABuilder
 import net.dv8tion.jda.core.entities.Game
@@ -105,6 +106,15 @@ class Boot {
                               }
                               DogoBot.cmdFactory.route.findRoute(s, Holder())
                           }.let { r -> this.reply("```json\n$r\n```") }
+                      }
+                  }
+                  route(CommandReference("update", category=CommandCategory.OWNER)){
+                      execute {
+                          reply(":warning: Preparing to build...")
+                          WebUtils.get("${DogoBot.data.JENKINS.URL}/job/${DogoBot.data.JENKINS.JOB_NAME}/build?token=${DogoBot.data.JENKINS.AUTH_TOKEN}")
+                          reply("<:nathanbb:390267731846627329> Restarting...")
+                          DogoBot.logger.warn("Dogo is restarting to apply new build!")
+                          System.exit(3)
                       }
                   }
                   route(io.github.dogo.commands.Badwords()){

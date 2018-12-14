@@ -78,4 +78,11 @@ class DogoData {
     @Setting
     val API = API()
 
+    /**
+     * Jenkins.
+     * @see [Jenkins]
+     */
+    @Setting
+    val JENKINS = Jenkins()
+
 }
