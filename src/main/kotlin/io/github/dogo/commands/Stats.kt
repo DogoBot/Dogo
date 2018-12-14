@@ -37,18 +37,13 @@ class Stats : ReferencedCommand(
             val menu = SimpleReactionMenu(this).also {
                 it.timeout = DogoBot.data.TIMEOUTS.GENERAL
             }
-            var basic = false
-
-            val embBasic = Stats.getBasicInfo(lang, langEntry).appendDescription(":arrows_counterclockwise: ${langEntry.getText(lang, "advancedinfo")}\n")
-            val embAdvanced = Stats.getThreadInfo(sender.lang, langEntry).appendDescription(":arrows_counterclockwise: ${langEntry.getText(lang, "basicinfo")}\n")
 
             menu.addAction(EmoteReference.ARROW_COUNTERCLOCKWISE, "Info") {
-                menu.build(if(basic) embBasic else embAdvanced)
+                menu.build(getBasicInfo(lang, langEntry))
                 DogoBot.eventBus.unregister(menu)
                 menu.send()
-                basic = !basic
             }
-            menu.build(embBasic)
+            menu.build(getBasicInfo(lang, langEntry))
             menu.send()
         }
 ) {
@@ -66,29 +61,14 @@ class Stats : ReferencedCommand(
                     .setAuthor("Dogo v${DogoBot.version}", null, DogoBot.jda!!.selfUser.effectiveAvatarUrl)
                     .setTitle(langEntry.getText(lang, "amihealthy"))
                     .setThumbnail("https://i.imgur.com/9rmyKUk.png")
-                    .addField(langEntry.getText(lang, "users"), io.github.dogo.core.DogoBot?.jda?.users?.size.toString(),true)
-                    .addField(langEntry.getText(lang, "guilds"), io.github.dogo.core.DogoBot?.jda?.guilds?.size.toString(), true)
+                    .addField(langEntry.getText(lang, "users"), DogoBot.jda?.users?.size.toString(),true)
+                    .addField(langEntry.getText(lang, "guilds"), DogoBot.jda?.guilds?.size.toString(), true)
 
                     .addField(langEntry.getText(lang, "cpu"), BeamUtils.usedCPU().toString()+"%", true)
                     .addField(langEntry.getText(lang, "ram"), "${BeamUtils.usedMemory()}MB | ${BeamUtils.maxMemory()}MB", true)
 
-                    .addField(langEntry.getText(lang, "ping"), "${io.github.dogo.core.DogoBot.jda?.ping}ms", true)
-                    .addField(langEntry.getText(lang, "uptime"), DisplayUtils.formatTimeSimple(System.currentTimeMillis() - io.github.dogo.core.DogoBot.initTime), true)
-        }
-
-        /**
-         * Builds the thread information embed.
-         *
-         * @param[lang] the language.
-         * @param[langEntry] the [Stats] command [LanguageEntry].
-         */
-        private fun getThreadInfo(lang : String, langEntry: LanguageEntry) : EmbedBuilder {
-            val embed = EmbedBuilder()
-                    .setColor(ThemeColor.PRIMARY)
-                    .setThumbnail("https://i.imgur.com/9rmyKUk.png")
-                    .setTitle(langEntry.getText(lang, "threadinfo"))
-            io.github.dogo.core.DogoBot.threads.values.forEach { t -> embed.addField(t.name, "TPS: ${t.getTps()}Hz | Queue: ${t.queue()}", true) }
-            return embed
+                    .addField(langEntry.getText(lang, "ping"), "${DogoBot.jda?.ping}ms", true)
+                    .addField(langEntry.getText(lang, "uptime"), DisplayUtils.formatTimeSimple(System.currentTimeMillis() - DogoBot.initTime), true)
         }
     }
 }

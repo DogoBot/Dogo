@@ -1,24 +1,22 @@
 package io.github.dogo.core.eventBus
 
 import io.github.dogo.core.DogoBot
-import io.github.dogo.core.queue.DogoQueue
-import net.dv8tion.jda.core.events.Event
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.LinkedHashMap
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.functions
 
-class EventBus(name : String) : DogoQueue(name) {
+class EventBus {
     private val listeners = LinkedHashMap<Long, EventBus.EventListener>()
 
     fun submit(element : Any) {
-        submit {
-            submitSink(element)
+        DogoBot.eventBusThread.execute {
+            submitSync(element)
         }
     }
 
-    fun submitSink(element : Any) {
+    fun submitSync(element : Any) {
         for(listener in ArrayList(listeners.values)){
             try{
                 listener.func.call(listener.instance, element)
@@ -48,7 +46,7 @@ class EventBus(name : String) : DogoQueue(name) {
     fun unregister(instance : Any) {
         LinkedHashMap<Long, EventBus.EventListener>(listeners)
                 .forEach {
-                    t, u -> if(u.instance.equals(instance))  unregister(t)
+                    t, u -> if(u.instance == instance)  unregister(t)
                 }
     }
 
@@ -56,11 +54,9 @@ class EventBus(name : String) : DogoQueue(name) {
     @Target(AnnotationTarget.FUNCTION)
     annotation class Listener(val value : Int = 0)
 
-    private class EventListener constructor( func : KFunction<Any?>, bus : EventBus, instance : Any) {
-        val func = func
+    private data class EventListener constructor( val func : KFunction<Any?>, val bus : EventBus, val instance : Any) {
         var id = 0L
         var priotity = 0
-        val instance = instance
 
         init {
             do {

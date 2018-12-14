@@ -51,7 +51,7 @@ class CommandFactory {
                             if(cmd.reference.category == CommandCategory.NSFW){
                                 if(event.channel !is PrivateChannel){
                                     if(!(event.channel is TextChannel && (event.channel as TextChannel).isNSFW)){
-                                        DogoBot.jdaOutputThread.submit {
+                                        DogoBot.jdaOutputThread.execute {
                                             val lang = LanguageEntry("text")
                                             event.channel.sendMessage(lang.getText(user.lang, "error.notnsfwchannel")).queue({}, {})
                                         }
@@ -60,14 +60,14 @@ class CommandFactory {
                                 }
                             }
                             if(cmd.reference.category == CommandCategory.GUILD_ADMINISTRATION && guild == null) {
-                                DogoBot.jdaOutputThread.submit {
+                                DogoBot.jdaOutputThread.execute {
                                     val lang = LanguageEntry("text")
                                     event.channel.sendMessage(lang.getText(user.lang, "error.guildrequired")).queue({}, {})
                                 }
                                 return@let
                             }
                             if(cmd.reference.category == CommandCategory.OWNER && !user.getPermGroups().can("commands.admin.root")){
-                                DogoBot.jdaOutputThread.submit {
+                                DogoBot.jdaOutputThread.execute {
                                     val lang = LanguageEntry("text")
                                     EmbedBuilder()
                                             .setColor(Color.YELLOW)
@@ -77,12 +77,14 @@ class CommandFactory {
                                 return@let
                             }
                             if(!route.isRoot()){
-                                val context = CommandContext(event.message, route, args)
-                                cmd.run?.let { it.command(context) }
+                                DogoBot.cmdProcessorThread.execute {
+                                    val context = CommandContext(event.message, route, args)
+                                    cmd.run?.let { it.command(context) }
+                                }
                             }
 
                         } else {
-                            DogoBot.jdaOutputThread.submit {
+                            DogoBot.jdaOutputThread.execute {
                                 val lang = LanguageEntry("text")
                                 event.channel.sendMessage(
                                         EmbedBuilder()
@@ -94,7 +96,7 @@ class CommandFactory {
                             }
                         }
                     } else {
-                        DogoBot.jdaOutputThread.submit {
+                        DogoBot.jdaOutputThread.execute {
                             val lang = LanguageEntry("text")
                             event.channel.sendMessage(
                                     EmbedBuilder()

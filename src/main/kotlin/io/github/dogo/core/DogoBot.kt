@@ -7,7 +7,6 @@ import io.github.dogo.core.command.CommandFactory
 import io.github.dogo.core.data.DogoData
 import io.github.dogo.core.entities.DogoGuild
 import io.github.dogo.core.eventBus.EventBus
-import io.github.dogo.core.queue.DogoQueue
 import io.github.dogo.menus.SimpleReactionMenu
 import io.github.dogo.server.APIServer
 import net.dv8tion.jda.core.JDA
@@ -18,6 +17,7 @@ import org.apache.logging.log4j.Logger
 import java.io.File
 import java.io.FileWriter
 import java.util.*
+import java.util.concurrent.Executors
 
 /*
 Copyright 2019 Nathan Bombana
@@ -101,88 +101,40 @@ class DogoBot {
          */
         val initTime = System.currentTimeMillis()
 
-        /**
-         * All the [DogoQueue] threads present on the system.
-         * @see [DogoQueue]
-         */
-        val threads = HashMap<String, DogoQueue>()
 
         /**
          * The Event Bus.
-         * @see DogoQueue
          */
-        val eventBus = EventBus("EVENT BUS")
+        val eventBus = EventBus()
+
+        /**
+         * Event Bus Thread
+         */
+
+        val eventBusThread = Executors.newSingleThreadExecutor()
 
         /**
          * The JDA Output queue.
-         * @see [DogoQueue]
          */
-        val jdaOutputThread = DogoQueue("JDA OUTPUT")
+        val jdaOutputThread = Executors.newSingleThreadExecutor()
 
         /**
          * The command processor queue.
-         * @see [DogoQueue]
          */
-        val cmdProcessorThread = DogoQueue("CMD PROCESSOR")
+        val cmdProcessorThread = Executors.newSingleThreadExecutor()
 
         /**
          * The time watcher. This thread is responsible to finish up the timeout things.
-         * @see [DogoQueue]
          */
-        val menuTimeWatcher = DogoQueue("MENU TIME WATCHER").also {
-            it.run = {
+        val menuTimeWatcher = object : TimerTask() {
+            override fun run() {
                 SimpleReactionMenu.instances
                         .filter{it.timeout > 0L}
                         .filter { it.lastSend > 0 && System.currentTimeMillis() > it.lastSend + it.timeout }
                         .forEach{it.end(false)}
             }
-        }
+        }.also { Timer().schedule(it, 1, 1000) }
 
-        /**
-         * The Overclock Watcher. This thread is responsible to watch the clock from other queues and overclock/downclock it.
-         * @see [DogoQueue]
-         */
-        val ocWatcher = DogoQueue("OC WATCHER").also {
-            it.run = {
-                for(t in io.github.dogo.core.DogoBot.Companion.threads.values){
-                    var queue = t.queue()
-                    var clk = 1
-
-                    //Increases 10Hz every 10 items in queue;
-                    while (queue > 10){
-                        queue-=10
-                        clk+=10
-                    }
-                    //clk is in Hz, NOT FUCKING PERIOD
-
-                    //Fix the overclock multiplier if its wrong
-                    if(clk < t.defaultClock){
-                        clk = t.defaultClock
-                    }
-
-                    //Fix the queue clock if its wrong
-                    if(t.clk < t.defaultClock){
-                        t.clk = t.defaultClock
-                    }
-
-                    //Reduces the overclock to ONLY THE NECESSARY
-                    clk -= t.clk
-                    if(clk < 0) clk = 0
-
-                    //Applies the overclock (if necessary)
-                    if(t.overclock < clk) {
-                        //DogoBot.logger.info("Queue ${t.name} overclocked from ${t.clk}Hz (+${t.overclock}Hz oc) to ${t.clk + clk}Hz (+${clk}Hz oc)")
-                        t.overclock = clk
-                        if ((t.overclock / t.defaultClock) > 10) {
-                            //DogoBot.logger.warn("Overclock from ${t.name} is TOO HIGH!!!")
-                        }
-                    } else if(t.overclock > clk){
-                        //DogoBot.logger.info("Queue ${t.name} downclocked from ${t.clk}Hz (+${t.overclock}Hz oc) to ${t.clk + clk}Hz (+${clk}Hz oc)")
-                        t.overclock = clk
-                    }
-                }
-            }
-        }
 
         /**
          * The command factory.
