@@ -16,9 +16,11 @@ import io.github.dogo.utils.WebUtils
 import net.dv8tion.jda.core.AccountType
 import net.dv8tion.jda.core.JDABuilder
 import net.dv8tion.jda.core.entities.Game
+import org.json.JSONObject
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 
@@ -110,13 +112,27 @@ class Boot {
                   }
                   route(CommandReference("update", category=CommandCategory.OWNER)){
                       execute {
-                          reply(":warning: Preparing to build...")
-                          try{
-                              WebUtils.get("${DogoBot.data.JENKINS.URL}/job/${DogoBot.data.JENKINS.JOB_NAME}/build?token=${DogoBot.data.JENKINS.AUTH_TOKEN}")
-                          } catch (ex: java.lang.Exception){ }
-                          replySynk("<:nathanbb:390267731846627329> Restarting...")
-                          DogoBot.logger.warn("Dogo is restarting to apply new build!")
-                          System.exit(3)
+                          Executors.newSingleThreadExecutor().execute {
+                              reply(":warning: Preparing to build...")
+                              try{
+                                  WebUtils.get("${DogoBot.data.JENKINS.URL}/job/${DogoBot.data.JENKINS.JOB_NAME}/build?token=${DogoBot.data.JENKINS.AUTH_TOKEN}")
+                              } catch (ex: java.lang.Exception){}
+                              try {
+                                  var json: JSONObject
+                                  do {
+                                      json = JSONObject(WebUtils.get("${DogoBot.data.JENKINS.URL}/job/${DogoBot.data.JENKINS.JOB_NAME}/lastBuild/api/json"))
+                                      Thread.sleep(1000)
+                                  } while (!json.keySet().contains("result"))
+                                  if(!json.getBoolean("result")) throw Exception()
+                              } catch (ex: Exception){
+                                  replySynk(":alert: Something gone wrong while build the last update! Check Jeakins to more details!")
+                                  return@execute
+                              }
+                              replySynk("<:nathanbb:390267731846627329> Build compiled! Restarting...")
+                              DogoBot.logger.warn("Dogo is restarting to apply new build!")
+                              Thread.sleep(1000)
+                              System.exit(3)
+                          }
                       }
                   }
                   route(io.github.dogo.commands.Badwords()){
