@@ -128,7 +128,7 @@ class Boot {
 
                                   replySynk("success", preset = true)
                                   DogoBot.logger.warn("Dogo is restarting to apply new build!")
-                                  Thread.sleep(1000)
+                                  Thread.sleep(3000)
                                   System.exit(3)
                               } catch (ex: java.lang.Exception){
                                   replySynk("failed", preset = true)
