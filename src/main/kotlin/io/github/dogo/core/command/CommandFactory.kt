@@ -7,6 +7,7 @@ import io.github.dogo.core.eventBus.EventBus
 import io.github.dogo.lang.LanguageEntry
 import io.github.dogo.utils.Holder
 import net.dv8tion.jda.core.EmbedBuilder
+import net.dv8tion.jda.core.Permission
 import net.dv8tion.jda.core.entities.PrivateChannel
 import net.dv8tion.jda.core.entities.TextChannel
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent
@@ -35,7 +36,10 @@ class CommandFactory {
         }
 
         prefix?.let {
-            DogoBot.cmdProcessorThread.submit {
+            DogoBot.cmdProcessorThread.execute {
+                if(event.guild?.getMember(DogoBot.jda!!.selfUser)?.hasPermission(Permission.MESSAGE_WRITE) != true){
+                    return@execute
+                }
                 val text = event.message.contentRaw.replaceFirst(prefix, "")
                 val argsHolder = Holder<Int>()
                 val route = this.route.findRoute(text, argsHolder)
@@ -77,10 +81,8 @@ class CommandFactory {
                                 return@let
                             }
                             if(!route.isRoot()){
-                                DogoBot.cmdProcessorThread.execute {
-                                    val context = CommandContext(event.message, route, args)
-                                    cmd.run?.let { it.command(context) }
-                                }
+                                val context = CommandContext(event.message, route, args)
+                                cmd.run?.let { it.command(context) }
                             }
 
                         } else {

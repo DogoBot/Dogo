@@ -1,9 +1,11 @@
 package io.github.dogo.badwords
 
+import io.github.dogo.core.DogoBot
 import io.github.dogo.core.entities.DogoGuild
 import io.github.dogo.core.entities.DogoUser
 import io.github.dogo.core.eventBus.EventBus
 import net.dv8tion.jda.core.EmbedBuilder
+import net.dv8tion.jda.core.Permission
 import net.dv8tion.jda.core.entities.Message
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import java.awt.Color
@@ -46,6 +48,10 @@ class BadwordListener {
      * @param[msg] the message.
      */
     fun check(msg: Message) {
+        val member = msg.guild.getMember(DogoBot.jda!!.selfUser)
+        if(!member.hasPermission(Permission.MESSAGE_WRITE) || !member.hasPermission(Permission.MESSAGE_MANAGE)){
+            return
+        }
         DogoGuild(msg.guild).let { guild ->
             val bw = guild.badwords.badwords
             val user = DogoUser(msg.author)
