@@ -43,5 +43,6 @@ class Jenkins {
     /**
      * The authentication token
      */
+    @Setting
     val AUTH_TOKEN = "token"
 }
