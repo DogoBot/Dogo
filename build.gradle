@@ -68,7 +68,10 @@ jar {
     manifest {
         attributes 'Main-Class': 'io.github.dogo.core.boot.BootKt'
     }
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    from { configurations.compile
+        .findAll { !it.name.endsWith('pom') }
+        .collect { it.isDirectory() ? it : zipTree(it) }
+    }
 }
 
 dokka {
