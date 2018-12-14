@@ -113,7 +113,7 @@ class Boot {
                   route(CommandReference("update", category=CommandCategory.OWNER)){
                       execute {
                           Executors.newSingleThreadExecutor().execute {
-                              reply(":warning: Preparing to build...")
+                              replySynk(":warning: Preparing to build...")
                               try{
                                   WebUtils.get("${DogoBot.data.JENKINS.URL}/job/${DogoBot.data.JENKINS.JOB_NAME}/build?token=${DogoBot.data.JENKINS.AUTH_TOKEN}")
                               } catch (ex: java.lang.Exception){}
