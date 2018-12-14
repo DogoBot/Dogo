@@ -111,8 +111,10 @@ class Boot {
                   route(CommandReference("update", category=CommandCategory.OWNER)){
                       execute {
                           reply(":warning: Preparing to build...")
-                          WebUtils.get("${DogoBot.data.JENKINS.URL}/job/${DogoBot.data.JENKINS.JOB_NAME}/build?token=${DogoBot.data.JENKINS.AUTH_TOKEN}")
-                          reply("<:nathanbb:390267731846627329> Restarting...")
+                          try{
+                              WebUtils.get("${DogoBot.data.JENKINS.URL}/job/${DogoBot.data.JENKINS.JOB_NAME}/build?token=${DogoBot.data.JENKINS.AUTH_TOKEN}")
+                          } catch (ex: java.lang.Exception){ }
+                          replySynk("<:nathanbb:390267731846627329> Restarting...")
                           DogoBot.logger.warn("Dogo is restarting to apply new build!")
                           System.exit(3)
                       }

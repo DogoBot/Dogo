@@ -66,7 +66,7 @@ class CommandFactory {
                                 }
                                 return@let
                             }
-                            if(cmd.reference.category == CommandCategory.OWNER && user.getPermGroups().can("commands.admin.root")){
+                            if(cmd.reference.category == CommandCategory.OWNER && !user.getPermGroups().can("commands.admin.root")){
                                 DogoBot.jdaOutputThread.submit {
                                     val lang = LanguageEntry("text")
                                     EmbedBuilder()
