@@ -113,25 +113,28 @@ class Boot {
                   route(CommandReference("update", category=CommandCategory.OWNER)){
                       execute {
                           Executors.newSingleThreadExecutor().execute {
-                              replySynk(":warning: Preparing to build...")
+                              replySynk("preparing", preset = true)
                               try{
                                   WebUtils.get("${DogoBot.data.JENKINS.URL}/job/${DogoBot.data.JENKINS.JOB_NAME}/build?token=${DogoBot.data.JENKINS.AUTH_TOKEN}")
-                              } catch (ex: java.lang.Exception){}
-                              try {
+
                                   var json: JSONObject
                                   do {
                                       json = JSONObject(WebUtils.get("${DogoBot.data.JENKINS.URL}/job/${DogoBot.data.JENKINS.JOB_NAME}/lastBuild/api/json"))
+                                      val queue = JSONObject(WebUtils.get("${DogoBot.data.JENKINS.URL}/queue/api/json"))
                                       Thread.sleep(1000)
-                                  } while (!json.keySet().contains("result"))
-                                  if(!json.getBoolean("result")) throw Exception()
-                              } catch (ex: Exception){
-                                  replySynk(":alert: Something gone wrong while build the last update! Check Jeakins to more details!")
+                                  } while (queue.getJSONArray("items").length() > 0 || !json.keySet().contains("result") || json["result"] == null)
+
+                                  if(json["result"] == "FAILED") throw Exception()
+
+                                  replySynk("success", preset = true)
+                                  DogoBot.logger.warn("Dogo is restarting to apply new build!")
+                                  Thread.sleep(1000)
+                                  System.exit(3)
+                              } catch (ex: java.lang.Exception){
+                                  replySynk("failed", preset = true)
                                   return@execute
                               }
-                              replySynk("<:nathanbb:390267731846627329> Build compiled! Restarting...")
-                              DogoBot.logger.warn("Dogo is restarting to apply new build!")
-                              Thread.sleep(1000)
-                              System.exit(3)
+
                           }
                       }
                   }

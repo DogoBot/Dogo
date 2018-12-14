@@ -87,3 +87,10 @@ command.badwords.remove.author=Removed Words:
 command.trasleite.description=Gives you milk!
 command.trasleite.milk=:milk: There is your milk!
 command.trasleite.nope=Nope I don't like you
+
+################
+#UPDATE COMMAND#
+################
+command.update.preparing=:warning: Preparing to update...
+command.update.failed=:warning: Something went wrong while building the last update! Check Jenkins for more details!
+command.update.success=<:nathanbb:390267731846627329> Build compiled! Restarting to apply...
