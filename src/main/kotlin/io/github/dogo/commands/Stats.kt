@@ -63,6 +63,7 @@ class Stats : ReferencedCommand(
         private fun getBasicInfo(lang : String, langEntry: LanguageEntry) : EmbedBuilder {
             return EmbedBuilder()
                     .setColor(ThemeColor.PRIMARY)
+                    .setAuthor("Dogo v${DogoBot.version}", null, DogoBot.jda!!.selfUser.effectiveAvatarUrl)
                     .setTitle(langEntry.getText(lang, "amihealthy"))
                     .setThumbnail("https://i.imgur.com/9rmyKUk.png")
                     .addField(langEntry.getText(lang, "users"), io.github.dogo.core.DogoBot?.jda?.users?.size.toString(),true)

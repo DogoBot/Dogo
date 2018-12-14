@@ -53,7 +53,7 @@ class BadwordListener {
             if (!user.getPermGroups().can("badword.bypass")) {
                 val newmsg = msg.contentDisplay.split(" ")
                         .map { word ->
-                            if(bw.any { it.contains(word, ignoreCase = true) }){
+                            if(bw.filter { it.isNotEmpty() }.any { it.contains(word, ignoreCase = true) }){
                                 val sw = StringBuilder("``")
                                 for(i in 0..word.length) sw.append("*")
                                 sw.toString()+"``"
