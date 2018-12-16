@@ -8,20 +8,26 @@ import com.mongodb.client.MongoDatabase
 import io.github.dogo.core.DogoBot
 import io.github.dogo.core.JDAListener
 import io.github.dogo.core.command.CommandCategory
+import io.github.dogo.core.command.CommandContext
 import io.github.dogo.core.command.CommandReference
 import io.github.dogo.core.profiles.PermGroup
 import io.github.dogo.server.APIServer
+import io.github.dogo.utils.HastebinUtils
 import io.github.dogo.utils.Holder
 import io.github.dogo.utils.WebUtils
 import net.dv8tion.jda.core.AccountType
+import net.dv8tion.jda.core.EmbedBuilder
 import net.dv8tion.jda.core.JDABuilder
 import net.dv8tion.jda.core.entities.Game
 import org.json.JSONObject
-import java.io.File
+import java.awt.Color
+import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
+import javax.script.ScriptEngine
+import javax.script.ScriptEngineManager
 
 
 /*
@@ -110,7 +116,7 @@ class Boot {
                           }.let { r -> this.reply("```json\n$r\n```") }
                       }
                   }
-                  route(CommandReference("update", category=CommandCategory.OWNER)){
+                  route(CommandReference("update", category = CommandCategory.OWNER)){
                       execute {
                           Executors.newSingleThreadExecutor().execute {
                               replySynk("preparing", preset = true)
@@ -215,14 +221,21 @@ class Boot {
         for(phase in phaseList){
             val time = System.currentTimeMillis()
             DogoBot.logger.info("["+count+"/"+phaseList.size+"] " + phase.display)
-            DogoBot.jda?.presence?.game = Game.watching("myself starting - "+phase.display)
+
+            val now = Holder<Int>().apply { hold(count) }
+            object : TimerTask() {
+                override fun run() {
+                    if(now.hold() == count)
+                        DogoBot.jda?.presence?.game = Game.watching("myself starting - ${phase.display}")
+                }
+            }.let { Timer().schedule(it, 3000) }
+
             phase.start()
             DogoBot.logger.info("["+count+"/"+phaseList.size+"] Done in ${time.timeSince()}")
             count++
         }
-
         DogoBot.ready = true
-        DogoBot.jda?.presence?.game = Game.watching("${io.github.dogo.core.DogoBot.jda?.guilds?.size} guilds | dg!help")
+        DogoBot.jda?.presence?.game = Game.watching("to ${DogoBot.jda?.guilds?.size} guilds | dg!help")
         DogoBot.logger.info("Dogo is Done! ${io.github.dogo.core.DogoBot.initTime.timeSince()}")
     }
 
