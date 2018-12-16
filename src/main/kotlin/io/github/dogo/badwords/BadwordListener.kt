@@ -60,7 +60,7 @@ class BadwordListener {
                 val newmsg = msg.contentDisplay.split(" ")
                         .filter { it.isNotEmpty() }
                         .map { word ->
-                            if(bw.any { it.contains(word, ignoreCase = true) }){
+                            if(bw.any { word.contains(it, ignoreCase = true) }){
                                 val sw = StringBuilder("``")
                                 for(i in 0..word.length) sw.append("*")
                                 sw.toString()+"``"
