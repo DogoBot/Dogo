@@ -34,6 +34,10 @@ limitations under the License.
  */
 class BadwordListener {
 
+    companion object {
+        val echos = mutableMapOf<Message, String>()
+    }
+
     /**
      * Listens the events.
      *
@@ -52,31 +56,50 @@ class BadwordListener {
         if(!member.hasPermission(Permission.MESSAGE_WRITE) || !member.hasPermission(Permission.MESSAGE_MANAGE)){
             return
         }
-        DogoGuild(msg.guild).let { guild ->
-            val bw = guild.badwords.badwords
-            val user = DogoUser(msg.author)
 
-            if (!user.getPermGroups().can("badword.bypass")) {
-                val newmsg = msg.contentDisplay.split(" ")
-                        .filter { it.isNotEmpty() }
-                        .map { word ->
-                            if(bw.any { word.contains(it, ignoreCase = true) }){
-                                val sw = StringBuilder("``")
-                                for(i in 0..word.length) sw.append("*")
-                                sw.toString()+"``"
-                            } else word
-                        }.joinToString(" ")
-                if (newmsg != msg.contentDisplay) {
-                    msg.channel.sendMessage(
-                            EmbedBuilder()
-                                    .setAuthor("${user.formatName()} said", null, user.usr?.effectiveAvatarUrl.orEmpty())
-                                    .setColor(Color.YELLOW)
-                                    .setDescription(newmsg)
-                                    .build()
-                    ).queue()
-                    msg.delete().queue()
+        val guild = DogoGuild(msg.guild)
+        val user = DogoUser(echos[msg]?.also { echos.remove(msg) } ?: msg.author.id)
+        if (user.id != DogoBot.jda!!.selfUser.id && !user.getPermGroups().can("badword.bypass")) {
+            val newmsg = msg.contentDisplay.replaceBadwords(guild.badwords.badwords)
+            if (newmsg != msg.contentDisplay) {
+                DogoBot.jdaOutputThread.execute {
+                    msg.channel.sendMessage(newmsg.createEmbed(user).build()).complete()
+                    msg.delete().complete()
                 }
             }
         }
+    }
+
+    /**
+     * Replaces the badwords in a String
+     *
+     * @param[badwords] the badwords.
+     *
+     * @return the string replaced.
+     */
+    fun String.replaceBadwords(badwords: List<String>): String {
+        return this.split(" ")
+                .filter { it.isNotEmpty() }
+                .map { word ->
+                    if(badwords.any { word.contains(it, ignoreCase = true) }){
+                        val sw = StringBuilder("``")
+                        for(i in 0..word.length) sw.append("*")
+                        sw.toString()+"``"
+                    } else word
+                }.joinToString(" ")
+    }
+
+    /**
+     * Creates a embed with the following message
+     *
+     * @param[sender] the sender.
+     *
+     * @return the embed builder.
+     */
+    fun String.createEmbed(sender: DogoUser): EmbedBuilder {
+        return EmbedBuilder()
+                .setAuthor("${sender.formatName()} said", null, sender.usr?.effectiveAvatarUrl.orEmpty())
+                .setColor(Color.YELLOW)
+                .setDescription(this)
     }
 }
