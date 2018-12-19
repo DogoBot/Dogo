@@ -21,12 +21,12 @@ limitations under the License.
  *
  * @param onWin block executed when a player won the game.
  *
- * @see [Player]
+ * @see [TTTPlayer]
  *
  * @author NathanPB
  * @since 3.1.0
  */
-open class TicTacToe(val onWin: (Player) -> Unit) {
+open class TicTacToe(val onWin: (TTTPlayer) -> Unit) {
     companion object {
         /**
          * Template of all wins available. (1 means the player you are checking, 0 means everything else (including the player itself)).
@@ -49,8 +49,8 @@ open class TicTacToe(val onWin: (Player) -> Unit) {
      *
      * Must be a 9 characters [String]. The following characters are allowed:
      * - *0* means empty.
-     * - *1* means [Player.P1]
-     * - *2* means [Player.P2]
+     * - *1* means [TTTPlayer.P1]
+     * - *2* means [TTTPlayer.P2]
      */
     var table = "000000000"
 
@@ -62,11 +62,11 @@ open class TicTacToe(val onWin: (Player) -> Unit) {
      * @param[index] the index on table that the player changed.
      * @param[player] the player.
      */
-    fun play(index: Int, player: Player) {
+    fun play(index: Int, player: TTTPlayer) {
         table = copyTableWith(index, player, table)
         (hasWinner(table) ?: {
             if (countEmptySpaces(table) <= 2) {
-                var returner : Player? = Player.ENVIROMENT
+                var returner : TTTPlayer? = TTTPlayer.ENVIRONMENT
                 arrayOf("12", "21")
                         .map { it.toCharArray().map { it.toString() } }
                         .forEach {
@@ -74,7 +74,7 @@ open class TicTacToe(val onWin: (Player) -> Unit) {
                             it.forEach {
                                 workingOn = copyTableWith(
                                         nextEmptySpace(workingOn),
-                                        if (it == "1") Player.P1 else Player.P2,
+                                        if (it == "1") TTTPlayer.P1 else TTTPlayer.P2,
                                         workingOn
                                 )
                             }
@@ -86,27 +86,27 @@ open class TicTacToe(val onWin: (Player) -> Unit) {
     }
 
     /**
-     * Replaces a specified index in a [String] with a player mark.
+     * Replaces a specified index in a [String] with a TTTPlayer mark.
      *
      * @param[index] the index to replace.
-     * @param[player] the player to mark.
+     * @param[TTTPlayer] the TTTPlayer to mark.
      * @param[table] the table to analyze.
      *
      * @return the replaced table.
      */
-    private fun copyTableWith(index: Int, player: Player, table: String) = "${table.substring(0, index)}${player.id}${table.substring(index + 1)}"
+    private fun copyTableWith(index: Int, TTTPlayer: TTTPlayer, table: String) = "${table.substring(0, index)}${TTTPlayer.id}${table.substring(index + 1)}"
 
     /**
      * Checks if a table has a winner.
      *
      * @param[table] the table to analyze.
      *
-     * @return [Player.P1] if the first player won; [Player.P2] if the second player won. [Player.ENVIROMENT] if the game tied and null if the game didn't ended.
+     * @return [TTTPlayer.P1] if the first player won; [TTTPlayer.P2] if the second player won. [TTTPlayer.ENVIRONMENT] if the game tied and null if the game didn't ended.
      */
-    private fun hasWinner(table: String): Player? {
-        return arrayOf(Player.P1, Player.P2)
+    private fun hasWinner(table: String): TTTPlayer? {
+        return arrayOf(TTTPlayer.P1, TTTPlayer.P2)
                 .firstOrNull {
-                    val copy = table.replace((if (it == Player.P1) Player.P2 else Player.P1).id, "0").replace("2", "1")
+                    val copy = table.replace((if (it == TTTPlayer.P1) TTTPlayer.P2 else TTTPlayer.P1).id, "0").replace("2", "1")
                     wins.any { win ->
                         var match = true
                         win.toCharArray().forEachIndexed { index, it ->  if(it == '1' && copy[index] != it) match = false}
@@ -125,7 +125,7 @@ open class TicTacToe(val onWin: (Player) -> Unit) {
     private fun countEmptySpaces(table: String): Int {
         return table.toCharArray()
                 .filter { c ->
-                    !arrayOf(Player.P1, Player.P2).map { it.id }.any { "$c" == it }
+                    !arrayOf(TTTPlayer.P1, TTTPlayer.P2).map { it.id }.any { "$c" == it }
                 }.count()
     }
 
@@ -136,7 +136,7 @@ open class TicTacToe(val onWin: (Player) -> Unit) {
      *
      * @return the index of the first *0*. -1 if not found.
      */
-    private fun nextEmptySpace(table: String) = table.indexOf(Player.ENVIROMENT.id)
+    private fun nextEmptySpace(table: String) = table.indexOf(TTTPlayer.ENVIRONMENT.id)
 
 
 }

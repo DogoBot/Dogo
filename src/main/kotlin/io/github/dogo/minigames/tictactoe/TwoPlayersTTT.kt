@@ -22,25 +22,25 @@ limitations under the License.
  * @author NathanPB
  * @since 3.1.0
  */
-class TwoPlayersTTT(onWin: (Player) -> Unit) : TicTacToe(onWin), ITTTImp {
+class TwoPlayersTTT(onWin: (TTTPlayer) -> Unit) : TicTacToe(onWin), ITTTImp {
 
     /**
-     * The currentPlayer turn owner.
+     * The turn owner.
      */
-    override var currentPlayer : Player = Player.P1
+    override var currentTTTPlayer : TTTPlayer = TTTPlayer.P1
 
     /**
-     * runs [TicTacToe.play] with [currentPlayer] as player.
+     * Runs [TicTacToe.play] with [currentTTTPlayer] as player.
      */
-     override fun play(index: Int)= play(index, currentPlayer).let {togglePlayer()}
+     override fun play(index: Int)= play(index, currentTTTPlayer).let {togglePlayer()}
 
     /**
-     * Toggles the currentPlayer player
+     * Toggles the currentTTTPlayer player.
      */
     fun togglePlayer(){
-        currentPlayer = if(currentPlayer == Player.P1) Player.P2 else Player.P1
+        currentTTTPlayer = if(currentTTTPlayer == TTTPlayer.P1) TTTPlayer.P2 else TTTPlayer.P1
     }
 
-    override fun forceWin(player: Player)= onWin(player)
+    override fun forceWin(TTTPlayer: TTTPlayer)= onWin(TTTPlayer)
 
 }

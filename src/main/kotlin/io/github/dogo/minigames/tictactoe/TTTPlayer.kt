@@ -22,11 +22,11 @@ limitations under the License.
  * @author NathanPB
  * @since 3.1.0
  */
-enum class Player(val id: String) {
+enum class TTTPlayer(val id: String) {
     /**
-     * The enviroment, no player.
+     * The environment, no player.
      */
-    ENVIROMENT("0"),
+    ENVIRONMENT("0"),
 
     /**
      * The first player.

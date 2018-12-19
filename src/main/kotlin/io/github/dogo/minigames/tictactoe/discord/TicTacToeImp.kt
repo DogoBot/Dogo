@@ -6,13 +6,12 @@ import io.github.dogo.core.entities.DogoUser
 import io.github.dogo.menus.SimpleReactionMenu
 import io.github.dogo.minigames.tictactoe.ITTTImp
 import io.github.dogo.minigames.tictactoe.OnePlayerTTT
-import io.github.dogo.minigames.tictactoe.Player
+import io.github.dogo.minigames.tictactoe.TTTPlayer
 import io.github.dogo.minigames.tictactoe.TwoPlayersTTT
 import io.github.dogo.statistics.TicTacToeStatistics
 import io.github.dogo.utils.EmoteReference
 import io.github.dogo.utils.ThemeColor
 import net.dv8tion.jda.core.EmbedBuilder
-import java.util.*
 
 /*
 Copyright 2019 Nathan Bombana
@@ -41,12 +40,12 @@ class TicTacToeImp(context: CommandContext, val p1: DogoUser, val p2: DogoUser) 
     /**
      * Runs when someone wins.
      */
-    private val onWin: (Player)->Unit = {
+    private val onWin: (TTTPlayer)->Unit = {
         this.build(
                 createEmbed()
                         .appendDescription("\n"+when(it){
-                            Player.ENVIROMENT -> context.langEntry.getText(context.lang, "tie")
-                            else -> context.langEntry.getText(context.lang, "winner", (if(it == Player.P1) p1 else p2).formatName(context.guild))
+                            TTTPlayer.ENVIRONMENT -> context.langEntry.getText(context.lang, "tie")
+                            else -> context.langEntry.getText(context.lang, "winner", (if(it == TTTPlayer.P1) p1 else p2).formatName(context.guild))
                         })
         )
         this.send()
@@ -60,16 +59,16 @@ class TicTacToeImp(context: CommandContext, val p1: DogoUser, val p2: DogoUser) 
      * It will be [OnePlayerTTT] if one of [p1] or [p2] are bots, or [TwoPlayersTTT] if the two players are humans.
      */
     val ttt: ITTTImp = when {
-        p1.isBot() -> OnePlayerTTT(onWin, Player.P2)
-        p2.isBot() -> OnePlayerTTT(onWin, Player.P1)
+        p1.isBot() -> OnePlayerTTT(onWin, TTTPlayer.P2)
+        p2.isBot() -> OnePlayerTTT(onWin, TTTPlayer.P1)
         else -> TwoPlayersTTT(onWin)
     }
 
     /**
      * Sets the player statistics.
      */
-    private fun dumbSetStatistics(winner: Player) {
-        TicTacToeStatistics(ttt.table, p1, p2, if(winner != Player.ENVIROMENT) getCurrentPlayer() else null).update()
+    private fun dumbSetStatistics(winner: TTTPlayer) {
+        TicTacToeStatistics(ttt.table, p1, p2, if(winner != TTTPlayer.ENVIRONMENT) getCurrentPlayer() else null).update()
     }
 
     init {
@@ -118,7 +117,7 @@ class TicTacToeImp(context: CommandContext, val p1: DogoUser, val p2: DogoUser) 
      *
      * @return [p1] or [p2]
      */
-    private fun getCurrentPlayer() : DogoUser = if(this.ttt.currentPlayer == Player.P1) p1 else p2
+    private fun getCurrentPlayer() : DogoUser = if(this.ttt.currentTTTPlayer == TTTPlayer.P1) p1 else p2
 
     /**
      * Sends the table and sets its actions.
@@ -144,7 +143,7 @@ class TicTacToeImp(context: CommandContext, val p1: DogoUser, val p2: DogoUser) 
                         }
                     }
             this.addAction(EmoteReference.OCTAGONAL_SIGN, "") {
-                ttt.forceWin(if(ttt.currentPlayer == Player.P1) Player.P2 else Player.P1)
+                ttt.forceWin(if(ttt.currentTTTPlayer == TTTPlayer.P1) TTTPlayer.P2 else TTTPlayer.P1)
             }
         }
         super.send()

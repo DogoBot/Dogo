@@ -8,26 +8,20 @@ import com.mongodb.client.MongoDatabase
 import io.github.dogo.core.DogoBot
 import io.github.dogo.core.JDAListener
 import io.github.dogo.core.command.CommandCategory
-import io.github.dogo.core.command.CommandContext
 import io.github.dogo.core.command.CommandReference
 import io.github.dogo.core.profiles.PermGroup
 import io.github.dogo.server.APIServer
-import io.github.dogo.utils.HastebinUtils
 import io.github.dogo.utils.Holder
 import io.github.dogo.utils.WebUtils
 import net.dv8tion.jda.core.AccountType
-import net.dv8tion.jda.core.EmbedBuilder
 import net.dv8tion.jda.core.JDABuilder
 import net.dv8tion.jda.core.entities.Game
 import org.json.JSONObject
-import java.awt.Color
 import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
-import javax.script.ScriptEngine
-import javax.script.ScriptEngineManager
 
 
 /*
@@ -143,6 +137,9 @@ class Boot {
 
                           }
                       }
+                  }
+                  route(CommandReference("eval", args = 1, category = CommandCategory.OWNER)){
+                      route(io.github.dogo.commands.Eval.KotlinEval())
                   }
                   route(io.github.dogo.commands.Badwords()){
                       route(io.github.dogo.commands.Badwords.Add())

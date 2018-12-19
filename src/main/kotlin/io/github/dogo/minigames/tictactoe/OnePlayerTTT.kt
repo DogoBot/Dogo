@@ -19,27 +19,27 @@ limitations under the License.
 */
 
 /**
- * Single Player Tic Tac Toe. Human Player plays against IA
+ * Single TTTPlayer Tic Tac Toe. Human TTTPlayer plays against IA
  *
  * @author NathanPB
  * @since 3.1.0
  */
-class OnePlayerTTT(onWin: (Player) -> Unit, override var currentPlayer: Player) : TicTacToe(onWin), ITTTImp {
+class OnePlayerTTT(onWin: (TTTPlayer) -> Unit, override var currentTTTPlayer: TTTPlayer) : TicTacToe(onWin), ITTTImp {
 
     /**
-     * runs [TicTacToe.play] with [player] as player.
+     * runs [TicTacToe.play] with [currentTTTPlayer] as player.
      */
     override fun play(index: Int) {
-        play(index, currentPlayer)
+        play(index, currentTTTPlayer)
         if(!hasWinner) {
             this.play({
                 val empty = table.toCharArray().mapIndexed { index, it ->
                     if (it == '0') index else -1
                 }.filter { it > -1 }
                 empty[Random().nextInt(empty.size)]
-            }(), if (currentPlayer == Player.P1) Player.P2 else Player.P1)
+            }(), if (currentTTTPlayer == TTTPlayer.P1) TTTPlayer.P2 else TTTPlayer.P1)
         }
     }
 
-    override fun forceWin(player: Player)= onWin(player)
+    override fun forceWin(TTTPlayer: TTTPlayer)= onWin(TTTPlayer)
 }

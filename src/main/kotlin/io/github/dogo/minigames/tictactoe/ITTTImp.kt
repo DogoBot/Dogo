@@ -26,12 +26,12 @@ interface ITTTImp {
     fun play(index: Int)
 
     /**
-     * The currentPlayer turn's owner.
+     * The currentTTTPlayer turn's owner.
      */
-    var currentPlayer: Player
+    var currentTTTPlayer: TTTPlayer
 
     /**
-     * True if the game has a winner ([Player.ENVIROMENT] is included)
+     * True if the game has a winner ([TTTPlayer.ENVIRONMENT] is included)
      */
     var hasWinner: Boolean
 
@@ -43,5 +43,5 @@ interface ITTTImp {
     /**
      * Forces someone to win the game.
      */
-    fun forceWin(player: Player)
+    fun forceWin(TTTPlayer: TTTPlayer)
 }

@@ -14,6 +14,7 @@ import ninja.leaping.configurate.ConfigurationOptions
 import ninja.leaping.configurate.json.JSONConfigurationLoader
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import sun.misc.Unsafe
 import java.io.File
 import java.io.FileWriter
 import java.util.*
@@ -91,6 +92,11 @@ class DogoBot {
         }()
 
         /**
+         * Directory used to store temporary things
+         */
+        val dynamicDir = File(".dynamic").also { it.mkdirs() }
+
+        /**
          * The logger.
          */
         val logger : Logger
@@ -150,6 +156,15 @@ class DogoBot {
          * True when Dogo finished up the boot process and is ready to use.
          */
         var ready = false
+
+        /**
+         * Simple container for [Unsafe]
+         */
+        val unsafe = Unsafe::class.java.getDeclaredField("theUnsafe")
+                        .let {
+                            it.isAccessible = true
+                            it.get(null) as Unsafe
+                        }
 
         /**
          * Function used to search for valid command prefixes. It will always return the global ones.
