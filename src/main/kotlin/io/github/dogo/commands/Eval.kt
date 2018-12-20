@@ -122,7 +122,7 @@ class Eval {
                                             }
                                             it.eval(formatCode(code))
                                         } as Invocable)
-                                        .invokeFunction("run", this) ?: "No Returns")
+                                        .invokeFunction("run", this).let { if(it is Unit) null else it } ?: "No Returns")
                                         .let { desc.append(it) }
                             } catch (ex: Exception) {
                                 embed.setColor(Color.RED)
