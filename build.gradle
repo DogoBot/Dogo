@@ -57,10 +57,11 @@ dependencies {
     compile 'org.apache.logging.log4j:log4j-core:2.11.1'
     compile 'org.apache.logging.log4j:log4j-api:2.11.1'
 
-    compile 'org.jetbrains.kotlin:kotlin-compilern:1.3.11'
     compile 'org.jetbrains.kotlin:kotlin-script-runtime:1.3.11'
     compile 'org.jetbrains.kotlin:kotlin-script-util:1.3.11'
     compile 'org.jetbrains.kotlin:kotlin-compiler-embeddable:1.3.11'
+    
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.1'
 
 }
 
