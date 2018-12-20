@@ -1,5 +1,6 @@
 package io.github.dogo.commands
 
+import com.mashape.unirest.http.Unirest
 import com.sun.org.glassfish.external.statistics.Statistic
 import io.github.dogo.badwords.BadwordFinder
 import io.github.dogo.badwords.BadwordListener
@@ -92,11 +93,12 @@ class Eval {
                 SystemUtils::class,
                 ThemeColor::class,
                 UnitUtils::class,
-                WebUtils::class,
 
                 Guild::class,
                 Message::class,
-                User::class
+                User::class,
+
+                Unirest::class
         )
                 .map { "import ${it.qualifiedName}\n" }
                 .joinToString("")

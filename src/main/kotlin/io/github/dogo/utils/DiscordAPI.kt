@@ -1,5 +1,6 @@
 package io.github.dogo.utils
 
+import com.mashape.unirest.http.Unirest
 import io.github.dogo.server.token.Token
 import org.json.JSONObject
 
@@ -47,10 +48,11 @@ class DiscordAPI {
          * @throws [java.io.IOException]
          */
         fun fetchUser(auth: String, type: String): JSONObject {
-            return JSONObject(WebUtils.get(
-                    "https://discordapp.com/api/v6/users/@me",
-                    headers = arrayOf(Pair("Authorization", "$type $auth"))
-            ))
+            return JSONObject(
+                    Unirest.get("https://discordapp.com/api/v6/users/@me")
+                            .header("Authorization", "$type $auth")
+                            .asString().body
+            )
         }
     }
 }

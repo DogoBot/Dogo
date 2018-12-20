@@ -1,5 +1,6 @@
 package io.github.dogo.core.boot
 
+import com.mashape.unirest.http.Unirest
 import com.mongodb.MongoClient
 import com.mongodb.MongoClientOptions
 import com.mongodb.MongoCredential
@@ -12,7 +13,6 @@ import io.github.dogo.core.command.CommandReference
 import io.github.dogo.core.profiles.PermGroup
 import io.github.dogo.server.APIServer
 import io.github.dogo.utils.Holder
-import io.github.dogo.utils.WebUtils
 import net.dv8tion.jda.core.AccountType
 import net.dv8tion.jda.core.JDABuilder
 import net.dv8tion.jda.core.entities.Game
@@ -115,12 +115,12 @@ class Boot {
                           Executors.newSingleThreadExecutor().execute {
                               replySynk("preparing", preset = true)
                               try{
-                                  WebUtils.get("${DogoBot.data.JENKINS.URL}/job/${DogoBot.data.JENKINS.JOB_NAME}/build?token=${DogoBot.data.JENKINS.AUTH_TOKEN}")
+                                  Unirest.get("${DogoBot.data.JENKINS.URL}/job/${DogoBot.data.JENKINS.JOB_NAME}/build?token=${DogoBot.data.JENKINS.AUTH_TOKEN}")
 
                                   var json: JSONObject
                                   do {
-                                      json = JSONObject(WebUtils.get("${DogoBot.data.JENKINS.URL}/job/${DogoBot.data.JENKINS.JOB_NAME}/lastBuild/api/json"))
-                                      val queue = JSONObject(WebUtils.get("${DogoBot.data.JENKINS.URL}/queue/api/json"))
+                                      json = JSONObject(Unirest.get("${DogoBot.data.JENKINS.URL}/job/${DogoBot.data.JENKINS.JOB_NAME}/lastBuild/api/json").asString().body)
+                                      val queue = JSONObject(Unirest.get("${DogoBot.data.JENKINS.URL}/queue/api/json").asString().body)
                                       Thread.sleep(1000)
                                   } while (queue.getJSONArray("items").length() > 0 || !json.keySet().contains("result") || json["result"] == null)
 

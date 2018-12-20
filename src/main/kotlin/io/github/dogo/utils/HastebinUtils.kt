@@ -42,7 +42,7 @@ class HastebinUtils {
                         .header("Content-Type", "text/plain")
                         .body(text)
                         .asJson()
-                        .getBody()
+                        .body
                         .getObject()
                         .getString("key")
 
@@ -52,6 +52,6 @@ class HastebinUtils {
          * @param[id] the upload token.
          * @return the text.
          */
-        fun download(id: String) = WebUtils.get("${URL}raw/$id")
+        fun download(id: String) = Unirest.get("${URL}raw/$id").asString().body
     }
 }
