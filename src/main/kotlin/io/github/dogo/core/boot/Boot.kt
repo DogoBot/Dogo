@@ -114,22 +114,24 @@ class Boot {
                       execute {
                           Executors.newSingleThreadExecutor().execute {
                               replySynk("preparing", preset = true)
-                              try{
+                              try {
                                   Unirest.get("${DogoBot.data.JENKINS.URL}/job/${DogoBot.data.JENKINS.JOB_NAME}/build?token=${DogoBot.data.JENKINS.AUTH_TOKEN}")
 
                                   var json: JSONObject
                                   do {
-                                      json = JSONObject(Unirest.get("${DogoBot.data.JENKINS.URL}/job/${DogoBot.data.JENKINS.JOB_NAME}/lastBuild/api/json").asString().body)
-                                      val queue = JSONObject(Unirest.get("${DogoBot.data.JENKINS.URL}/queue/api/json").asString().body)
+                                      json = Unirest.get("${DogoBot.data.JENKINS.URL}/job/${DogoBot.data.JENKINS.JOB_NAME}/lastBuild/api/json").asJson().body.`object`
                                       Thread.sleep(1000)
-                                  } while (queue.getJSONArray("items").length() > 0 || !json.keySet().contains("result") || json["result"] == null)
+                                  } while (json["result"] == null)
 
-                                  if(json["result"] == "FAILED") throw Exception()
+                                  if(json["result"] == "FAILED") {
+                                      throw Exception() //to trigger catch block
+                                  } else {
+                                      replySynk("success", preset = true)
+                                      DogoBot.logger.warn("Dogo is restarting to apply new build!")
+                                      Thread.sleep(3000)
+                                      System.exit(3) //exit code for update restart
+                                  }
 
-                                  replySynk("success", preset = true)
-                                  DogoBot.logger.warn("Dogo is restarting to apply new build!")
-                                  Thread.sleep(3000)
-                                  System.exit(3)
                               } catch (ex: java.lang.Exception){
                                   replySynk("failed", preset = true)
                                   return@execute
