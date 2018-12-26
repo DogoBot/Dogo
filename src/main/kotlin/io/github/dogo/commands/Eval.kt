@@ -34,6 +34,7 @@ import io.github.dogo.statistics.StatisticsFinder
 import io.github.dogo.statistics.TicTacToeStatistics
 import io.github.dogo.utils.*
 import net.dv8tion.jda.core.EmbedBuilder
+import net.dv8tion.jda.core.entities.Game
 import net.dv8tion.jda.core.entities.Guild
 import net.dv8tion.jda.core.entities.Message
 import net.dv8tion.jda.core.entities.User
@@ -97,6 +98,8 @@ class Eval {
                 Guild::class,
                 Message::class,
                 User::class,
+                EmbedBuilder::class,
+                Game::class,
 
                 Unirest::class
         )
@@ -107,10 +110,11 @@ class Eval {
     class KotlinEval : ReferencedCommand(
             CommandReference("kotlin", aliases = "kt", args = 1),
             {
+                val embedPast = replySynk(EmbedBuilder().setColor(Color.YELLOW).setTitle("Evaluating...").build())
                 System.setProperty("idea.io.use.fallback", "true")
                 val desc = StringBuilder()
                 EmbedBuilder()
-                        .setFooter("Kotlin Evaluation", "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Kotlin-logo.svg/220px-Kotlin-logo.svg.png000000")
+                        .setAuthor("Kotlin Evaluation")
                         .setColor(Color.GREEN)
                         .also { embed ->
                             try {
@@ -132,12 +136,18 @@ class Eval {
                             }
                         }.let {
                             it.setDescription(
-                                    "Result: "+
-                                            if(desc.length > 1500){
-                                                "[Hastebin](${HastebinUtils.URL}${HastebinUtils.upload(it.descriptionBuilder.toString())})"
-                                            } else "\n```$desc```"
+                                "Result: "+
+                                if(desc.length > 1500){
+                                    "[Hastebin](${HastebinUtils.URL}${HastebinUtils.upload(it.descriptionBuilder.toString())})"
+                                } else "\n```$desc```"
                             )
-                            reply(it.build())
+                            DogoBot.jdaOutputThread.submit {
+                                embedPast.editMessage(
+                                        it.setFooter("Took ${UnitUtils.timeSince(embedPast.creationTime.toInstant().toEpochMilli())/1000} seconds", null)
+                                        .setAuthor("Kotlin Evaluation", "https://kotlinlang.org", "https://kotlinlang.org/assets/images/open-graph/kotlin_250x250.png")
+                                        .build()
+                                ).complete()
+                            }
                         }
             }
     ) {
