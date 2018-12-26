@@ -37,8 +37,8 @@ class HastebinUtils {
          *
          * @return the document token.
          */
-        fun upload(text: String) = Unirest.post("https://hastebin.com/documents")
-                        .header("User-Agent", "PCBRecBot")
+        fun upload(text: String) = Unirest.post("$URL/documents")
+                        .header("User-Agent", "DogoBot")
                         .header("Content-Type", "text/plain")
                         .body(text)
                         .asJson()
