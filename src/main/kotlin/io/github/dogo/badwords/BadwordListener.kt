@@ -4,6 +4,7 @@ import io.github.dogo.core.DogoBot
 import io.github.dogo.core.entities.DogoGuild
 import io.github.dogo.core.entities.DogoUser
 import io.github.dogo.core.eventBus.EventBus
+import io.github.dogo.events.badword.BadwordMessageCensoredEvent
 import net.dv8tion.jda.core.EmbedBuilder
 import net.dv8tion.jda.core.Permission
 import net.dv8tion.jda.core.entities.Message
@@ -60,8 +61,10 @@ class BadwordListener {
         val guild = DogoGuild(msg.guild)
         val user = DogoUser(echos[msg]?.also { echos.remove(msg) } ?: msg.author.id)
         if (user.id != DogoBot.jda!!.selfUser.id && !user.getPermGroups().can("badword.bypass")) {
-            val newmsg = msg.contentDisplay.replaceBadwords(guild.badwords.badwords)
-            if (newmsg != msg.contentDisplay) {
+            val container = mutableListOf<String>()
+            val newmsg = msg.contentDisplay.replaceBadwords(guild.badwords.badwords, container)
+            if (container.isNotEmpty()) {
+                DogoBot.eventBus.submit(BadwordMessageCensoredEvent(guild, msg, container))
                 DogoBot.jdaOutputThread.execute {
                     msg.channel.sendMessage(newmsg.createEmbed(user).build()).complete()
                     msg.delete().complete()
@@ -74,14 +77,16 @@ class BadwordListener {
      * Replaces the badwords in a String
      *
      * @param[badwords] the badwords.
+     * @param[container] an empty list. It will be filled with the replaced words.
      *
      * @return the string replaced.
      */
-    fun String.replaceBadwords(badwords: List<String>): String {
+    fun String.replaceBadwords(badwords: List<String>, container: MutableList<String>): String {
         return this.split(" ")
                 .filter { it.isNotEmpty() }
                 .map { word ->
                     if(badwords.any { word.contains(it, ignoreCase = true) }){
+                        container.add(badwords.first { word.contains(it, ignoreCase = true) })
                         val sw = StringBuilder("``")
                         for(i in 0..word.length) sw.append("*")
                         sw.toString()+"``"

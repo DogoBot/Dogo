@@ -1,9 +1,14 @@
 package io.github.dogo.commands
 
+import com.google.common.eventbus.EventBus
 import io.github.dogo.core.DogoBot
 import io.github.dogo.core.command.CommandCategory
 import io.github.dogo.core.command.CommandReference
 import io.github.dogo.core.command.ReferencedCommand
+import io.github.dogo.events.badword.BadwordAddedEvent
+import io.github.dogo.events.badword.BadwordListAddedEvent
+import io.github.dogo.events.badword.BadwordListRemovedEvent
+import io.github.dogo.events.badword.BadwordRemovedEvent
 import io.github.dogo.menus.ListReactionMenu
 
 /*
@@ -54,6 +59,8 @@ class Badwords : ReferencedCommand(
                                 it.update()
                             }
                         }.let {
+                            DogoBot.eventBus.submit(BadwordListAddedEvent(guild!!, sender, it))
+                            it.forEach { DogoBot.eventBus.submit(BadwordAddedEvent(guild, sender, it)) }
                             ListReactionMenu(this, it,
                                     embedBuild = {it.setAuthor(langEntry.getText(lang, "author"))}
                             ).showPage(0)
@@ -75,6 +82,8 @@ class Badwords : ReferencedCommand(
                                 it.update()
                             }
                         }.let {
+                            DogoBot.eventBus.submit(BadwordListRemovedEvent(guild!!, sender, it))
+                            it.forEach { DogoBot.eventBus.submit(BadwordRemovedEvent(guild, sender, it)) }
                             ListReactionMenu(this, it,
                                     embedBuild = {it.setAuthor(langEntry.getText(lang, "author"))}
                             ).showPage(0)
