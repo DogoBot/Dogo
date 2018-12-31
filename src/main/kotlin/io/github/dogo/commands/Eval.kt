@@ -39,9 +39,11 @@ import net.dv8tion.jda.core.entities.Guild
 import net.dv8tion.jda.core.entities.Message
 import net.dv8tion.jda.core.entities.User
 import org.jetbrains.kotlin.script.jsr223.KotlinJsr223JvmLocalScriptEngineFactory
+import org.jsoup.Jsoup
 import java.awt.Color
 import java.io.PrintWriter
 import java.io.StringWriter
+import java.net.URL
 import javax.script.Invocable
 
 class Eval {
@@ -88,6 +90,7 @@ class Eval {
                 DiscordAPI::class,
                 DisplayUtils::class,
                 EmoteReference::class,
+                FacebookUtils::class,
                 FileUtils::class,
                 HastebinUtils::class,
                 Holder::class,
@@ -101,7 +104,10 @@ class Eval {
                 EmbedBuilder::class,
                 Game::class,
 
-                Unirest::class
+                URL::class,
+
+                Unirest::class,
+                Jsoup::class
         )
                 .map { "import ${it.qualifiedName}\n" }
                 .joinToString("")
