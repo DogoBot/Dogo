@@ -25,6 +25,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+//todo IMPORTANT redo that fucking class because its bad-done as fuck and I'm not planning to maintain this shit on Dogo =)
+
 /**
  * Utility methods about Facebook
  *
@@ -34,35 +36,6 @@ limitations under the License.
 class FacebookUtils {
     companion object {
 
-        /**
-         * Builds a embed representation of the latest post from a page.
-         *
-         * @param[pagename] the page id.
-         *
-         * @return the embed representation.
-         */
-        fun getLastPostEmbed(pagename: String) = EmbedBuilder().setColor(ThemeColor.PRIMARY)
-                .setAuthor(
-                        FacebookUtils.getName(pagename),
-                        "https://facebook.com/$pagename",
-                        FacebookUtils.getProfilePic(pagename)
-                )
-                .also {embed ->
-                    FacebookUtils.getLastPost(pagename).let {
-                        if(it.keySet().contains("text"))
-                            embed.setDescription(
-                                    it.getString("text")
-                                            .let {
-                                                if(it.length > 1024) {
-                                                    it.substring(0, 1021)+"..."
-                                                } else it
-                                            }
-                            )
-
-                        if(it.keySet().contains("preview"))
-                            embed.setImage(it.getString("preview"))
-                    }
-                }
 
         /**
          * Fetch the latest post from a page.
@@ -84,6 +57,16 @@ class FacebookUtils {
                         if(elements.size > 1)
                             json.put("preview", elements[1].attr("src"))
                     } catch (ex: Exception){}
+
+                    try {
+                        json.put("permalink",
+                                "https://facebook.com/"+
+                                        Jsoup.parse(URL("https://facebook.com/$pagename"), 12000)
+                                                .getElementsByClass("_1dwg").first()
+                                                .getElementsByClass("fsm").first().children()[0].attr("href")
+                        )
+                    } catch (ex: Exception){}
+
                 } catch (ex: Exception) {
                     throw Exception("Profile https://facebook.com/$pagename could not be found")
                 }
@@ -122,6 +105,38 @@ class FacebookUtils {
             } catch (ex: Exception) {
                 throw Exception("Profile https://facebook.com/$pagename could not be found")
             }
+        }
+
+
+        /**
+         * Builds a embed representation of the latest post from a page.
+         *
+         * @param[pagename] the page id.
+         *
+         * @return the embed representation.
+         */
+        fun getLastPostEmbed(pagename: String) : EmbedBuilder {
+            val post = FacebookUtils.getLastPost(pagename)
+            return EmbedBuilder().setColor(ThemeColor.PRIMARY)
+                .setAuthor(
+                    FacebookUtils.getName(pagename),
+                    post.getString("permalink"),
+                    FacebookUtils.getProfilePic(pagename)
+                )
+                .also { embed ->
+                    if(post.keySet().contains("text"))
+                        embed.setDescription(
+                            post.getString("text")
+                            .let {
+                                if(it.length > 1024) {
+                                    it.substring(0, 1021)+"..."
+                                } else it
+                            }
+                        )
+
+                    if(post.keySet().contains("preview"))
+                        embed.setImage(post.getString("preview"))
+                }
         }
     }
 }
