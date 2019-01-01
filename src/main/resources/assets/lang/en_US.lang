@@ -94,3 +94,12 @@ command.trasleite.nope=Nope I don't like you
 command.update.preparing=:warning: Preparing to update...
 command.update.failed=:warning: Something went wrong while building the last update! Check Jenkins for more details!
 command.update.success=<:nathanbb:390267731846627329> Build compiled! Restarting to apply...
+
+##############
+#EVAL COMMAND#
+##############
+command.eval.kotlin.title=Kotlin Evaluation
+command.eval.kotlin.result=Result:
+command.eval.kotlin.noreturn=No Returns
+command.eval.kotlin.took=Took %s seconds
+command.eval.kotlin.evaluating=Evaluating...

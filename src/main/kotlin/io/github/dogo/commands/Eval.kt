@@ -116,11 +116,11 @@ class Eval {
     class KotlinEval : ReferencedCommand(
             CommandReference("kotlin", aliases = "kt", args = 1),
             {
-                val embedPast = replySynk(EmbedBuilder().setColor(Color.YELLOW).setTitle("Evaluating...").build())
+                val embedPast = replySynk(EmbedBuilder().setColor(Color.YELLOW).setTitle(langEntry.getText(lang, "evaluating")).build())
                 System.setProperty("idea.io.use.fallback", "true")
                 val desc = StringBuilder()
                 EmbedBuilder()
-                        .setAuthor("Kotlin Evaluation")
+                        .setAuthor(langEntry.getText(lang, "title"))
                         .setColor(Color.GREEN)
                         .also { embed ->
                             try {
@@ -134,7 +134,7 @@ class Eval {
                                             }
                                             it.eval(formatCode(code))
                                         } as Invocable)
-                                        .invokeFunction("run", this).let { if(it is Unit) null else it } ?: "No Returns")
+                                        .invokeFunction("run", this).let { if(it is Unit) null else it } ?: langEntry.getText(lang, "noreturn"))
                                         .let { desc.append(it) }
                             } catch (ex: Exception) {
                                 embed.setColor(Color.RED)
@@ -142,15 +142,15 @@ class Eval {
                             }
                         }.let {
                             it.setDescription(
-                                "Result: "+
+                                langEntry.getText(lang, "result")+
                                 if(desc.length > 1500){
                                     "[Hastebin](${HastebinUtils.URL}${HastebinUtils.upload(it.descriptionBuilder.toString())})"
                                 } else "\n```$desc```"
                             )
                             DogoBot.jdaOutputThread.submit {
                                 embedPast.editMessage(
-                                        it.setFooter("Took ${UnitUtils.timeSince(embedPast.creationTime.toInstant().toEpochMilli())/1000} seconds", null)
-                                        .setAuthor("Kotlin Evaluation", "https://kotlinlang.org", "https://kotlinlang.org/assets/images/open-graph/kotlin_250x250.png")
+                                        it.setFooter(langEntry.getText(lang, "took", UnitUtils.timeSince(embedPast.creationTime.toInstant().toEpochMilli())/1000), null)
+                                        .setAuthor(langEntry.getText(lang, "title"), "https://kotlinlang.org", "https://kotlinlang.org/assets/images/open-graph/kotlin_250x250.png")
                                         .build()
                                 ).complete()
                             }
