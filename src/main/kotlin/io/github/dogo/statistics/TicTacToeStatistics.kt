@@ -35,7 +35,7 @@ data class TicTacToeStatistics(val table: String, val p1: DogoUser, val p2: Dogo
     if(winner != null && !(p1 == winner || p2 == winner)){
         throw RuntimeException("Winner ${winner.id} is neither p1(${p1.id}) or p2(${p2.id})")
     }
-    Document().append("table", table).append("p1", p1.id).append("p2", p2.id).append("winner", winner?.id)
+    Document().append("table", table).append("p1", p1.id).append("p2", p2.id).append("winner", winner?.id).append("type", "TICTACTOE")
 }()){
 
     /**
@@ -53,6 +53,8 @@ data class TicTacToeStatistics(val table: String, val p1: DogoUser, val p2: Dogo
 
     class Finder : StatisticsFinder<TicTacToeStatistics>() {
         override fun map(doc: Document) = try { TicTacToeStatistics(doc) } catch (ex: Exception) { null }
+
+        init { append("type", "TICTACTOE")}
 
         /**
          * The first player of the game.
