@@ -82,8 +82,6 @@ open class LanguageEntry constructor(val registry : String){
             default = langs["en_US"] ?: mutableMapOf()
             DogoBot.logger.info("Language Assets were loaded successfully!")
         }
-
-        init { load() }
     }
 
     /**

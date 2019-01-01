@@ -11,6 +11,7 @@ import io.github.dogo.core.JDAListener
 import io.github.dogo.core.command.CommandCategory
 import io.github.dogo.core.command.CommandReference
 import io.github.dogo.core.profiles.PermGroup
+import io.github.dogo.lang.LanguageEntry
 import io.github.dogo.server.APIServer
 import io.github.dogo.utils.Holder
 import net.dv8tion.jda.core.AccountType
@@ -82,7 +83,10 @@ class Boot {
                 DogoBot.db?.checkCollection("tokens")
                 DogoBot.db?.checkCollection("badwords")
             },
-            Phase("Registering Commands"){
+            Phase("Loading Language Assets") {
+                LanguageEntry.load()
+            },
+            Phase("Registering Commands") {
               DogoBot.cmdFactory.route {
                   route(io.github.dogo.commands.Help())
                   route(io.github.dogo.commands.TicTacToe())
