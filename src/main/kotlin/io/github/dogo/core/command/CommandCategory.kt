@@ -16,6 +16,6 @@ enum class CommandCategory {
     OWNER;
 
     fun getDisplay(lang : String) : String {
-        return LanguageEntry("cmdcategory").getText(lang, name.toLowerCase())
+        return LanguageEntry("cmdcategory").getTextIn(lang, name.toLowerCase())
     }
 }

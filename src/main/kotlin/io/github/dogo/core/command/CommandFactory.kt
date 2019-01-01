@@ -4,6 +4,7 @@ import io.github.dogo.core.DogoBot
 import io.github.dogo.core.entities.DogoGuild
 import io.github.dogo.core.entities.DogoUser
 import io.github.dogo.core.eventBus.EventBus
+import io.github.dogo.lang.BoundLanguage
 import io.github.dogo.lang.LanguageEntry
 import io.github.dogo.utils.Holder
 import net.dv8tion.jda.core.EmbedBuilder
@@ -56,8 +57,7 @@ class CommandFactory {
                                 if(event.channel !is PrivateChannel){
                                     if(!(event.channel is TextChannel && (event.channel as TextChannel).isNSFW)){
                                         DogoBot.jdaOutputThread.execute {
-                                            val lang = LanguageEntry("text")
-                                            event.channel.sendMessage(lang.getText(user.lang, "error.notnsfwchannel")).queue({}, {})
+                                            event.channel.sendMessage(BoundLanguage(user.lang, "text").getText("error.notnsfwchannel")).queue({}, {})
                                         }
                                         return@let
                                     }
@@ -66,17 +66,17 @@ class CommandFactory {
                             if(cmd.reference.category == CommandCategory.GUILD_ADMINISTRATION && guild == null) {
                                 DogoBot.jdaOutputThread.execute {
                                     val lang = LanguageEntry("text")
-                                    event.channel.sendMessage(lang.getText(user.lang, "error.guildrequired")).queue({}, {})
+                                    event.channel.sendMessage(lang.getTextIn(user.lang, "error.guildrequired")).queue({}, {})
                                 }
                                 return@let
                             }
                             if(cmd.reference.category == CommandCategory.OWNER && !user.getPermGroups().can("commands.admin.root")){
                                 DogoBot.jdaOutputThread.execute {
-                                    val lang = LanguageEntry("text")
+                                    val lang = BoundLanguage(user.lang, "text")
                                     EmbedBuilder()
                                             .setColor(Color.YELLOW)
-                                            .setTitle(lang.getText(user.lang, "error.commandforbidden.title"))
-                                            .setDescription(lang.getText(user.lang, "error.commandforbidden.description", "command.admin.root"))
+                                            .setTitle(lang.getText("error.commandforbidden.title"))
+                                            .setDescription(lang.getText("error.commandforbidden.description", "command.admin.root"))
                                 }
                                 return@let
                             }
@@ -87,24 +87,24 @@ class CommandFactory {
 
                         } else {
                             DogoBot.jdaOutputThread.execute {
-                                val lang = LanguageEntry("text")
+                                val lang = BoundLanguage(user.lang, "text")
                                 event.channel.sendMessage(
                                         EmbedBuilder()
                                                 .setColor(Color.YELLOW)
-                                                .setTitle(lang.getText(user.lang, "error.argsmissing.title"))
-                                                .setDescription(lang.getText(user.lang, "error.argsmissing.description", args.size, cmd.reference.args))
+                                                .setTitle(lang.getText("error.argsmissing.title"))
+                                                .setDescription(lang.getText("error.argsmissing.description", args.size, cmd.reference.args))
                                                 .build()
                                 ).queue({}, {})
                             }
                         }
                     } else {
                         DogoBot.jdaOutputThread.execute {
-                            val lang = LanguageEntry("text")
+                            val lang = BoundLanguage(user.lang, "text")
                             event.channel.sendMessage(
                                     EmbedBuilder()
                                             .setColor(Color.YELLOW)
-                                            .setTitle(lang.getText(user.lang, "error.commandforbidden.title"))
-                                            .setDescription(lang.getText(user.lang, "error.commandforbidden.description", cmd.getPermission()))
+                                            .setTitle(lang.getText("error.commandforbidden.title"))
+                                            .setDescription(lang.getText("error.commandforbidden.description", cmd.getPermission()))
                                             .build()
                             ).queue({}, {})
                         }

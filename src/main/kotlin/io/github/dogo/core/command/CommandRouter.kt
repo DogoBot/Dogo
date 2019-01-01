@@ -7,19 +7,15 @@ import org.json.JSONObject
 class CommandRouter(val reference: CommandReference, body: CommandRouter.()->Unit) {
     val children = mutableListOf<CommandRouter>()
     var run: ReferencedCommand? = null
-    lateinit var langEntry: LanguageEntry
     var parent: CommandRouter? = null
 
-    init {
-        body()
-    }
+    init { body() }
 
     fun CommandRouter.route(reference: CommandReference, body: CommandRouter.()->Unit) : CommandRouter {
         return CommandRouter(reference, body)
                 .also {
                     it.parent = this
                     children.add(it)
-                    it.langEntry = LanguageEntry(it.getPermission())
                 }
     }
 

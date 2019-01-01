@@ -41,16 +41,16 @@ class TicTacToe : ReferencedCommand(
                 SimpleReactionMenu(this).also {
                     it.target = friend.id
                     it.timeout = DogoBot.data.TIMEOUTS.GENERAL
-                    it.embed = EmbedBuilder().setColor(ThemeColor.PRIMARY).setTitle(langEntry.getText(lang, "title", sender.formatName(guild)))
+                    it.embed = EmbedBuilder().setColor(ThemeColor.PRIMARY).setTitle(langEntry.getText("title", sender.formatName(guild)))
                     val refuse = {
                         it.end(true)
                         reply("refused", DogoUser(friend).formatName(guild), preset = true)
                     }
-                    it.addAction(EmoteReference.WHITE_CHECK_MARK, langEntry.getText(lang, "accept")){
+                    it.addAction(EmoteReference.WHITE_CHECK_MARK, langEntry.getText("accept")){
                         TicTacToeImp(this, sender, DogoUser(friend))
                         it.end(true)
                     }
-                    it.addAction(EmoteReference.NEGATIVE_SQUARED_CROSS_MARK, langEntry.getText(lang, "deny"), refuse)
+                    it.addAction(EmoteReference.NEGATIVE_SQUARED_CROSS_MARK, langEntry.getText("deny"), refuse)
                     it.build()
                 }.send()
             } else TicTacToeImp(this, sender, DogoUser(friend))

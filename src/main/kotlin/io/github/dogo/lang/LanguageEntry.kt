@@ -1,5 +1,12 @@
 package io.github.dogo.lang
 
+import io.github.dogo.core.DogoBot
+import io.ktor.util.cio.readChannel
+import io.ktor.util.extension
+import kotlinx.coroutines.io.readUTF8Line
+import java.nio.file.*
+import java.nio.file.attribute.BasicFileAttributes
+import java.util.*
 import java.util.concurrent.ConcurrentLinkedDeque
 
 /*
@@ -26,15 +33,62 @@ limitations under the License.
  * @author NathanPB
  * @since 3.1.0
  */
-class LanguageEntry constructor(val registry : String){
-    /**
-     * The default language file.
-     */
-    private val default = LanguageEntry::class.java.getResource("/assets/lang/en_US.lang").readText().toLang()
+open class LanguageEntry constructor(val registry : String){
 
+    companion object {
+        /**
+         * Holds all the language file data
+         */
+        val langs = mutableMapOf<String, MutableMap<String, String>>()
+
+        /**
+         * Default language assets (en_US)
+         */
+        lateinit var default: MutableMap<String, String>
+
+        /**
+         * Loads language files from /assets/lang resources into [langs] and [default]
+         */
+        fun load() {
+            DogoBot.logger.info("Loading language files...")
+            langs.clear()
+            val uri = LanguageEntry::class.java.getResource("/assets/lang").toURI()
+            val fs: FileSystem? = if(uri.scheme == "jar") FileSystems.newFileSystem(uri, mutableMapOf<String, Any>()) else null
+            Files.walkFileTree(Paths.get(uri), object: SimpleFileVisitor<Path>() {
+                override fun visitFile(file: Path?, attrs: BasicFileAttributes?): FileVisitResult {
+                    file?.let {
+                        if(it.extension == "lang"){
+                            val langEntry = file.fileName.toString().split(".")[0]
+                            langs[langEntry] = mutableMapOf()
+                            Files.readAllLines(file)
+                                    .filter { line ->
+                                        !line.startsWith("#") &&
+                                        line.isNotEmpty() &&
+                                        line.contains("=") &&
+                                        line !="\r"
+                                    }
+                                    .forEach { line ->
+                                        val split = line.split("=")
+                                        langs[langEntry]!![split[0]] = split[1]
+                                            .replace("\\n", "\n")
+                                            .replace("\r", "")
+                            }
+                        }
+                    }
+                    return FileVisitResult.CONTINUE
+                }
+            })
+            fs?.close()
+            default = langs["en_US"] ?: mutableMapOf()
+            DogoBot.logger.info("Language Assets were loaded successfully!")
+        }
+
+        init { load() }
+    }
 
     /**
      * Gets an text from language files and format it.
+     * Firstly it will search on the specified locale, if the entry was not found, it will try on the default language. If not found (again), it will return the entry itself.
      *
      * @param[lang] the language. If the supplied value cannot be found, *en_US* will be the default.
      * @param[entry] the entry to look for. Eg: command.help.*helpfor*. Considering *command.help* as [registry] and *helpfor* as [entry].
@@ -44,31 +98,5 @@ class LanguageEntry constructor(val registry : String){
      * @return the text read from language resources. If the entry wasn't found, it will return [registry].[entry].
      *
      */
-    fun getText(lang : String, entry : String, vararg args : Any) : String{
-        var text = LanguageEntry::class.java.getResource("/assets/lang/${lang.split("_")[0].toLowerCase()}_${lang.split("_")[1].toUpperCase()}.lang")?.readText()?.toLang()
-        if(text == null){
-           text = default
-        }
-        return if(text.containsKey("$registry.$entry")){
-            java.lang.String.format(text["$registry.$entry"] as String, *args).replace("\\n", "\n")
-        } else {
-            "$registry.$entry"
-        }
-    }
-
-    /*
-    extension shit
-     */
-    /**
-     * Parses a [String] to a [HashMap]. The key is the entry and the value is the text.
-     */
-    private fun String.toLang() : HashMap<String, String> {
-        val hm = HashMap<String, String>()
-        var array = ConcurrentLinkedDeque<String>(this.split("=", "\n"))
-        array = ConcurrentLinkedDeque(array.filter { t -> t.isNotEmpty() && !t.equals("\r") && !t.startsWith("#")}.map { t -> t.replace("\r", "") })
-        while (array.size >= 2) {
-            hm[array.poll()] = array.poll()
-        }
-        return hm
-    }
+    fun getTextIn(lang : String, entry : String, vararg args : Any) = (langs[lang] ?: default)["$registry.$entry"]?.let { String.format(it, *args) } ?: "$registry.$entry"
 }

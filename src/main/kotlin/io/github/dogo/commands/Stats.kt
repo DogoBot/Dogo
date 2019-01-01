@@ -4,6 +4,7 @@ import io.github.dogo.core.DogoBot
 import io.github.dogo.core.command.CommandCategory
 import io.github.dogo.core.command.CommandReference
 import io.github.dogo.core.command.ReferencedCommand
+import io.github.dogo.lang.BoundLanguage
 import io.github.dogo.lang.LanguageEntry
 import io.github.dogo.menus.SimpleReactionMenu
 import io.github.dogo.utils.BeamUtils
@@ -39,11 +40,11 @@ class Stats : ReferencedCommand(
             }
 
             menu.addAction(EmoteReference.ARROW_COUNTERCLOCKWISE, "Info") {
-                menu.build(getBasicInfo(lang, langEntry))
+                menu.build(getBasicInfo(langEntry))
                 DogoBot.eventBus.unregister(menu)
                 menu.send()
             }
-            menu.build(getBasicInfo(lang, langEntry))
+            menu.build(getBasicInfo(langEntry))
             menu.send()
         }
 ) {
@@ -55,20 +56,20 @@ class Stats : ReferencedCommand(
          * @param[lang] the language.
          * @param[langEntry] the [Stats] command [LanguageEntry].
          */
-        private fun getBasicInfo(lang : String, langEntry: LanguageEntry) : EmbedBuilder {
+        private fun getBasicInfo(langEntry: BoundLanguage) : EmbedBuilder {
             return EmbedBuilder()
                     .setColor(ThemeColor.PRIMARY)
                     .setAuthor("Dogo v${DogoBot.version}", null, DogoBot.jda!!.selfUser.effectiveAvatarUrl)
-                    .setTitle(langEntry.getText(lang, "amihealthy"))
+                    .setTitle(langEntry.getText("amihealthy"))
                     .setThumbnail("https://i.imgur.com/9rmyKUk.png")
-                    .addField(langEntry.getText(lang, "users"), DogoBot.jda?.users?.size.toString(),true)
-                    .addField(langEntry.getText(lang, "guilds"), DogoBot.jda?.guilds?.size.toString(), true)
+                    .addField(langEntry.getText("users"), DogoBot.jda?.users?.size.toString(),true)
+                    .addField(langEntry.getText("guilds"), DogoBot.jda?.guilds?.size.toString(), true)
 
-                    .addField(langEntry.getText(lang, "cpu"), BeamUtils.usedCPU().toString()+"%", true)
-                    .addField(langEntry.getText(lang, "ram"), "${BeamUtils.usedMemory()}MB | ${BeamUtils.maxMemory()}MB", true)
+                    .addField(langEntry.getText("cpu"), BeamUtils.usedCPU().toString()+"%", true)
+                    .addField(langEntry.getText("ram"), "${BeamUtils.usedMemory()}MB | ${BeamUtils.maxMemory()}MB", true)
 
-                    .addField(langEntry.getText(lang, "ping"), "${DogoBot.jda?.ping}ms", true)
-                    .addField(langEntry.getText(lang, "uptime"), DisplayUtils.formatTimeSimple(System.currentTimeMillis() - DogoBot.initTime), true)
+                    .addField(langEntry.getText("ping"), "${DogoBot.jda?.ping}ms", true)
+                    .addField(langEntry.getText("uptime"), DisplayUtils.formatTimeSimple(System.currentTimeMillis() - DogoBot.initTime), true)
         }
     }
 }

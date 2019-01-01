@@ -1,5 +1,6 @@
 package io.github.dogo.interfaces
 
+import io.github.dogo.lang.BoundLanguage
 import io.github.dogo.lang.LanguageEntry
 import net.dv8tion.jda.core.entities.Message
 import net.dv8tion.jda.core.entities.MessageChannel
@@ -36,16 +37,9 @@ interface IRepliable {
     val replyChannel : MessageChannel
 
     /**
-     * The language to get the text.
+     * The language entry to get the text.
      */
-    val lang : String
-
-    /**
-     * The language entry.
-     *
-     * @see [LanguageEntry]
-     */
-    val langEntry : LanguageEntry
+    val langEntry : BoundLanguage
 
     /**
      * Asynchronous reply.
@@ -74,7 +68,7 @@ interface IRepliable {
             var text = content[0].toString()
 
             replyChannel.sendMessage(when {
-                preset -> langEntry.getText(lang, text, *Arrays.copyOfRange(content, 1, content.size))
+                preset -> langEntry.getText(text, *Arrays.copyOfRange(content, 1, content.size))
                 content.size > 1 -> String.format(text, *Arrays.copyOfRange(content, 1, content.size - 1))
                 else -> text
             }).complete()

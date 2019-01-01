@@ -44,8 +44,8 @@ class TicTacToeImp(context: CommandContext, val p1: DogoUser, val p2: DogoUser) 
         this.build(
                 createEmbed()
                         .appendDescription("\n"+when(it){
-                            TTTPlayer.ENVIRONMENT -> context.langEntry.getText(context.lang, "tie")
-                            else -> context.langEntry.getText(context.lang, "winner", (if(it == TTTPlayer.P1) p1 else p2).formatName(context.guild))
+                            TTTPlayer.ENVIRONMENT -> context.langEntry.getText("tie")
+                            else -> context.langEntry.getText("winner", (if(it == TTTPlayer.P1) p1 else p2).formatName(context.guild))
                         })
         )
         this.send()
@@ -87,7 +87,7 @@ class TicTacToeImp(context: CommandContext, val p1: DogoUser, val p2: DogoUser) 
             .setColor(ThemeColor.PRIMARY)
             .also {
                 if(!(ttt is OnePlayerTTT || ttt.hasWinner)){
-                    it.appendDescription(context.langEntry.getText(context.lang, "turn", getCurrentPlayer().formatName(this.context.guild))+"\n\n")
+                    it.appendDescription(context.langEntry.getText("turn", getCurrentPlayer().formatName(this.context.guild))+"\n\n")
                 }
                 it.appendDescription(
                         getTableEmoted().mapIndexed { i, it ->

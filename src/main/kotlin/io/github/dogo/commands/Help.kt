@@ -2,6 +2,7 @@ package io.github.dogo.commands
 
 import io.github.dogo.core.DogoBot
 import io.github.dogo.core.command.*
+import io.github.dogo.lang.BoundLanguage
 import io.github.dogo.utils.Holder
 import io.github.dogo.utils.ThemeColor
 import net.dv8tion.jda.core.EmbedBuilder
@@ -46,7 +47,7 @@ class Help : ReferencedCommand(
                 if(route.reference == CommandRouter.root){
                     val embed = EmbedBuilder()
                             .setColor(ThemeColor.PRIMARY)
-                            .setAuthor(langEntry.getText(lang, "helproot"), null, io.github.dogo.commands.Help.HELP_IMAGE)
+                            .setAuthor(langEntry.getText("helproot"), null, io.github.dogo.commands.Help.HELP_IMAGE)
 
                     val hm = HashMap<CommandCategory, ArrayList<CommandReference>>()
 
@@ -98,7 +99,7 @@ class Help : ReferencedCommand(
             }
 
             embed.addField(cnt.langEntry.getText(cnt.sender.lang, "examples"), if(cmd.reference.usage.isNotEmpty()) usage else cnt.langEntry.getText(cnt.sender.lang, "noexamples"), true)
-            embed.addField(cnt.langEntry.getText(cnt.sender.lang, "cmddescription"), cmd.langEntry.getText(cnt.sender.lang, "description"), true)
+            embed.addField(cnt.langEntry.getText(cnt.sender.lang, "cmddescription"), BoundLanguage(cnt.sender.lang, cmd.getPermission()).getText("description"), true)
 
             val subcommands = cnt.route.children.joinToString {"``${DogoBot.getCommandPrefixes().first()}${it.getFullName()}``\n"}
             if(subcommands.isNotEmpty()){

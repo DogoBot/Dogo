@@ -39,7 +39,7 @@ class Badwords : ReferencedCommand(
                 ListReactionMenu(
                         this,
                         guild.badwords.badwords,
-                        embedBuild = {it.setAuthor(langEntry.getText(lang, "author"))}
+                        embedBuild = {it.setAuthor(langEntry.getText("author"))}
                 ).let {
                     it.timeout = DogoBot.data.TIMEOUTS.GENERAL
                     it.showPage(0)
@@ -62,7 +62,7 @@ class Badwords : ReferencedCommand(
                             DogoBot.eventBus.submit(BadwordListAddedEvent(guild!!, sender, it))
                             it.forEach { DogoBot.eventBus.submit(BadwordAddedEvent(guild, sender, it)) }
                             ListReactionMenu(this, it,
-                                    embedBuild = {it.setAuthor(langEntry.getText(lang, "author"))}
+                                    embedBuild = {it.setAuthor(langEntry.getText("author"))}
                             ).showPage(0)
                         }
                     } else {
@@ -85,11 +85,11 @@ class Badwords : ReferencedCommand(
                             DogoBot.eventBus.submit(BadwordListRemovedEvent(guild!!, sender, it))
                             it.forEach { DogoBot.eventBus.submit(BadwordRemovedEvent(guild, sender, it)) }
                             ListReactionMenu(this, it,
-                                    embedBuild = {it.setAuthor(langEntry.getText(lang, "author"))}
+                                    embedBuild = {it.setAuthor(langEntry.getText("author"))}
                             ).showPage(0)
                         }
                     } else {
-                        reply(langEntry.getText(lang, "nothing"))
+                        reply(langEntry.getText("nothing"))
                     }
                 }
     )
