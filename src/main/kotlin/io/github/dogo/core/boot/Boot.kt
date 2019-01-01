@@ -175,9 +175,7 @@ class Boot {
                 }
             },
             Phase("Initializing API"){
-                DogoBot.apiServer = APIServer().also {
-                    it.server.start()
-                }
+                DogoBot.apiServer = APIServer().also { it.start() }
             },
             Phase("Registering Random Event Listeners"){
                 DogoBot.eventBus.register(io.github.dogo.badwords.BadwordProfile.listener)

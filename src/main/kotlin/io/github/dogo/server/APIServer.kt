@@ -183,6 +183,20 @@ class APIServer {
         }
     }
 
+    /**
+     * The server thread.
+     */
+    private val thread = Thread {
+        server.start()
+    }.also { it.name = "API Server" }
+
+    /**
+     * Starts the server yey
+     */
+    fun start() {
+        thread.start()
+    }
+
     companion object {
 
         /**
