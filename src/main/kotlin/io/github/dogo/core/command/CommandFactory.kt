@@ -63,6 +63,14 @@ class CommandFactory {
                                     }
                                 }
                             }
+
+                            //todo temporary shit
+                            if(cmd.reference.category == CommandCategory.GUILD_ADMINISTRATION && guild != null){
+                                if(!guild.g!!.getMember(user.usr!!).isOwner) {
+                                    return@execute
+                                }
+                            }
+
                             if(cmd.reference.category == CommandCategory.GUILD_ADMINISTRATION && guild == null) {
                                 DogoBot.jdaOutputThread.execute {
                                     val lang = LanguageEntry("text")

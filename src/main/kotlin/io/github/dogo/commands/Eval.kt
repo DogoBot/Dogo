@@ -7,6 +7,7 @@ import io.github.dogo.badwords.BadwordListener
 import io.github.dogo.badwords.BadwordProfile
 import io.github.dogo.core.DogoBot
 import io.github.dogo.core.JDAListener
+import io.github.dogo.core.PermgroupsListener
 import io.github.dogo.core.command.*
 import io.github.dogo.core.data.DogoData
 import io.github.dogo.core.entities.DogoGuild
@@ -20,6 +21,7 @@ import io.github.dogo.interfaces.IFinder
 import io.github.dogo.interfaces.IRepliable
 import io.github.dogo.lang.LanguageEntry
 import io.github.dogo.menus.ListReactionMenu
+import io.github.dogo.menus.SelectorReactionMenu
 import io.github.dogo.menus.SimpleReactionMenu
 import io.github.dogo.minigames.tictactoe.ITTTImp
 import io.github.dogo.minigames.tictactoe.OnePlayerTTT
@@ -66,12 +68,14 @@ class Eval {
                 PermGroupSet::class,
                 DogoBot::class,
                 JDAListener::class,
+                PermgroupsListener::class,
                 APIException::class,
                 DiscordException::class,
                 IFinder::class,
                 IRepliable::class,
                 LanguageEntry::class,
                 ListReactionMenu::class,
+                SelectorReactionMenu::class,
                 SimpleReactionMenu::class,
                 TicTacToeImp::class,
                 ITTTImp::class,

@@ -27,13 +27,12 @@ limitations under the License.
  * @param[context] a command context to extract information like sender, channel, etc.
  * @param[items] the list of items to display.
  * @param[render] the transformation that the strings should undergo before display.
- * @param[render] the transformation that the embed should undergo before display.
- *
+ * @param[embedBuild] the transformation that the embed should undergo before display.
  *
  * @author NathanPB
  * @since 3.1.0
  */
-class ListReactionMenu(context: CommandContext, val items: List<String>, val render: (String)->String = {"$it\n"}, val embedBuild: (EmbedBuilder)->Unit = {}) : SimpleReactionMenu(context) {
+open class ListReactionMenu(context: CommandContext, val items: List<String>, val render: (String, Int)->String = {it, _ ->"$it\n"}, val embedBuild: (EmbedBuilder)->Unit = {}) : SimpleReactionMenu(context) {
 
     /**
      * The list of pages to display.
@@ -48,7 +47,7 @@ class ListReactionMenu(context: CommandContext, val items: List<String>, val ren
      * Sends a page. It also adds buttons to navigate between pages.
      * @see page
      */
-    fun showPage(page: Int) {
+    open fun showPage(page: Int) {
         end()
         build(pages[page])
         if(page != 0){
@@ -89,7 +88,7 @@ class ListReactionMenu(context: CommandContext, val items: List<String>, val ren
         }
         items.forEachIndexed {index, it ->
             val pindex = getPageIndex(index)
-            pages[pindex].appendDescription(render(it))
+            pages[pindex].appendDescription(render(it, index-(pindex*9)))
         }
     }
 

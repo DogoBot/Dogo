@@ -103,3 +103,13 @@ command.eval.kotlin.result=Result:
 command.eval.kotlin.noreturn=No Returns
 command.eval.kotlin.took=Took %s seconds
 command.eval.kotlin.evaluating=Evaluating...
+
+##############
+#NEWS COMMAND#
+##############
+command.news.notconfigured=:warning: There is no webhook configured for this guild! Please use ``%snews configure``
+command.news.configure.pagetitle=Select a Webhook:
+command.news.configure.done=:white_check_mark: New Webhook: **%s**
+command.news.configure.none=You have no Webhooks available! Please create one on guild settings
+command.news.current.current= Current Webhook: **%s**
+command.news.current.none=:warning: There is no webhook configured for this guild! Please use ``%snews configure``

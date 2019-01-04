@@ -4,6 +4,7 @@ import io.github.dogo.core.DogoBot
 import io.github.dogo.core.profiles.PermGroup
 import io.github.dogo.core.profiles.PermGroupSet
 import net.dv8tion.jda.core.entities.Guild
+import net.dv8tion.jda.core.entities.Webhook
 import org.bson.Document
 import java.util.*
 import kotlin.collections.ArrayList
@@ -48,7 +49,14 @@ class DogoGuild (val id : String){
     val badwords: io.github.dogo.badwords.BadwordProfile
         get() = io.github.dogo.badwords.BadwordProfile.cachedEntry(this)
 
-
+    var newsWebhook: Webhook?
+        get() = g?.webhooks?.complete()?.firstOrNull {
+            val doc = find()
+            if(!doc.containsKey("newsWebhook") || doc["newsWebhook"] != null){
+                it.id == doc.getString("newsWebhook")
+            } else false
+        }
+        set(it) = update(Document("\$set", Document("newsWebhook", it?.id)))
 
     fun find() : Document {
         return col?.find(Document("ID", id))?.first() as Document

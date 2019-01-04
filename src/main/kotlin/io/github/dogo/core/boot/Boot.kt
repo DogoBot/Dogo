@@ -147,6 +147,10 @@ class Boot {
                   route(CommandReference("eval", args = 1, category = CommandCategory.OWNER)){
                       route(io.github.dogo.commands.Eval.KotlinEval())
                   }
+                  route(io.github.dogo.commands.WebhookEcho()){
+                      route(io.github.dogo.commands.WebhookEcho.Configure())
+                      route(io.github.dogo.commands.WebhookEcho.Current())
+                  }
                   route(io.github.dogo.commands.Badwords()){
                       route(io.github.dogo.commands.Badwords.Add())
                       route(io.github.dogo.commands.Badwords.Remove())
@@ -159,7 +163,7 @@ class Boot {
                     priority = 0
                     applyTo = arrayListOf("everyone")
                     include = arrayListOf("command.*")
-                    exclude = arrayListOf("command.admin.*")
+                    exclude = arrayListOf("command.admin.*", "command.news.*")
                 }
                 PermGroup("-1").apply {
                     name = "admin"
@@ -179,6 +183,7 @@ class Boot {
             },
             Phase("Registering Random Event Listeners"){
                 DogoBot.eventBus.register(io.github.dogo.badwords.BadwordProfile.listener)
+                DogoBot.eventBus.register(io.github.dogo.core.PermgroupsListener())
             }
     )
 
