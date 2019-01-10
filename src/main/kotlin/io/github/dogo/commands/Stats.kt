@@ -41,7 +41,7 @@ class Stats : ReferencedCommand(
 
             menu.addAction(EmoteReference.ARROW_COUNTERCLOCKWISE, "Info") {
                 menu.build(getBasicInfo(langEntry))
-                DogoBot.eventBus.unregister(menu)
+                DogoBot.eventBus.unregister(menu::onReact)
                 menu.send()
             }
             menu.build(getBasicInfo(langEntry))

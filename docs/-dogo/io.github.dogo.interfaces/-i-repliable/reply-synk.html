@@ -1,0 +1,22 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>IRepliable.replySynk - Dogo</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">Dogo</a>&nbsp;/&nbsp;<a href="../index.html">io.github.dogo.interfaces</a>&nbsp;/&nbsp;<a href="index.html">IRepliable</a>&nbsp;/&nbsp;<a href="./reply-synk.html">replySynk</a><br/>
+<br/>
+<h1>replySynk</h1>
+<a name="io.github.dogo.interfaces.IRepliable$replySynk(kotlin.Array((kotlin.Any)), kotlin.Boolean)"></a>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">replySynk</span><span class="symbol">(</span><span class="keyword">vararg</span> <span class="identifier" id="io.github.dogo.interfaces.IRepliable$replySynk(kotlin.Array((kotlin.Any)), kotlin.Boolean)/content">content</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">, </span><span class="identifier" id="io.github.dogo.interfaces.IRepliable$replySynk(kotlin.Array((kotlin.Any)), kotlin.Boolean)/preset">preset</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Message</span></code>
+<p>Synchronous reply.</p>
+<h3>Parameters</h3>
+<p><a name="content"></a>
+<code>content</code> - the content to reply. The first one should be a <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a> or <a href="#">MessageEmbed</a>. If it isn't, it is converted to <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a> using <a href="http://docs.oracle.com/javase/6/docs/api/java/lang/Object.html#toString()">Object.toString</a>. The other arguments are values to be used on <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.text/format.html">String formatting</a>.</p>
+<p><a name="preset"></a>
+<code>preset</code> - if true, means that the first argument of <a href="reply-synk.html#io.github.dogo.interfaces.IRepliable$replySynk(kotlin.Array((kotlin.Any)), kotlin.Boolean)/content">content</a> is a entry on <a href="../../io.github.dogo.lang/-language-entry/index.html">LanguageEntry</a>, and will reply with its text.</p>
+<p><strong>Return</strong><br/>
+the replied message.</p>
+</BODY>
+</HTML>

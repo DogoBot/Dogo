@@ -145,7 +145,7 @@ class DogoBot {
         /**
          * The command factory.
          */
-        val cmdFactory = CommandFactory().also { DogoBot.eventBus.register(it) }
+        val cmdFactory = CommandFactory().also { DogoBot.eventBus.register(it::onMessage) }
 
         /**
          * The API Server.

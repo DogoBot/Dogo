@@ -11,7 +11,6 @@ import net.dv8tion.jda.core.entities.PrivateChannel
 import net.dv8tion.jda.core.events.message.react.GenericMessageReactionEvent
 import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent
 import net.dv8tion.jda.core.events.message.react.MessageReactionRemoveEvent
-import java.security.Permissions
 import java.util.*
 
 
@@ -108,7 +107,7 @@ open class SimpleReactionMenu(val context: CommandContext) {
      * @param[delete] deletes the message if true. All is relative to the bot permissions on guild.
      */
     fun end(delete : Boolean = true) {
-        DogoBot.eventBus.unregister(eventbusId)
+        DogoBot.eventBus.unregister(this::onReact)
         instances.remove(this)
 
         val member = context.guild?.g?.getMember(DogoBot.jda!!.selfUser)
@@ -128,7 +127,7 @@ open class SimpleReactionMenu(val context: CommandContext) {
      * Edit the message if it already exists.
      */
     open fun send() {
-        eventbusId = DogoBot.eventBus.register(this)
+        DogoBot.eventBus.register(this::onReact)
         msg = if(msg == null) {
             context.replySynk(embed.build())
         } else {
@@ -170,7 +169,6 @@ open class SimpleReactionMenu(val context: CommandContext) {
     /**
      * Listen to reactions and process it.
      */
-    @EventBus.Listener()
     fun onReact(e: GenericMessageReactionEvent) {
         msg?.let {
             if(e.messageId == it.id){

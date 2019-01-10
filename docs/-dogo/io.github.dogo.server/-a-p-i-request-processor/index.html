@@ -1,0 +1,74 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>APIRequestProcessor - Dogo</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">Dogo</a>&nbsp;/&nbsp;<a href="../index.html">io.github.dogo.server</a>&nbsp;/&nbsp;<a href="./index.html">APIRequestProcessor</a><br/>
+<br/>
+<h1>APIRequestProcessor</h1>
+<code><span class="keyword">class </span><span class="identifier">APIRequestProcessor</span></code>
+<p>The processors from routes in <a href="../-a-p-i-server/index.html">APIServer</a>.</p>
+<h3>Parameters</h3>
+<p><a name="data"></a>
+<code>data</code> - the data to output as response body.</p>
+<p><a name="run"></a>
+<code>run</code> - the code to execute when the route is accessed.</p>
+<p><strong>Author</strong><br/>
+NathanPB</p>
+<p><strong>Since</strong><br/>
+3.1.0</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">APIRequestProcessor</span><span class="symbol">(</span><span class="identifier" id="io.github.dogo.server.APIRequestProcessor$<init>(org.json.JSONObject, kotlin.Function1((org.json.JSONObject, kotlin.Unit)))/data">data</span><span class="symbol">:</span>&nbsp;<span class="identifier">JSONObject</span>&nbsp;<span class="symbol">=</span>&nbsp;JSONObject()<span class="symbol">, </span><span class="identifier" id="io.github.dogo.server.APIRequestProcessor$<init>(org.json.JSONObject, kotlin.Function1((org.json.JSONObject, kotlin.Unit)))/run">run</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><span class="identifier">JSONObject</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span></code>
+<p>The processors from routes in <a href="../-a-p-i-server/index.html">APIServer</a>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="code.html">code</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">code</span><span class="symbol">: </span><span class="identifier">HttpStatusCode</span></code>
+<p>The HTTP Status Code</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="data.html">data</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">data</span><span class="symbol">: </span><span class="identifier">JSONObject</span></code>
+<p>the data to output as response body.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="to-string.html">toString</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">toString</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code>
+<p>Formats the output adding <a href="code.html"><em>code</em></a> and <a href="#"><em>description</em></a>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

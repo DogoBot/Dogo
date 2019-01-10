@@ -1,0 +1,28 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>APIServer.getAuthorization - Dogo</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">Dogo</a>&nbsp;/&nbsp;<a href="../index.html">io.github.dogo.server</a>&nbsp;/&nbsp;<a href="index.html">APIServer</a>&nbsp;/&nbsp;<a href="./get-authorization.html">getAuthorization</a><br/>
+<br/>
+<h1>getAuthorization</h1>
+<a name="io.github.dogo.server.APIServer.Companion$getAuthorization(io.ktor.application.ApplicationCall, kotlin.Array((kotlin.String)))"></a>
+<code><span class="keyword">fun </span><span class="identifier">getAuthorization</span><span class="symbol">(</span><span class="identifier" id="io.github.dogo.server.APIServer.Companion$getAuthorization(io.ktor.application.ApplicationCall, kotlin.Array((kotlin.String)))/call">call</span><span class="symbol">:</span>&nbsp;<span class="identifier">ApplicationCall</span><span class="symbol">, </span><span class="keyword">vararg</span> <span class="identifier" id="io.github.dogo.server.APIServer.Companion$getAuthorization(io.ktor.application.ApplicationCall, kotlin.Array((kotlin.String)))/validScopes">validScopes</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../io.github.dogo.server.token/-token/index.html"><span class="identifier">Token</span></a><span class="symbol">?</span></code>
+<p>Finds the Authorization header on the request and get its token. Throws <a href="../../io.github.dogo.exceptions/-a-p-i-exception/index.html">APIException</a> if the Authorization header is not well formatted.</p>
+<h3>Parameters</h3>
+<p><a name="call"></a>
+<code>call</code> - the application call from kTor.</p>
+<p><a name="validScopes"></a>
+<code>validScopes</code> - the required valid scopes (OR). Eg. email OR identify OR guilds. That means that the token is valid if the scopes contains 'email' OR contains 'identify' OR contains 'guilds'</p>
+<h3>Exceptions</h3>
+<p><a name="APIException"></a>
+<code>APIException</code> - </p>
+<p><strong>Return</strong><br/>
+the token found that matches its Authorization. Null if:</p>
+<p><strong>See Also</strong><br/>
+<p><a href="../../io.github.dogo.server.token/-token/is-valid.html">Token.isValid</a></p>
+</p>
+</BODY>
+</HTML>

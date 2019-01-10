@@ -1,0 +1,74 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>APIServer - Dogo</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">Dogo</a>&nbsp;/&nbsp;<a href="../index.html">io.github.dogo.server</a>&nbsp;/&nbsp;<a href="./index.html">APIServer</a><br/>
+<br/>
+<h1>APIServer</h1>
+<code><span class="keyword">class </span><span class="identifier">APIServer</span></code>
+<p>Holds the embedded web server from kTor, that provides the Web API.</p>
+<h1>Configurations</h1>
+<p>kTor web server is initialized with the route specified with information contained in <a href="../../io.github.dogo.core/-dogo-bot/data.html">DogoBot.data</a>.</p>
+<ul><li>Port: <a href="../../io.github.dogo.core.data/-a-p-i/-p-o-r-t.html">io.github.dogo.core.data.API.PORT</a>.</li>
+<li>Route Root: <a href="../../io.github.dogo.core.data/-a-p-i/-r-o-u-t-e.html">io.github.dogo.core.data.API.ROUTE</a>.</li>
+</ul>
+<p><strong>Author</strong><br/>
+NathanPB</p>
+<p><strong>Since</strong><br/>
+3.1.0</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">APIServer</span><span class="symbol">(</span><span class="symbol">)</span></code>
+<p>Holds the embedded web server from kTor, that provides the Web API.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="server.html">server</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">server</span><span class="symbol">: </span><span class="identifier">NettyApplicationEngine</span></code>
+<p>The server.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="tokens-hash.html">tokensHash</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">tokensHash</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html"><span class="identifier">MutableList</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">&gt;</span></code>
+<p>List of temporarily authorized hashes, generated from route '.../token/add/fromdiscord' and checked in '.../token/add'.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Companion Object Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="get-authorization.html">getAuthorization</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getAuthorization</span><span class="symbol">(</span><span class="identifier" id="io.github.dogo.server.APIServer.Companion$getAuthorization(io.ktor.application.ApplicationCall, kotlin.Array((kotlin.String)))/call">call</span><span class="symbol">:</span>&nbsp;<span class="identifier">ApplicationCall</span><span class="symbol">, </span><span class="keyword">vararg</span> <span class="identifier" id="io.github.dogo.server.APIServer.Companion$getAuthorization(io.ktor.application.ApplicationCall, kotlin.Array((kotlin.String)))/validScopes">validScopes</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../io.github.dogo.server.token/-token/index.html"><span class="identifier">Token</span></a><span class="symbol">?</span></code>
+<p>Finds the Authorization header on the request and get its token. Throws <a href="../../io.github.dogo.exceptions/-a-p-i-exception/index.html">APIException</a> if the Authorization header is not well formatted.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

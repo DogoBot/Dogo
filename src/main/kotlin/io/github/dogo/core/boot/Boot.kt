@@ -182,8 +182,11 @@ class Boot {
                 DogoBot.apiServer = APIServer().also { it.start() }
             },
             Phase("Registering Random Event Listeners"){
-                DogoBot.eventBus.register(io.github.dogo.badwords.BadwordProfile.listener)
-                DogoBot.eventBus.register(io.github.dogo.core.PermgroupsListener())
+                DogoBot.eventBus.register(io.github.dogo.badwords.BadwordProfile.listener::listenSend)
+                DogoBot.eventBus.register()
+                io.github.dogo.core.PermgroupsListener().let {
+                    DogoBot.eventBus.register(it::onEvent1, it::onEvent2)
+                }
             }
     )
 

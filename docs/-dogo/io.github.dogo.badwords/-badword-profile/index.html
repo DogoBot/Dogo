@@ -1,0 +1,147 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>BadwordProfile - Dogo</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">Dogo</a>&nbsp;/&nbsp;<a href="../index.html">io.github.dogo.badwords</a>&nbsp;/&nbsp;<a href="./index.html">BadwordProfile</a><br/>
+<br/>
+<h1>BadwordProfile</h1>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">BadwordProfile</span></code>
+<p>Data Class that holds Badwords from guilds.</p>
+<h3>Parameters</h3>
+<p><a name="guild"></a>
+<code>guild</code> - the guild.</p>
+<p><a name="badwords"></a>
+<code>badwords</code> - the badwords.</p>
+<p><strong>Author</strong><br/>
+NathanPB</p>
+<p><strong>Since</strong><br/>
+3.1.0</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">BadwordProfile</span><span class="symbol">(</span><span class="identifier" id="io.github.dogo.badwords.BadwordProfile$<init>(io.github.dogo.core.entities.DogoGuild, kotlin.collections.MutableList((kotlin.String)))/guild">guild</span><span class="symbol">:</span>&nbsp;<a href="../../io.github.dogo.core.entities/-dogo-guild/index.html"><span class="identifier">DogoGuild</span></a><span class="symbol">, </span><span class="identifier" id="io.github.dogo.badwords.BadwordProfile$<init>(io.github.dogo.core.entities.DogoGuild, kotlin.collections.MutableList((kotlin.String)))/badwords">badwords</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html"><span class="identifier">MutableList</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">&gt;</span><span class="symbol">)</span></code>
+<p>Data Class that holds Badwords from guilds.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="badwords.html">badwords</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">badwords</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html"><span class="identifier">MutableList</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">&gt;</span></code>
+<p>the badwords.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="guild.html">guild</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">guild</span><span class="symbol">: </span><a href="../../io.github.dogo.core.entities/-dogo-guild/index.html"><span class="identifier">DogoGuild</span></a></code>
+<p>the guild.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="export.html">export</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">export</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Document</span></code>
+<p>Exports the current profile for a <a href="#">Document</a> instance, ready to be inserted into MongoDB.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="remove.html">remove</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">remove</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Removes the current profile from database. Also remove from cache.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="update.html">update</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">update</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Inserts the current profile into database (updates if it already exists).
+Also automatically cache the profile (or update the cache if it already exists)</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Companion Object Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="col.html">col</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">col</span><span class="symbol">: </span><span class="identifier">MongoCollection</span><span class="symbol">&lt;</span><span class="identifier">Document</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="listener.html">listener</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">listener</span><span class="symbol">: </span><a href="../-badword-listener/index.html"><span class="identifier">BadwordListener</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Companion Object Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="cached-entry.html">cachedEntry</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">cachedEntry</span><span class="symbol">(</span><span class="identifier" id="io.github.dogo.badwords.BadwordProfile.Companion$cachedEntry(io.github.dogo.core.entities.DogoGuild)/guild">guild</span><span class="symbol">:</span>&nbsp;<a href="../../io.github.dogo.core.entities/-dogo-guild/index.html"><span class="identifier">DogoGuild</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">BadwordProfile</span></a></code>
+<p>Gets a cached entry for a guild. If its not found, automatically creates a blank <a href="./index.html">BadwordProfile</a> and stores it on database (also automatically cached).</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="clear-cache.html">clearCache</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">clearCache</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Clears the badwords cache (<a href="#">cache</a>)</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="parse.html">parse</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">parse</span><span class="symbol">(</span><span class="identifier" id="io.github.dogo.badwords.BadwordProfile.Companion$parse(org.bson.Document)/doc">doc</span><span class="symbol">:</span>&nbsp;<span class="identifier">Document</span><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">BadwordProfile</span></a><span class="symbol">?</span></code>
+<p>Parses a single <a href="#">Document</a> into a <a href="./index.html">BadwordProfile</a> (nullable)
+Required Fields:
+-guild: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a>
+-badwords: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html">List</a>&lt;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a>&gt;</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

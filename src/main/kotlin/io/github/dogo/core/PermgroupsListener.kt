@@ -1,13 +1,8 @@
 package io.github.dogo.core
 
 import io.github.dogo.core.entities.DogoGuild
-import io.github.dogo.core.entities.DogoUser
-import io.github.dogo.core.eventBus.EventBus
-import io.github.dogo.core.profiles.PermGroup
-import net.dv8tion.jda.core.entities.Guild
 import net.dv8tion.jda.core.events.guild.update.GuildUpdateOwnerEvent
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 /*
 Copyright 2019 Nathan Bombana
@@ -35,12 +30,10 @@ class PermgroupsListener {
 
     //todo remake permgroups :cccc
 
-    @EventBus.Listener
     fun onEvent1(e: GuildUpdateOwnerEvent){
         //forceUpdate(DogoGuild(e.guild), e.newOwner.user.id)
     }
 
-    @EventBus.Listener
     fun onEvent2(e: GuildMessageReceivedEvent) {
         //forceUpdate(DogoGuild(e.guild), e.guild.ownerId)
     }

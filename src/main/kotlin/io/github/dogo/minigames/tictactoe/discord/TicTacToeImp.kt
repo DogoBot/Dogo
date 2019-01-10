@@ -127,7 +127,7 @@ class TicTacToeImp(context: CommandContext, val p1: DogoUser, val p2: DogoUser) 
      * @see SimpleReactionMenu.send
      */
     override fun send(){
-        DogoBot.eventBus.unregister(this)
+        DogoBot.eventBus.unregister(this::onReact)
         this.actions.clear()
         if(!ttt.hasWinner){
             getTableEmoted()

@@ -1,0 +1,129 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>TicTacToeStatistics - Dogo</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">Dogo</a>&nbsp;/&nbsp;<a href="../index.html">io.github.dogo.statistics</a>&nbsp;/&nbsp;<a href="./index.html">TicTacToeStatistics</a><br/>
+<br/>
+<h1>TicTacToeStatistics</h1>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">TicTacToeStatistics</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-statistic/index.html"><span class="identifier">Statistic</span></a></code>
+<p><a href="../-statistic/index.html">Statistic</a> subclass for Tic Tac Toe game Statistics</p>
+<h3>Parameters</h3>
+<p><a name="table"></a>
+<code>table</code> - the game table. Must be a String with exactly 9 characters, only '0', '1' and '2' are allowed.</p>
+<p><a name="p1"></a>
+<code>p1</code> - the TTTPlayer 1 of the game.</p>
+<p><a name="p2"></a>
+<code>p2</code> - the TTTPlayer 2 of the game.</p>
+<p><a name="winner"></a>
+<code>winner</code> - the winner of the game. Must be the same as <a href="p1.html">p1</a>, <a href="p2.html">p2</a> or null (if the game has tied)</p>
+<p><strong>See Also</strong><br/>
+<p><a href="../../io.github.dogo.minigames.tictactoe/index.html">io.github.dogo.minigames.tictactoe</a></p>
+</p>
+<p><strong>Author</strong><br/>
+NathanPB</p>
+<p><strong>Since</strong><br/>
+3.1.0</p>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-finder/index.html">Finder</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Finder</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-statistics-finder/index.html"><span class="identifier">StatisticsFinder</span></a><span class="symbol">&lt;</span><a href="./index.html"><span class="identifier">TicTacToeStatistics</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">TicTacToeStatistics</span><span class="symbol">(</span><span class="identifier" id="io.github.dogo.statistics.TicTacToeStatistics$<init>(org.bson.Document)/doc">doc</span><span class="symbol">:</span>&nbsp;<span class="identifier">Document</span><span class="symbol">)</span></code>
+<p>Creates a <a href="./index.html">TicTacToeStatistics</a> instance from a <a href="#">Document</a>.</p>
+<code><span class="identifier">TicTacToeStatistics</span><span class="symbol">(</span><span class="identifier" id="io.github.dogo.statistics.TicTacToeStatistics$<init>(kotlin.String, io.github.dogo.core.entities.DogoUser, io.github.dogo.core.entities.DogoUser, io.github.dogo.core.entities.DogoUser)/table">table</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="io.github.dogo.statistics.TicTacToeStatistics$<init>(kotlin.String, io.github.dogo.core.entities.DogoUser, io.github.dogo.core.entities.DogoUser, io.github.dogo.core.entities.DogoUser)/p1">p1</span><span class="symbol">:</span>&nbsp;<a href="../../io.github.dogo.core.entities/-dogo-user/index.html"><span class="identifier">DogoUser</span></a><span class="symbol">, </span><span class="identifier" id="io.github.dogo.statistics.TicTacToeStatistics$<init>(kotlin.String, io.github.dogo.core.entities.DogoUser, io.github.dogo.core.entities.DogoUser, io.github.dogo.core.entities.DogoUser)/p2">p2</span><span class="symbol">:</span>&nbsp;<a href="../../io.github.dogo.core.entities/-dogo-user/index.html"><span class="identifier">DogoUser</span></a><span class="symbol">, </span><span class="identifier" id="io.github.dogo.statistics.TicTacToeStatistics$<init>(kotlin.String, io.github.dogo.core.entities.DogoUser, io.github.dogo.core.entities.DogoUser, io.github.dogo.core.entities.DogoUser)/winner">winner</span><span class="symbol">:</span>&nbsp;<a href="../../io.github.dogo.core.entities/-dogo-user/index.html"><span class="identifier">DogoUser</span></a><span class="symbol">?</span><span class="symbol">)</span></code>
+<p><a href="../-statistic/index.html">Statistic</a> subclass for Tic Tac Toe game Statistics</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="p1.html">p1</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">p1</span><span class="symbol">: </span><a href="../../io.github.dogo.core.entities/-dogo-user/index.html"><span class="identifier">DogoUser</span></a></code>
+<p>the TTTPlayer 1 of the game.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="p2.html">p2</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">p2</span><span class="symbol">: </span><a href="../../io.github.dogo.core.entities/-dogo-user/index.html"><span class="identifier">DogoUser</span></a></code>
+<p>the TTTPlayer 2 of the game.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="table.html">table</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">table</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code>
+<p>the game table. Must be a String with exactly 9 characters, only '0', '1' and '2' are allowed.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="winner.html">winner</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">winner</span><span class="symbol">: </span><a href="../../io.github.dogo.core.entities/-dogo-user/index.html"><span class="identifier">DogoUser</span></a><span class="symbol">?</span></code>
+<p>the winner of the game. Must be the same as <a href="p1.html">p1</a>, <a href="p2.html">p2</a> or null (if the game has tied)</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-statistic/data.html">data</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">data</span><span class="symbol">: </span><span class="identifier">Document</span></code>
+<p>document with the statistics data to be imported into a <a href="../-statistic/index.html">Statistic</a> instance.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-statistic/update.html">update</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">update</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Updates the statistic document on database. If the document already exists, its updated.
+The <em>date</em> field will be always the current time (when <a href="../-statistic/update.html">update</a> is invoked).
+Be careful on using this method: Statistics shouldn't be updated, just inserted.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

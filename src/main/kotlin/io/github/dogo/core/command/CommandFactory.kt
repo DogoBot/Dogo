@@ -3,7 +3,6 @@ package io.github.dogo.core.command
 import io.github.dogo.core.DogoBot
 import io.github.dogo.core.entities.DogoGuild
 import io.github.dogo.core.entities.DogoUser
-import io.github.dogo.core.eventBus.EventBus
 import io.github.dogo.lang.BoundLanguage
 import io.github.dogo.lang.LanguageEntry
 import io.github.dogo.utils.Holder
@@ -21,7 +20,6 @@ class CommandFactory {
         CommandRouter(CommandRouter.root, body).also { route = it }
     }
 
-    @EventBus.Listener
     fun onMessage(event : MessageReceivedEvent){
         var prefix : String? = null
 

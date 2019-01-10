@@ -44,7 +44,6 @@ class BadwordListener {
      *
      * @param[e] the event, sent from [EventBus]
      */
-    @EventBus.Listener
     fun listenSend(e: GuildMessageReceivedEvent) = check(e.message)
 
     /**

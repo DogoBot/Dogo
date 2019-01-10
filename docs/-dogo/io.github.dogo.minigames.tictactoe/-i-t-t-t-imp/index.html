@@ -1,0 +1,94 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>ITTTImp - Dogo</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">Dogo</a>&nbsp;/&nbsp;<a href="../index.html">io.github.dogo.minigames.tictactoe</a>&nbsp;/&nbsp;<a href="./index.html">ITTTImp</a><br/>
+<br/>
+<h1>ITTTImp</h1>
+<code><span class="keyword">interface </span><span class="identifier">ITTTImp</span></code>
+<p>Simple interface to TicTacToe implementations.</p>
+<p><strong>Author</strong><br/>
+NathanPB</p>
+<p><strong>Since</strong><br/>
+3.1.0</p>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="current-TTTPlayer.html">currentPlayer</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">currentPlayer</span><span class="symbol">: </span><a href="../-TTTPlayer/index.html"><span class="identifier">Player</span></a></code>
+<p>The currentPlayer turn's owner.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="has-winner.html">hasWinner</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">hasWinner</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>True if the game has a winner (<a href="../-TTTPlayer/-e-n-v-i-r-o-m-e-n-t.html">Player.ENVIROMENT</a> is included)</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="table.html">table</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">table</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code>
+<p>The table</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="force-win.html">forceWin</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">forceWin</span><span class="symbol">(</span><span class="identifier" id="io.github.dogo.minigames.tictactoe.ITTTImp$forceWin(io.github.dogo.minigames.tictactoe.TTTPlayer)/TTTPlayer">TTTPlayer</span><span class="symbol">:</span>&nbsp;<a href="../-TTTPlayer/index.html"><span class="identifier">Player</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Forces someone to win the game.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="play.html">play</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">play</span><span class="symbol">(</span><span class="identifier" id="io.github.dogo.minigames.tictactoe.ITTTImp$play(kotlin.Int)/index">index</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-one-TTTPlayer-t-t-t/index.html">OnePlayerTTT</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">OnePlayerTTT</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-tic-tac-toe/index.html"><span class="identifier">TicTacToe</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">ITTTImp</span></a></code>
+<p>Single Player Tic Tac Toe. Human Player plays against IA</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-two-players-t-t-t/index.html">TwoPlayersTTT</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">TwoPlayersTTT</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-tic-tac-toe/index.html"><span class="identifier">TicTacToe</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">ITTTImp</span></a></code>
+<p>Two Players implementation of <a href="../-tic-tac-toe/index.html">TicTacToe</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>
