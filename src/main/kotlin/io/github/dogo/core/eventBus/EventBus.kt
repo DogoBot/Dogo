@@ -2,8 +2,10 @@ package io.github.dogo.core.eventBus
 
 import io.github.dogo.core.DogoBot
 import java.util.*
+import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.createType
+import kotlin.reflect.full.defaultType
 import kotlin.reflect.full.isSubtypeOf
 
 class EventBus {
@@ -15,10 +17,11 @@ class EventBus {
         }
     }
 
+    //todo temporary shit just to get it working, remove later
     fun submitSync(element : Any) {
         listeners
-            .filter { it.func.parameters.first().type.isSubtypeOf(element::class.createType()) }
-            .forEach { it.func.call(element) }
+            //.filter { it.func.parameters.first().type.isSubtypeOf(element::class.defaultType) }
+            .forEach { try { it.func.call(element) } catch (ex: Exception){} }
     }
 
     fun register(vararg functions: KFunction<Any?>, priority: Int = 0) {
