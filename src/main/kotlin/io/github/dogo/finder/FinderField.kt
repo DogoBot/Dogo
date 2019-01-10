@@ -1,9 +1,5 @@
-package io.github.dogo.badwords
+package io.github.dogo.finder
 
-import io.github.dogo.core.entities.DogoGuild
-import io.github.dogo.finder.Findable
-import io.github.dogo.finder.FinderField
-import io.github.dogo.finder.IFinder
 import org.bson.Document
 
 /*
@@ -23,25 +19,32 @@ limitations under the License.
 */
 
 /**
- * Interface used to create a Finder for any subclass of [BadwordProfile].
  *
  * @author NathanPB
  * @since 3.1.0
  */
-class BadwordFinder : IFinder<BadwordProfile>() {
+class FinderField {
+    /**
+     * The name of the field. Will be initialized when the [IFinder] instance is created.
+     */
+    var name: String = ""
 
     /**
-     * The guild that the profile belongs.
+     * The filter. Empty one means to match anything.
      */
-    @Findable
-    val guild = FinderField()
+    var doc = Document()
 
     /**
-     * The badword list.
+     * Clears [doc], to match any value on DB.
      */
-    @Findable
-    val badwords = FinderField()
+    fun matchAll() {
+        doc = Document()
+    }
 
-    override val col = BadwordProfile.col
-    override fun map(doc: Document) = BadwordProfile.parse(doc)
+    /**
+     * Fills [doc] with a filter.
+     */
+    fun matchFilter(filter: String.()->Document) {
+        doc = filter(name)
+    }
 }

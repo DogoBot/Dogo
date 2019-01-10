@@ -1,7 +1,4 @@
-package io.github.dogo.statistics
-
-import io.github.dogo.finder.IFinder
-import org.bson.Document
+package io.github.dogo.finder
 
 /*
 Copyright 2019 Nathan Bombana
@@ -20,13 +17,11 @@ limitations under the License.
 */
 
 /**
- * Interface used to create a Finder for any subclass of [Statistic].
+ * All the fields to query in a [IFinder] must be annotated with this class.
  *
- * @param[T] the statistic type.
+ * @param[name] the name of the field on database. Empty one means the name of the current field (on source code).
  *
  * @author NathanPB
  * @since 3.1.0
  */
-abstract class StatisticsFinder<T : Statistic> : IFinder<T>() {
-    override val col = Statistic.col
-}
+annotation class Findable(val name: String = "")

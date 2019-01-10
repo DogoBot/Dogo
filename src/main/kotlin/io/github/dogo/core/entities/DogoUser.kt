@@ -33,7 +33,9 @@ data class DogoUser (val id : String){
     fun fetchUser() : JSONObject {
         val dogo = this
         return TokenFinder().apply {
-            owner = dogo
+            owner.matchFilter {
+                Document().append(this, dogo.id)
+            }
         }.findAll().filter { it.isValid() }
                 .firstOrNull { it.scopes.contains("identify") || it.scopes.contains("email")}
                 ?.let {

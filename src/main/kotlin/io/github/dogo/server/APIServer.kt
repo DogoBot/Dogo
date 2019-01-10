@@ -6,7 +6,6 @@ import io.github.dogo.core.entities.DogoUser
 import io.github.dogo.exceptions.APIException
 import io.github.dogo.server.token.Token
 import io.github.dogo.server.token.TokenFinder
-import io.github.dogo.statistics.Statistic
 import io.github.dogo.utils.DiscordAPI
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
@@ -102,7 +101,9 @@ class APIServer {
                                                 }
                                             }
 
-                                    if(TokenFinder().apply { token = call.parameters["access_token"].orEmpty() }.count() != 0L){
+                                    if(TokenFinder().apply {
+                                        token.matchFilter { Document().append(this, call.parameters["access_token"].orEmpty()) }
+                                    }.count() != 0L){
                                         throw APIException(HttpStatusCode.Conflict, "token already exists")
                                     }
 
@@ -221,8 +222,8 @@ class APIServer {
                 if(auth.size != 2) throw APIException(HttpStatusCode.BadRequest, "invalid authorization")
 
                 TokenFinder().apply {
-                    type = auth[0]
-                    token = auth[1]
+                    type.matchFilter { Document().append(this, auth[0]) }
+                    token.matchFilter { Document().append(this, auth[1]) }
                 }.find()?.let {
                     if(it.scopes.any { validScopes.contains(it) } && it.isValid()) it else null
                 }

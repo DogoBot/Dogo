@@ -3,7 +3,6 @@ package io.github.dogo.badwords
 import com.mongodb.client.MongoCollection
 import io.github.dogo.core.DogoBot
 import io.github.dogo.core.entities.DogoGuild
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.bson.Document
 
 /*
@@ -69,7 +68,11 @@ data class BadwordProfile(val guild: DogoGuild, val badwords: MutableList<String
          *
          * @return the profile for the supplied guild.
          */
-        fun cachedEntry(guild: DogoGuild) = BadwordProfile.cache[guild.id] ?: BadwordFinder().also{it.guild = guild}.find() ?: BadwordProfile(guild, mutableListOf()).also { it.update() }
+        fun cachedEntry(guild: DogoGuild) = BadwordProfile.cache[guild.id] ?: BadwordFinder().also{
+            it.guild.matchFilter {
+                Document().append(this, guild.id)
+            }
+        }.find() ?: BadwordProfile(guild, mutableListOf()).also { it.update() }
     }
 
     /**
@@ -77,7 +80,11 @@ data class BadwordProfile(val guild: DogoGuild, val badwords: MutableList<String
      * Also automatically cache the profile (or update the cache if it already exists)
      */
     fun update(){
-        if(BadwordFinder().also{ it.guild = guild}.count() >= 1) {
+        if(BadwordFinder().also{
+            it.guild.matchFilter {
+                Document().append(this, guild.id)
+            }
+        }.count() >= 1) {
             BadwordProfile.col.updateOne(Document().append("guild", guild.id), Document("\$set", export()))
         } else {
             BadwordProfile.col.insertOne(export())

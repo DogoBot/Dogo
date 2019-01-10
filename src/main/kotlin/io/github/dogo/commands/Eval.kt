@@ -17,7 +17,9 @@ import io.github.dogo.core.profiles.PermGroup
 import io.github.dogo.core.profiles.PermGroupSet
 import io.github.dogo.exceptions.APIException
 import io.github.dogo.exceptions.DiscordException
-import io.github.dogo.interfaces.IFinder
+import io.github.dogo.finder.Findable
+import io.github.dogo.finder.FinderField
+import io.github.dogo.finder.IFinder
 import io.github.dogo.interfaces.IRepliable
 import io.github.dogo.lang.LanguageEntry
 import io.github.dogo.menus.ListReactionMenu
@@ -71,6 +73,8 @@ class Eval {
                 PermgroupsListener::class,
                 APIException::class,
                 DiscordException::class,
+                Findable::class,
+                FinderField::class,
                 IFinder::class,
                 IRepliable::class,
                 LanguageEntry::class,

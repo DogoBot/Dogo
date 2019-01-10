@@ -1,6 +1,8 @@
 package io.github.dogo.statistics
 
 import io.github.dogo.core.entities.DogoUser
+import io.github.dogo.finder.Findable
+import io.github.dogo.finder.FinderField
 import org.bson.Document
 
 /*
@@ -54,35 +56,41 @@ data class TicTacToeStatistics(val table: String, val p1: DogoUser, val p2: Dogo
     class Finder : StatisticsFinder<TicTacToeStatistics>() {
         override fun map(doc: Document) = try { TicTacToeStatistics(doc) } catch (ex: Exception) { null }
 
-        init { append("type", "TICTACTOE")}
+        /**
+         * The statistic type
+         */
+        @Findable
+        val type = FinderField()
 
         /**
-         * The first player of the game.
+         * The first player of the game
          */
-        var p1 : DogoUser
-            get() = DogoUser(getString("p1"))
-            set(it){append("p1", it.id)}
+        @Findable
+        val p1 = FinderField()
 
         /**
          * The second player of the game.
          */
-        var p2: DogoUser
-            get() = DogoUser(getString("p2"))
-            set(it){append("p2", it.id)}
+        @Findable
+        val p2 = FinderField()
 
         /**
          * The winner player of the game. Set to null to match only tied games.
          */
-        var winner: DogoUser?
-            get() = DogoUser(getString("winner"))
-            set(it){append("winner", it?.id)}
+        @Findable
+        val winner = FinderField()
 
         /**
          * The table of the game.
          */
-        var table: String
-            get() = getString("table")
-            set(it){append("table", it)}
+        @Findable
+        val table = FinderField()
 
+        init {
+            initialize()
+            type.matchFilter {
+                createDocument(this, "TICTACTOE")
+            }
+        }
     }
 }
