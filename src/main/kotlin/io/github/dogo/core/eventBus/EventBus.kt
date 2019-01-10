@@ -2,11 +2,8 @@ package io.github.dogo.core.eventBus
 
 import io.github.dogo.core.DogoBot
 import java.util.*
-import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
-import kotlin.reflect.full.createType
-import kotlin.reflect.full.defaultType
-import kotlin.reflect.full.isSubtypeOf
+import kotlin.reflect.jvm.javaMethod
 
 class EventBus {
     private val listeners = LinkedList<EventBus.EventListener>()
@@ -17,18 +14,18 @@ class EventBus {
         }
     }
 
-    //todo temporary shit just to get it working, remove later
+    @SuppressWarnings("private")
     fun submitSync(element : Any) {
         listeners
-            //.filter { it.func.parameters.first().type.isSubtypeOf(element::class.defaultType) }
-            .forEach { try { it.func.call(element) } catch (ex: Exception){} }
+            .filter { it.func.javaMethod!!.parameterTypes.first().isAssignableFrom(element::class.java) }
+            .forEach { it.func.call(element) }
     }
 
     fun register(vararg functions: KFunction<Any?>, priority: Int = 0) {
         functions.forEach {
             if(it.parameters.size == 1) {
-                listeners += EventBus.EventListener(it, this, priority)
-                listeners.sortBy { it.priority }
+                listeners += EventBus.EventListener(it, priority)
+                listeners.sortBy { l -> l.priority }
             }
         }
     }
@@ -39,11 +36,6 @@ class EventBus {
 
     private data class EventListener(
             val func : KFunction<Any?>,
-            val bus : EventBus,
             val priority: Int
-    ) {
-        override fun toString(): String {
-            return "EventBus.Listener@${func.hashCode()}"
-        }
-    }
+    )
 }
