@@ -4,7 +4,7 @@ import io.github.dogo.core.profiles.PermGroup
 import io.github.dogo.core.profiles.PermGroupSet
 import io.github.dogo.exceptions.DiscordException
 import io.github.dogo.server.token.TokenFinder
-import io.github.dogo.utils.DiscordAPI
+import io.github.dogo.utils._static.DiscordAPI
 import net.dv8tion.jda.core.entities.User
 import org.bson.Document
 import org.json.JSONObject

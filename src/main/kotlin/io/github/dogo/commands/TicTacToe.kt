@@ -7,8 +7,8 @@ import io.github.dogo.core.command.ReferencedCommand
 import io.github.dogo.core.entities.DogoUser
 import io.github.dogo.menus.SimpleReactionMenu
 import io.github.dogo.minigames.tictactoe.discord.TicTacToeImp
-import io.github.dogo.utils.EmoteReference
-import io.github.dogo.utils.ThemeColor
+import io.github.dogo.utils._static.EmoteReference
+import io.github.dogo.utils._static.ThemeColor
 import net.dv8tion.jda.core.EmbedBuilder
 
 /*

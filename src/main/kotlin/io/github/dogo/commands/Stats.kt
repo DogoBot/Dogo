@@ -7,10 +7,10 @@ import io.github.dogo.core.command.ReferencedCommand
 import io.github.dogo.lang.BoundLanguage
 import io.github.dogo.lang.LanguageEntry
 import io.github.dogo.menus.SimpleReactionMenu
-import io.github.dogo.utils.BeamUtils
-import io.github.dogo.utils.DisplayUtils
-import io.github.dogo.utils.EmoteReference
-import io.github.dogo.utils.ThemeColor
+import io.github.dogo.utils._static.BeamUtils
+import io.github.dogo.utils._static.DisplayUtils
+import io.github.dogo.utils._static.EmoteReference
+import io.github.dogo.utils._static.ThemeColor
 import net.dv8tion.jda.core.EmbedBuilder
 
 /*

@@ -9,8 +9,8 @@ import io.github.dogo.minigames.tictactoe.OnePlayerTTT
 import io.github.dogo.minigames.tictactoe.TTTPlayer
 import io.github.dogo.minigames.tictactoe.TwoPlayersTTT
 import io.github.dogo.statistics.TicTacToeStatistics
-import io.github.dogo.utils.EmoteReference
-import io.github.dogo.utils.ThemeColor
+import io.github.dogo.utils._static.EmoteReference
+import io.github.dogo.utils._static.ThemeColor
 import net.dv8tion.jda.core.EmbedBuilder
 
 /*

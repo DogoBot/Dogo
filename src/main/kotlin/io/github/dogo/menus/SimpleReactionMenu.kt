@@ -2,8 +2,7 @@ package io.github.dogo.menus
 
 import io.github.dogo.core.DogoBot
 import io.github.dogo.core.command.CommandContext
-import io.github.dogo.core.eventBus.EventBus
-import io.github.dogo.utils.EmoteReference
+import io.github.dogo.utils._static.EmoteReference
 import net.dv8tion.jda.core.EmbedBuilder
 import net.dv8tion.jda.core.Permission
 import net.dv8tion.jda.core.entities.Message

@@ -1,8 +1,8 @@
 package io.github.dogo.menus
 
 import io.github.dogo.core.command.CommandContext
-import io.github.dogo.utils.EmoteReference
-import io.github.dogo.utils.ThemeColor
+import io.github.dogo.utils._static.EmoteReference
+import io.github.dogo.utils._static.ThemeColor
 import net.dv8tion.jda.core.EmbedBuilder
 
 

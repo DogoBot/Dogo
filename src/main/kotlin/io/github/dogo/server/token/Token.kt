@@ -3,7 +3,7 @@ package io.github.dogo.server.token
 import com.mongodb.client.MongoCollection
 import io.github.dogo.core.DogoBot
 import io.github.dogo.core.entities.DogoUser
-import io.github.dogo.utils.DiscordAPI
+import io.github.dogo.utils._static.DiscordAPI
 import org.bson.Document
 import java.util.*
 

@@ -37,6 +37,7 @@ import io.github.dogo.server.token.TokenFinder
 import io.github.dogo.statistics.StatisticsFinder
 import io.github.dogo.statistics.TicTacToeStatistics
 import io.github.dogo.utils.*
+import io.github.dogo.utils._static.*
 import net.dv8tion.jda.core.EmbedBuilder
 import net.dv8tion.jda.core.entities.Game
 import net.dv8tion.jda.core.entities.Guild

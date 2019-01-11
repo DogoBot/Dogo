@@ -4,7 +4,7 @@ import io.github.dogo.core.DogoBot
 import io.github.dogo.core.command.*
 import io.github.dogo.lang.BoundLanguage
 import io.github.dogo.utils.Holder
-import io.github.dogo.utils.ThemeColor
+import io.github.dogo.utils._static.ThemeColor
 import net.dv8tion.jda.core.EmbedBuilder
 
 /*

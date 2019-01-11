@@ -6,7 +6,7 @@ import io.github.dogo.core.entities.DogoUser
 import io.github.dogo.exceptions.APIException
 import io.github.dogo.server.token.Token
 import io.github.dogo.server.token.TokenFinder
-import io.github.dogo.utils.DiscordAPI
+import io.github.dogo.utils._static.DiscordAPI
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
 import io.ktor.http.ContentType
