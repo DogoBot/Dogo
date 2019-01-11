@@ -1,4 +1,4 @@
-package io.github.dogo.utils
+package io.github.dogo.utils._static
 
 /*
 Copyright 2019 Nathan Bombana
@@ -151,6 +151,6 @@ enum class EmoteReference(val id : String, val external : Boolean = false, val e
         /**
          * Gets the equivalent [EmoteReference] for a [Char]
          */
-        fun getRegional(char: Char) = EmoteReference.values().firstOrNull { it.equivalentChar == char } ?: EmoteReference.DOGOHELP
+        fun getRegional(char: Char) = EmoteReference.values().firstOrNull { it.equivalentChar == char } ?: DOGOHELP
     }
 }

@@ -1,7 +1,6 @@
-package io.github.dogo.utils
+package io.github.dogo.utils._static
 
 import com.mashape.unirest.http.Unirest
-import org.json.JSONObject
 
 
 /*

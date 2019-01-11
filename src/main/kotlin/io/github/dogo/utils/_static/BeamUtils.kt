@@ -1,4 +1,4 @@
-package io.github.dogo.utils
+package io.github.dogo.utils._static
 
 import java.lang.management.ManagementFactory
 

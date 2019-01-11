@@ -1,13 +1,10 @@
-package io.github.dogo.utils
+package io.github.dogo.utils._static
 
 import net.dv8tion.jda.core.EmbedBuilder
 import org.json.JSONObject
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Element
-import org.jsoup.select.Elements
 import java.lang.Exception
 import java.net.URL
-import javax.swing.text.html.HTML
 
 /*
 Copyright 2019 Nathan Bombana
@@ -116,12 +113,12 @@ class FacebookUtils {
          * @return the embed representation.
          */
         fun getLastPostEmbed(pagename: String) : EmbedBuilder {
-            val post = FacebookUtils.getLastPost(pagename)
+            val post = getLastPost(pagename)
             return EmbedBuilder().setColor(ThemeColor.PRIMARY)
                 .setAuthor(
-                    FacebookUtils.getName(pagename),
+                        getName(pagename),
                     post.getString("permalink"),
-                    FacebookUtils.getProfilePic(pagename)
+                        getProfilePic(pagename)
                 )
                 .also { embed ->
                     if(post.keySet().contains("text"))

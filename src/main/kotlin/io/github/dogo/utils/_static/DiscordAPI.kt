@@ -1,4 +1,4 @@
-package io.github.dogo.utils
+package io.github.dogo.utils._static
 
 import com.mashape.unirest.http.Unirest
 import io.github.dogo.server.token.Token

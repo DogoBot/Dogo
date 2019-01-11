@@ -1,4 +1,4 @@
-package io.github.dogo.utils
+package io.github.dogo.utils._static
 
 /*
 Copyright 2019 Nathan Bombana
