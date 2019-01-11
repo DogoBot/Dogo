@@ -113,4 +113,4 @@ command.news.configure.done=:white_check_mark: New Webhook: **%s**
 command.news.configure.none=You have no Webhooks available! Please create one on guild settings
 command.news.current.current= Current Webhook: **%s**
 command.news.current.none=:warning: There is no webhook configured for this guild! Please use ``%snews configure``
-command.news.texttoolong=:octagonal_sign: The text contains more than 2000 characters!
+command.news.texttoolong=:octagonal_sign: The text is longer than 2000 characters!
