@@ -32,7 +32,12 @@ class WebhookEcho : ReferencedCommand(
         {
             if(guild?.newsWebhook != null){
                 guild.newsWebhook!!.newClient().build().also {
-                    it.send(args.joinToString(" "))
+                    val text = args.joinToString(" ")
+                    if(text.length > 2000) {
+                        reply("texttoolong", preset = true)
+                    } else {
+                        it.send(args.joinToString(" "))
+                    }
                 }.close()
             } else {
                 reply("notconfigured", DogoBot.getCommandPrefixes().first(), preset = true)
