@@ -105,7 +105,7 @@ open class SimpleReactionMenu(val context: CommandContext) {
      *
      * @param[delete] deletes the message if true. All is relative to the bot permissions on guild.
      */
-    fun end(delete : Boolean = true) {
+    open fun end(delete : Boolean = true) {
         DogoBot.eventBus.unregister(this::onReact)
         instances.remove(this)
 
