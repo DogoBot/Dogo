@@ -102,6 +102,7 @@ enum class EmoteReference(val id : String, val external : Boolean = false, val e
     WARNING("⚠"),
 
     OK_HAND("\uD83D\uDC4C"),
+    NEW("\uD83C\uDD95"),
 
     X("❌"),
     O("⭕"),
