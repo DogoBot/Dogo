@@ -32,7 +32,7 @@ limitations under the License.
  * @author NathanPB
  * @since 3.1.0
  */
-open class ListReactionMenu(context: CommandContext, val items: List<String>, val render: (String, Int)->String = {it, _ ->"$it\n"}, val embedBuild: (EmbedBuilder)->Unit = {}) : SimpleReactionMenu(context) {
+open class ListReactionMenu<T>(context: CommandContext, val items: List<T>, val render: (T, Int)->String = {it, _ ->"$it\n"}, val embedBuild: (EmbedBuilder)->Unit = {}) : SimpleReactionMenu(context) {
 
     /**
      * The list of pages to display.

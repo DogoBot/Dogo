@@ -32,13 +32,13 @@ limitations under the License.
  * @author NathanPB
  * @since 3.1.0
  */
-class SelectorReactionMenu(
+class SelectorReactionMenu<T>(
         context: CommandContext,
-        items: List<String>,
-        render: (String, Int)->String = {it, _ ->"$it\n"},
+        items: List<T>,
+        render: (T, Int)->String = {it, _ ->"$it\n"},
         embedBuild: (EmbedBuilder)->Unit = {},
-        val onSelected: (String, SelectorReactionMenu) -> Unit
-) : ListReactionMenu(
+        val onSelected: (T, SelectorReactionMenu<T>) -> Unit
+) : ListReactionMenu<T>(
         context,
         items,
         { it, index -> "${EmoteReference.getRegional(index.toString()[0]).getAsMention()} ${render(it, index)}" },
