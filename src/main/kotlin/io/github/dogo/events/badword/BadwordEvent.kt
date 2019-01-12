@@ -19,6 +19,7 @@ limitations under the License.
 */
 
 /**
+ * Event thrown on every badword action.
  *
  * @author NathanPB
  * @since 3.1.0

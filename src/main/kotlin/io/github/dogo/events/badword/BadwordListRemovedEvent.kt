@@ -20,6 +20,7 @@ limitations under the License.
 */
 
 /**
+ * Event thrown when a list of badwords were removed.
  *
  * @author NathanPB
  * @since 3.1.0
