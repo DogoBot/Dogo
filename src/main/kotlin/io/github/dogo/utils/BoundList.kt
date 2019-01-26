@@ -74,7 +74,7 @@ class BoundList<T>(
     /**
      * @{inheritDoc}
      */
-    override fun removeAll(elements: Collection<T>) = elements.forEach(push).let { true }
+    override fun removeAll(elements: Collection<T>) = elements.forEach(pull).let { true }
 
 
     /**
