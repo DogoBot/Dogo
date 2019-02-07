@@ -4,7 +4,6 @@ import io.github.dogo.core.DogoBot
 import java.util.*
 import kotlin.reflect.KFunction
 import kotlin.reflect.jvm.javaMethod
-import kotlin.reflect.jvm.reflect
 
 class EventBus {
     private val listeners = LinkedList<EventBus.EventListener>()
@@ -22,13 +21,11 @@ class EventBus {
             .forEach { it.func.call(element) }
     }
 
-    fun register(vararg functions: Function<Any?>, priority: Int = 0) {
+    fun register(vararg functions: KFunction<Any?>, priority: Int = 0) {
         functions.forEach {
-            it.reflect().let {
-                if(it!!.parameters.size == 1) {
-                    listeners += EventBus.EventListener(it, priority)
-                    listeners.sortBy { l -> l.priority }
-                }
+            if(it.parameters.size == 1) {
+                listeners += EventBus.EventListener(it, priority)
+                listeners.sortBy { l -> l.priority }
             }
         }
     }
