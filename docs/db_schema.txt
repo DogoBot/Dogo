@@ -9,11 +9,8 @@ LocalPrefixes: prefix, guild@
 
 
 
-BadwordProfile: id#, name, guild@
-    guild@ references Guild(id#)
-
-Badwords: id#, word, active, profile@
-    profile@ references BadwordProfile(#id)
+Badwords: id#, word, active, guild@
+    guild@ references Guilds(#id)
 
 BadwordPunishment: badword@, duser@
     badword@ references Badwords(id#)

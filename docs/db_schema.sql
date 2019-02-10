@@ -19,23 +19,14 @@ create table LocalPrefixes (
   foreign key(guild) references Guilds(id)
 );
 
-create table BadwordProfile (
-  id int not null auto_increment,
-  name varchar(256) not null,
-  guild varchar(16) not null,
-
-  primary key(id),
-  foreign key(guild) references Guilds(id)
-);
-
 create table Badwords (
   id int not null auto_increment,
   word varchar(256) not null,
-  profile int not null,
+  guild varchar(32) not null,
   active bit(1) not null default 1,
 
   primary key(id),
-  foreign key(profile) references BadwordProfile(id)
+  foreign key(guild) references Guilds(id)
 );
 
 create table BadwordPunishment (
