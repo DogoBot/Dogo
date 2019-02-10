@@ -1,0 +1,53 @@
+Users: id#, lang
+
+Guilds: id#, default_hook
+
+
+
+LocalPrefixes: prefix, guild@
+    guild@ references Guild(id#)
+
+
+
+BadwordProfile: id#, name, guild@
+    guild@ references Guild(id#)
+
+Badwords: id#, word, profile@
+    profile@ references BadwordProfile(#id)
+
+BadwordPunishment: badword@, duser@
+    badword@ references Badwords(id#)
+    duser@ references Users(id#)
+
+
+
+Statistics: id#, date
+
+TicTacToeStatistics: id#@, table
+    id#@ references Statistics(id#)
+
+TTTPlayers: statistic@, duser@, slot, winner
+    statistic@ references TicTacToeStatistics(id#@)
+    duser@ references Users(id#)
+
+
+
+PermGroups: id#
+
+Permissions: permgroup@, permission, type
+    permgroup@ references PermGroups(id#)
+
+UserBoundPermGroup: id#@, duser@
+    id#@ references PermGroups(id#)
+    duser@ references Users(id#)
+
+RoleBoundPermGroup: id#@, role
+    id#@ references PermGroups(id#)
+
+
+
+Tokens: token#, duser@, type, expires_in, auth_time
+    duser@ references Users(id#)
+
+TokenScopes: token@, scope
+    token@ references Tokens(token#)
