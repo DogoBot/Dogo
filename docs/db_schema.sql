@@ -32,6 +32,7 @@ create table Badwords (
   id int not null auto_increment,
   word varchar(256) not null,
   profile int not null,
+  active bit(1) not null default 1,
 
   primary key(id),
   foreign key(profile) references BadwordProfile(id)
@@ -64,7 +65,7 @@ create table TTTPlayers (
   statistic int not null,
   duser varchar(32) not null,
   slot bit(1) not null default 0,
-  winner bit(1) not null default 0,
+  winner bit(1) not null default 1,
 
   foreign key(statistic) references TicTacToeStatistics(id),
   foreign key(duser) references Users(id)
@@ -103,7 +104,7 @@ create table RoleBoundPermGroup (
 
 create table Tokens (
   token varchar(256) not null,
-  duser varchar(16) not null,
+  duser varchar(32) not null,
   type varchar(16) not null,
   expires_in datetime not null,
   auth_time datetime not null,
