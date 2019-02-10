@@ -32,6 +32,7 @@ create table Badwords (
 create table BadwordPunishment (
   badword int not null,
   duser varchar(32) not null,
+  date datetime not null default current_timestamp,
 
   foreign key(badword) references Badwords(id),
   foreign key(duser) references Users(id)

@@ -12,7 +12,7 @@ LocalPrefixes: prefix, guild@
 Badwords: id#, word, active, guild@
     guild@ references Guilds(#id)
 
-BadwordPunishment: badword@, duser@
+BadwordPunishment: badword@, duser@, date
     badword@ references Badwords(id#)
     duser@ references Users(id#)
 
