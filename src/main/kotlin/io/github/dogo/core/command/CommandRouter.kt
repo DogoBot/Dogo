@@ -1,10 +1,10 @@
 package io.github.dogo.core.command
 
-import io.github.dogo.lang.LanguageEntry
+import io.github.dogo.core.permissions.mapper.PermissionMapper
 import io.github.dogo.utils.Holder
 import org.json.JSONObject
 
-class CommandRouter(val reference: CommandReference, body: CommandRouter.()->Unit) {
+class CommandRouter(val reference: CommandReference, val permMapper: PermissionMapper, body: CommandRouter.()->Unit) {
     val children = mutableListOf<CommandRouter>()
     var run: ReferencedCommand? = null
     var parent: CommandRouter? = null
@@ -12,7 +12,7 @@ class CommandRouter(val reference: CommandReference, body: CommandRouter.()->Uni
     init { body() }
 
     fun CommandRouter.route(reference: CommandReference, body: CommandRouter.()->Unit) : CommandRouter {
-        return CommandRouter(reference, body)
+        return CommandRouter(reference, permMapper, body)
                 .also {
                     it.parent = this
                     children.add(it)
@@ -20,7 +20,10 @@ class CommandRouter(val reference: CommandReference, body: CommandRouter.()->Uni
     }
 
     fun CommandRouter.route(referenced: ReferencedCommand, body: CommandRouter.()->Unit = {}) : CommandRouter {
-        return route(referenced.reference, body).also { it.execute(referenced.command);}
+        return route(referenced.reference, body).also {
+            permMapper.registerPermission(it.getPermission())
+            it.execute(referenced.command)
+        }
     }
 
     fun CommandRouter.execute(execute: CommandContext.()->Unit){
@@ -45,7 +48,7 @@ class CommandRouter(val reference: CommandReference, body: CommandRouter.()->Uni
             routes.add(currentRoute!!.reference.name)
             currentRoute = currentRoute.parent
         } while(currentRoute != null)
-        return routes.reversed().filter{ it.isNotEmpty() }.joinToString(separator = ".", prefix = "command.")
+        return routes.reversed().filter{ it.isNotEmpty() }.joinToString(separator = ".", prefix = "${reference.permission}.")
     }
 
     fun getFullName() : String {
@@ -62,7 +65,7 @@ class CommandRouter(val reference: CommandReference, body: CommandRouter.()->Uni
     fun isRoot() = parent == null
 
     companion object {
-        val root = CommandReference("")
+        val root = CommandReference("", permission = "command")
     }
 
     override fun toString() = JSONObject().put("reference", reference).put("children", children.size).put("parent", if(parent == null) null else JSONObject(parent.toString())).toString(4)

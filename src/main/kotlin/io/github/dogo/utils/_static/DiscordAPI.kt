@@ -1,8 +1,7 @@
 package io.github.dogo.utils._static
 
 import com.mashape.unirest.http.Unirest
-import io.github.dogo.server.token.Token
-import org.json.JSONObject
+import io.github.dogo.server.Token
 
 /*
 Copyright 2019 Nathan Bombana
@@ -47,12 +46,8 @@ class DiscordAPI {
          * @return The data provided by Discord
          * @throws [java.io.IOException]
          */
-        fun fetchUser(auth: String, type: String): JSONObject {
-            return JSONObject(
-                    Unirest.get("https://discordapp.com/api/v6/users/@me")
-                            .header("Authorization", "$type $auth")
-                            .asString().body
-            )
-        }
+        fun fetchUser(auth: String, type: String) = Unirest.get("https://discordapp.com/api/v6/users/@me")
+                .header("Authorization", "$type $auth")
+                .asJson().body.`object`
     }
 }

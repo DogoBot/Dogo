@@ -35,12 +35,6 @@ class Database {
     var HOST = "localhost"
 
     /**
-     * The port.
-     */
-    @Setting
-    var PORT = 27017
-
-    /**
      * The database name.
      */
     @Setting
@@ -57,5 +51,10 @@ class Database {
      */
     @Setting
     var PWD = "root"
+
+    /**
+     * The port.
+     */
+    var PORT = 3306
 
 }

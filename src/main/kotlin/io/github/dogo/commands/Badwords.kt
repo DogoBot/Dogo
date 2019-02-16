@@ -1,6 +1,5 @@
 package io.github.dogo.commands
 
-import com.google.common.eventbus.EventBus
 import io.github.dogo.core.DogoBot
 import io.github.dogo.core.command.CommandCategory
 import io.github.dogo.core.command.CommandReference
@@ -31,14 +30,14 @@ limitations under the License.
  * @since 3.1.0
  */
 class Badwords : ReferencedCommand(
-        CommandReference("badwords", aliases = "bw badword", category = CommandCategory.GUILD_ADMINISTRATION),
+        CommandReference("badwords", aliases = "bw badword", category = CommandCategory.GUILD_ADMINISTRATION, permission = "command.guildowner"),
         {
-            if(guild!!.badwords.badwords.isEmpty()) {
+            if(guild!!.badwords.isEmpty()) {
                 reply("empty", preset = true)
             } else {
                 ListReactionMenu(
                         this,
-                        guild.badwords.badwords,
+                        guild.badwords,
                         embedBuild = {it.setAuthor(langEntry.getText("author"))}
                 ).let {
                     it.timeout = DogoBot.data.TIMEOUTS.GENERAL
@@ -49,48 +48,40 @@ class Badwords : ReferencedCommand(
 
 ) {
     class Add : ReferencedCommand(
-            CommandReference("add", aliases = "+", args = 1),
+            CommandReference("add", aliases = "+", args = 1, permission = "command.guildowner"),
             {
-                    val words = args.filter { w -> !guild!!.badwords.badwords.any { w.equals(it, ignoreCase = true) } }
-                    if(words.isNotEmpty()){
-                        words.also {
-                            guild!!.badwords.let {
-                                it.badwords.addAll(words)
-                                it.update()
-                            }
-                        }.let {
-                            DogoBot.eventBus.submit(BadwordListAddedEvent(guild!!, sender, it))
-                            it.forEach { DogoBot.eventBus.submit(BadwordAddedEvent(guild, sender, it)) }
-                            ListReactionMenu(this, it,
-                                    embedBuild = {it.setAuthor(langEntry.getText("author"))}
-                            ).showPage(0)
-                        }
-                    } else {
-                        reply("nothing", preset = true)
+                val words = args.filter { w -> !guild!!.badwords.any { w.equals(it, ignoreCase = true) } }
+                if(words.isNotEmpty()){
+                    guild!!.badwords.addAll(words)
+                    words.let {
+                        DogoBot.eventBus.submit(BadwordListAddedEvent(guild, sender, it))
+                        it.forEach { DogoBot.eventBus.submit(BadwordAddedEvent(guild, sender, it)) }
+                        ListReactionMenu(this, it,
+                                embedBuild = {it.setAuthor(langEntry.getText("author"))}
+                        ).showPage(0)
                     }
+                } else {
+                    reply("nothing", preset = true)
                 }
+            }
     )
 
     class Remove : ReferencedCommand(
-            CommandReference("remove", aliases = "-", args = 1),
+            CommandReference("remove", aliases = "-", args = 1, permission = "command.guildowner"),
              {
-                    val words = args.filter { w -> guild!!.badwords.badwords.any { w.equals(it, ignoreCase = true) } }
-                    if(words.isNotEmpty()){
-                        words.also {
-                            guild!!.badwords.let {
-                                it.badwords.removeAll(words)
-                                it.update()
-                            }
-                        }.let {
-                            DogoBot.eventBus.submit(BadwordListRemovedEvent(guild!!, sender, it))
-                            it.forEach { DogoBot.eventBus.submit(BadwordRemovedEvent(guild, sender, it)) }
-                            ListReactionMenu(this, it,
-                                    embedBuild = {it.setAuthor(langEntry.getText("author"))}
-                            ).showPage(0)
-                        }
-                    } else {
-                        reply(langEntry.getText("nothing"))
+                val words = args.filter { w -> guild!!.badwords.any { w.equals(it, ignoreCase = true) } }
+                if(words.isNotEmpty()){
+                    guild!!.badwords.removeAll(words)
+                    words.let {
+                        DogoBot.eventBus.submit(BadwordListRemovedEvent(guild, sender, it))
+                        it.forEach { DogoBot.eventBus.submit(BadwordRemovedEvent(guild, sender, it)) }
+                        ListReactionMenu(this, it,
+                                embedBuild = {it.setAuthor(langEntry.getText("author"))}
+                        ).showPage(0)
                     }
+                } else {
+                    reply(langEntry.getText("nothing"))
                 }
+            }
     )
 }

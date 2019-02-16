@@ -1,11 +1,10 @@
 package io.github.dogo.server
 
+import io.github.dogo.core.Database
 import io.github.dogo.core.DogoBot
 import io.github.dogo.core.entities.DogoGuild
 import io.github.dogo.core.entities.DogoUser
 import io.github.dogo.exceptions.APIException
-import io.github.dogo.server.token.Token
-import io.github.dogo.server.token.TokenFinder
 import io.github.dogo.utils._static.DiscordAPI
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
@@ -18,7 +17,11 @@ import io.ktor.routing.route
 import io.ktor.routing.routing
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
-import org.bson.Document
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.transactions.transaction
+import org.joda.time.DateTime
 import java.util.*
 
 /*
@@ -101,25 +104,45 @@ class APIServer {
                                                 }
                                             }
 
-                                    if(TokenFinder().apply {
-                                        token.matchFilter { Document().append(this, call.parameters["access_token"].orEmpty()) }
-                                    }.count() != 0L){
-                                        throw APIException(HttpStatusCode.Conflict, "token already exists")
+                                    transaction {
+                                        Database.TOKENS.run {
+                                            select {
+                                                token eq call.parameters["access_token"].orEmpty()
+                                            }.count().let {
+                                                if(it > 0) {
+                                                    throw APIException(HttpStatusCode.Conflict, "token already exists")
+                                                }
+                                            }
+                                        }
                                     }
 
                                     val fetch = DiscordAPI.fetchUser(call.parameters["access_token"].orEmpty(), call.parameters["token_type"].orEmpty())
                                     if(fetch.has("id")){
-                                        Token(
-                                                call.parameters["access_token"].orEmpty(),
-                                                DogoUser(fetch.getString("id")),
-                                                call.parameters["scope"].orEmpty().split(" ").toTypedArray(),
-                                                Date(),
-                                                Date(Date().time + (call.parameters["expires_in"].orEmpty().toLong() * 1000)),
-                                                call.parameters["token_type"].orEmpty()
-                                        ).also {
-                                            it.update()
-                                            it.export().let {
-                                                it.keys.forEach { k -> data.put(k, it[k]) }
+                                        transaction {
+                                            Database.TOKENS.run {
+                                                insert {
+                                                    it[token] = call.parameters["access_token"].orEmpty()
+                                                    it[user] = fetch.getString("id")
+                                                    it[authTime] = DateTime.now()
+                                                    it[expiresIn] = DateTime(Date().time + (call.parameters["expires_in"].orEmpty().toLong() * 1000))
+                                                    it[type] = call.parameters["token_type"].orEmpty()
+
+                                                    data.put("token", it[token])
+                                                    data.put("user", it[user])
+                                                    data.put("auth_time", it[authTime])
+                                                    data.put("expires_in", it[expiresIn])
+                                                    data.put("type", it[type])
+                                                    data.put("scopes", mutableListOf<String>())
+                                                }
+                                            }
+                                            Database.TOKENSCOPES.run {
+                                                call.parameters["scope"].orEmpty().split(" ").forEach { scopeName ->
+                                                    insert {
+                                                        it[scope] = scopeName
+                                                        it[token] = call.parameters["access_token"].orEmpty()
+                                                        (data["scopes"] as MutableList<String>) += scopeName
+                                                    }
+                                                }
                                             }
                                         }
                                     } else {
@@ -136,7 +159,7 @@ class APIServer {
                     route("{id}") {
                         get {
                             APIRequestProcessor {data ->
-                                val user = DogoUser(call.parameters["id"].orEmpty())
+                                val user = DogoUser.from(call.parameters["id"].orEmpty())
                                 val auth: Token? = getAuthorization(call,  "identify")
 
                                 data.put("id", user.id)
@@ -165,7 +188,7 @@ class APIServer {
                     route("{id}") {
                         get {
                             APIRequestProcessor { data ->
-                                val target = DogoGuild(call.parameters["id"].orEmpty())
+                                val target = DogoGuild.from(call.parameters["id"].orEmpty())
                                 val auth = getAuthorization(call, "guilds")
 
                                 data.put("id", target.id)
@@ -220,12 +243,18 @@ class APIServer {
             return if(call.request.headers.contains("Authorization")){
                 val auth = call.request.headers["Authorization"].orEmpty().split(" ")
                 if(auth.size != 2) throw APIException(HttpStatusCode.BadRequest, "invalid authorization")
-
-                TokenFinder().apply {
-                    type.matchFilter { Document().append(this, auth[0]) }
-                    token.matchFilter { Document().append(this, auth[1]) }
-                }.find()?.let {
-                    if(it.scopes.any { validScopes.contains(it) } && it.isValid()) it else null
+                transaction {
+                    return@transaction Database.TOKENS.run {
+                        (this innerJoin Database.TOKENSCOPES).select {
+                            (type eq auth[0]) and
+                            (token eq auth[1]) and
+                            (expiresIn greater DateTime.now()) and
+                            (Database.TOKENSCOPES.scope inList validScopes.asList())
+                        }.groupBy(Database.TOKENSCOPES.token)
+                        .map {
+                            Token(it[token], DogoUser.from(it[user]), it[authTime].toDate(), it[expiresIn].toDate(), it[type])
+                        }.firstOrNull { it.isValid() }
+                    }
                 }
             } else throw APIException(HttpStatusCode.BadRequest, "missing required header: Authorization")
         }

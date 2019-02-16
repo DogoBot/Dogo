@@ -1,10 +1,5 @@
 package io.github.dogo.statistics
 
-import com.mongodb.client.MongoCollection
-import io.github.dogo.core.DogoBot
-import org.bson.Document
-import java.util.*
-
 /*
 Copyright 2019 Nathan Bombana
 
@@ -22,29 +17,9 @@ limitations under the License.
 */
 
 /**
- * Holds Statistics data on a simple [Document] instance.
- *
- * @param[data] document with the statistics data to be imported into a [Statistic] instance.
+ * Holds Statistics data.
  *
  * @author NathanPB
  * @since 3.1.0
  */
-abstract class Statistic(val data: Document) {
-    companion object {
-        val col = DogoBot.db?.getCollection("statistics") as MongoCollection
-    }
-
-    /**
-     * Updates the statistic document on database. If the document already exists, its updated.
-     * The *date* field will be always the current time (when [update] is invoked).
-     * Be careful on using this method: Statistics shouldn't be updated, just inserted.
-     */
-    fun update(){
-        data.append("date", Date())
-        if(data.containsKey("_id") && col.find(Document().append("_id", data["_id"])).count() > 0){
-            col.updateOne(Document().append("_id", data["_id"]), data)
-        } else {
-            col.insertOne(data)
-        }
-    }
-}
+abstract class Statistic

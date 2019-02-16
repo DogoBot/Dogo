@@ -28,118 +28,70 @@ limitations under the License.
  * @author NathanPB
  * @since 3.1.0
  */
-class BoundList<T>(
+open class BoundList<T>(
         private val push: (T)->Unit,
         private val pull: (T)->Unit,
         private val all: ()->List<T>
 ) : MutableList<T> {
-
-    /**
-     * Sets the elements on list.
-     *
-     * @param[elements] the elements.
-     */
-    fun setElements(vararg elements: T) {
-        val all = all()
-        elements
-            .filter { !all.contains(it) }
-            .forEach(push)
-
-        all
-            .filter { !elements.contains(it) }
-            .forEach(pull)
-    }
-
-    /**
-     * @{inheritDoc}
-     */
+    
     override fun add(element: T) = push(element).let { true }
 
-    /**
-     * @{inheritDoc}
-     */
+    
     override fun remove(element: T) = pull(element).let { true }
 
-    /**
-     * @{inheritDoc}
-     */
+    
     override fun get(index: Int): T = all()[index]
 
-    /**
-     * @{inheritDoc}
-     */
+    
     override fun addAll(elements: Collection<T>) = elements.forEach(push).let { true }
 
 
-    /**
-     * @{inheritDoc}
-     */
+    
     override fun removeAll(elements: Collection<T>) = elements.forEach(pull).let { true }
 
 
-    /**
-     * @{inheritDoc}
-     */
+    
     override fun clear() = forEach(pull)
 
 
-    /**
-     * @{inheritDoc}
-     */
+    
     override fun contains(element: T) = all().contains(element)
 
 
-    /**
-     * @{inheritDoc}
-     */
+    
     override fun containsAll(elements: Collection<T>) = all().containsAll(elements)
 
 
-    /**
-     * @{inheritDoc}
-     */
+    
     override fun indexOf(element: T) = all().indexOf(element)
 
 
-    /**
-     * @{inheritDoc}
-     */
+    
     override fun lastIndexOf(element: T) = all().lastIndexOf(element)
 
 
-    /**
-     * @{inheritDoc}
-     */
+    
     override fun isEmpty() = all().isEmpty()
 
 
-    /**
-     * @{inheritDoc}
-     */
+    
     override fun iterator() = all().toMutableList().iterator()
 
 
-    /**
-     * @{inheritDoc}
-     */
+    
     override fun listIterator() = all().toMutableList().listIterator()
 
 
-    /**
-     * @{inheritDoc}
-     */
+    
     override fun listIterator(index: Int) = all().toMutableList().listIterator(index)
 
 
-    /**
-     * @{inheritDoc}
-     */
+    
     override fun subList(fromIndex: Int, toIndex: Int) = all().toMutableList().subList(fromIndex, toIndex)
 
 
-    /**
-     * @{inheritDoc}
-     */
+    override fun toString() = all().toString()
+    
     override val size = all().size
 
     /**

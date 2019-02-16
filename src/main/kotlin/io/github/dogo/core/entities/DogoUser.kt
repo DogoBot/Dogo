@@ -1,71 +1,83 @@
 package io.github.dogo.core.entities
 
-import io.github.dogo.core.profiles.PermGroup
-import io.github.dogo.core.profiles.PermGroupSet
+import io.github.dogo.core.Database
+import io.github.dogo.core.DogoBot
+import io.github.dogo.core.permissions.PermGroup
+import io.github.dogo.core.permissions.PermGroupSet
 import io.github.dogo.exceptions.DiscordException
-import io.github.dogo.server.token.TokenFinder
 import io.github.dogo.utils._static.DiscordAPI
 import net.dv8tion.jda.core.entities.User
-import org.bson.Document
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.transactions.transaction
+import org.joda.time.DateTime
 import org.json.JSONObject
+import java.util.*
 
-data class DogoUser (val id : String){
+class DogoUser private constructor(val id : String){
     companion object {
-        val col = io.github.dogo.core.DogoBot.db?.getCollection("users")
-    }
+        val cache = LinkedList<DogoUser>()
 
-    constructor(usr : User) : this(usr.id)
-    val usr = io.github.dogo.core.DogoBot.jda?.getUserById(id)
+        fun from(id: String) = cache.firstOrNull { it.id == id } ?: DogoUser(id).also {
+            it.usr = DogoBot.jda?.getUserById(id)
+        }
+
+        fun from(usr: User) = cache.firstOrNull { it.id == usr.id } ?: DogoUser(usr.id).also {
+            it.usr = usr
+        }
+    }
 
     init {
-        if((DogoGuild.col?.count(Document("ID", id)) as Long) < 1){
-            DogoGuild.col.insertOne(Document("ID", id))
+        transaction {
+            if(Database.USERS.selectAll().count() == 0) {
+                Database.USERS.insert {
+                    it[id] = this@DogoUser.id
+                }
+            }
         }
+        cache.add(this)
     }
+
+
+    var usr: User? = null
 
     var lang : String
-        get() {
-            val doc = find()
-            return if(doc.containsKey("lang")) doc.getString("lang") else "en_US"
+        get() = transaction {
+            return@transaction Database.USERS.run {
+                Database.USERS.slice(lang).select { id eq this@DogoUser.id }.first()[lang]
+            }
         }
-        set(value) = update(Document("\$set", Document("lang", value)))
+        set(newLang) = transaction {
+            Database.USERS.run {
+                Database.USERS.update({ id eq this@DogoUser.id }){
+                    it[lang] = newLang
+                }
+            }
+        }
 
     fun fetchUser() : JSONObject {
-        val dogo = this
-        return TokenFinder().apply {
-            owner.matchFilter {
-                Document().append(this, dogo.id)
+        return transaction {
+            Database.TOKENS.run {
+                (this innerJoin Database.TOKENSCOPES)
+                    .slice(token, type)
+                    .select {
+                        (user eq this@DogoUser.id) and
+                        (expiresIn greater DateTime.now()) and
+                        (Database.TOKENSCOPES.token inList(listOf("email", "identify")))
+                    }.firstOrNull()
+                    ?.let { DiscordAPI.fetchUser(it[token], it[type])} ?: throw DiscordException("Invalid or Unknown Token")
             }
-        }.findAll().filter { it.isValid() }
-                .firstOrNull { it.scopes.contains("identify") || it.scopes.contains("email")}
-                ?.let {
-                    DiscordAPI.fetchUser(it)
-                } ?: throw DiscordException("Invalid or Unknown Token")
-    }
-
-    fun find() : Document {
-        return DogoGuild.col?.find(Document("ID", id))?.first() as Document
-    }
-
-    fun update(replace : Document) {
-        DogoGuild.col?.findOneAndUpdate(Document("ID", id), replace)
-    }
-
-    fun getPermGroups() : PermGroupSet {
-        return PermGroupSet(
-                PermGroup.col.find()
-                        .map { PermGroup(it.getString("ID")) }
-                        .filter { (it.id as String).toLong() <= 0 }
-                        .filter { it.affectsEveryone() || it.applyTo.contains(id) }
-        )
+        }
     }
 
     fun formatName(g: DogoGuild? = null) : String {
         return if(g?.g?.isMember(this.usr) == true){
-            g.g.getMember(this.usr).effectiveName
+            g.g!!.getMember(this.usr).effectiveName
         } else {
             this.usr?.name
         }+"#${this.usr?.discriminator}"
     }
+
+    val permgroups: PermGroupSet
+        get() = PermGroupSet.find(this)
 
 }

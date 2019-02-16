@@ -81,7 +81,7 @@ create table Tokens (
   auth_time datetime not null,
 
   primary key(token),
-  foreign key(duser) references User(id)
+  foreign key(duser) references Users(id)
 );
 
 create table TokenScopes (

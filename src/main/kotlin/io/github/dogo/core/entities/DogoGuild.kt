@@ -1,68 +1,130 @@
 package io.github.dogo.core.entities
 
+import io.github.dogo.core.Database
 import io.github.dogo.core.DogoBot
-import io.github.dogo.core.profiles.PermGroup
-import io.github.dogo.core.profiles.PermGroupSet
+import io.github.dogo.core.permissions.PermGroup
+import io.github.dogo.core.permissions.PermGroupSet
+import io.github.dogo.utils.BoundList
 import net.dv8tion.jda.core.entities.Guild
 import net.dv8tion.jda.core.entities.Webhook
-import org.bson.Document
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
-import kotlin.collections.ArrayList
 
-class DogoGuild (val id : String){
+class DogoGuild private constructor(val id : String){
+
     companion object {
-        val col = DogoBot.db?.getCollection("guilds")
-    }
+        val cache = LinkedList<DogoGuild>()
 
-    constructor(g : Guild) : this(g.id)
-    val g = io.github.dogo.core.DogoBot.jda?.getGuildById(id)
+        fun from(id: String) = cache.firstOrNull { it.id == id } ?: DogoGuild(id).also {
+            it.g = DogoBot.jda?.getGuildById(id)
+        }
+
+        fun from(instance: Guild) = cache.firstOrNull { it.id == instance.id } ?: DogoGuild(instance.id).also {
+            it.g = instance
+        }
+    }
 
     init {
-        if(col?.count(Document("ID", id)) == 0L){
-            col?.insertOne(Document("ID", id))
+        transaction {
+            if(Database.GUILDS.selectAll().count() == 0) {
+                Database.GUILDS.insert {
+                    it[id] = this@DogoGuild.id
+                }
+            }
         }
+        cache.add(this)
     }
 
-    var prefix : ArrayList<String>
-        get() {
-            val doc = find()
-            return if(doc.containsKey("prefix")) doc["prefix"] as ArrayList<String> else ArrayList()
-        }
-        set(value) = update(Document("\$set", Document("prefix", value)))
+    var  g: Guild? = null
 
-    var permgroups : PermGroupSet
-        get() {
-            val doc = find()
-            if(!doc.containsKey("permgroups")) update(Document("\$set", Document("permgroups", ArrayList<String>())))
-            val list = PermGroupSet()
-            for(s in find().get("permgroups") as ArrayList<String>){
-                list.add(PermGroup(s))
+    val prefixes = BoundList(
+            {value ->
+                transaction {
+                    Database.LOCALPREFIXES.insert {
+                        it[guild] = id
+                        it[prefix] = value
+                    }
+                }
+            },
+            {value ->
+                transaction {
+                    Database.LOCALPREFIXES.deleteWhere {
+                        (Database.LOCALPREFIXES.guild) eq id and (Database.LOCALPREFIXES.prefix eq value)
+                    }
+                }
+            },
+            {
+                transaction {
+                    return@transaction Database.LOCALPREFIXES.slice(Database.LOCALPREFIXES.prefix).select {
+                        Database.LOCALPREFIXES.guild eq id
+                    }.map { it[Database.LOCALPREFIXES.prefix] }
+                }
             }
-            return list
-        }
-        set(value) {
-            //todo fix that gambiarra
-            val maped = ArrayList(Arrays.asList(value.map { v -> v.id }.toTypedArray()))
-            update(Document("\$set", Document("permgroups", maped)))
-        }
+    )
 
-    val badwords: io.github.dogo.badwords.BadwordProfile
-        get() = io.github.dogo.badwords.BadwordProfile.cachedEntry(this)
+
+    val badwords = BoundList(
+            { theword ->
+                transaction {
+                    val query: SqlExpressionBuilder.() -> Op<Boolean> = { (Database.BADWORDS.word eq theword.toLowerCase()) and (Database.BADWORDS.guild eq id)}
+                    Database.BADWORDS.slice(Database.BADWORDS.id).select(query).let { result ->
+                        when {
+                            result.count() == 0 -> {
+                                Database.BADWORDS.insert {
+                                    it[word] = theword.toLowerCase()
+                                    it[guild] = this@DogoGuild.id
+                                }
+                            }
+                            !result.first()[Database.BADWORDS.active] -> {
+                                Database.BADWORDS.update(query){
+                                    it[active] = true
+                                }
+                            }
+                            else -> {}
+                        }
+                    }
+                }
+            },
+            { theword ->
+                transaction {
+                    val query: SqlExpressionBuilder.() -> Op<Boolean> = { (Database.BADWORDS.word eq theword.toLowerCase()) and (Database.BADWORDS.guild eq id)}
+                    Database.BADWORDS.slice(Database.BADWORDS.id).select(query).let { result ->
+                        result.firstOrNull()?.let {
+                            if(it[Database.BADWORDS.active]){
+                                Database.BADWORDS.update(query){
+                                    it[active] = false
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                transaction {
+                    return@transaction Database.BADWORDS.slice(Database.BADWORDS.word).select {
+                        (Database.BADWORDS.guild eq id) and (Database.BADWORDS.active eq true)
+                    }.map { it[Database.BADWORDS.word] }
+                }
+            }
+    )
 
     var newsWebhook: Webhook?
-        get() = g?.webhooks?.complete()?.firstOrNull {
-            val doc = find()
-            if(!doc.containsKey("newsWebhook") || doc["newsWebhook"] != null){
-                it.id == doc.getString("newsWebhook")
-            } else false
+        get() = transaction {
+            return@transaction (Database.GUILDS.slice(Database.GUILDS.defaultHook).select {
+                Database.GUILDS.id.eq(id)
+            }.first()[Database.GUILDS.defaultHook])?.let {hookId ->
+                g?.webhooks?.complete()?.firstOrNull { it.id == hookId }
+            }
         }
-        set(it) = update(Document("\$set", Document("newsWebhook", it?.id)))
+        set(wh) {
+            transaction {
+                Database.GUILDS.update({ Database.GUILDS.id eq id }){
+                    it[Database.GUILDS.defaultHook] = wh?.id
+                }
+            }
+        }
 
-    fun find() : Document {
-        return col?.find(Document("ID", id))?.first() as Document
-    }
-
-    fun update(replace : Document) {
-        col?.findOneAndUpdate(Document("ID", id), replace)
-    }
+    val permgroups: PermGroupSet
+        get() = PermGroupSet.find(guild = this)
 }

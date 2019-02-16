@@ -22,14 +22,11 @@ limitations under the License.
 
 /**
  * Menu to reads text messages from user.
- * @inheritDoc
- *
- * @param[question] anything to ask to user.
  *
  * @author NathanPB
  * @since 3.1.0
  */
-class TextInputMenu(val cnt: CommandContext, val onResponse: (String)->Unit) : SimpleReactionMenu(cnt){
+class TextInputMenu(val cnt: CommandContext, val onResponse: (String, TextInputMenu)->Unit) : SimpleReactionMenu(cnt){
 
     /**
      * @inheritDoc
@@ -54,7 +51,7 @@ class TextInputMenu(val cnt: CommandContext, val onResponse: (String)->Unit) : S
      */
     fun onMessageText(e: MessageReceivedEvent){
         if(e.message.textChannel.id == cnt.replyChannel.id && target == e.author.id && e.message.contentRaw.isNotEmpty()){
-            onResponse(e.message.contentRaw)
+            onResponse(e.message.contentRaw, this)
         }
     }
 }

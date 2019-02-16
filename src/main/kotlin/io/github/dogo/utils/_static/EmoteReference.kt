@@ -94,6 +94,8 @@ enum class EmoteReference(val id : String, val external : Boolean = false, val e
     ARROW_FORWARD("▶"),
     ARROW_BACKWARD("◀"),
 
+    ARROW_LEFT("⬅"),
+
     TRACK_PREVIOUS("⏮"),
     TRACK_NEXT("⏭"),
 
@@ -107,6 +109,9 @@ enum class EmoteReference(val id : String, val external : Boolean = false, val e
 
     X("❌"),
     O("⭕"),
+
+    HEAVY_PLUS_SIGN("➕"),
+    HEAVY_MINUS_SIGN("➖"),
 
     /*
         OBJECTS
@@ -122,13 +127,22 @@ enum class EmoteReference(val id : String, val external : Boolean = false, val e
     TADA("\uD83C\uDF89"),
     HEART("❤"),
     PAGER("\uD83D\uDCDF"),
+    CLOSED_LOCK_WITH_KEY("\uD83D\uDD10"),
+    LOCK("\uD83D\uDD12"),
+    UNLOCK("\uD83D\uDD13"),
+    PENCIL2("✏"),
 
     /*
         FACES
      */
     WORRIED("\uD83D\uDE1F"),
     NEUTRAL_FACE("\uD83D\uDE10"),
-    RAGE("\uD83D\uDE21");
+    RAGE("\uD83D\uDE21"),
+
+    /*
+        PEOPLE
+     */
+    BUSTS_IN_SILHOUETTE("👥");
 
 
     /**

@@ -1,5 +1,6 @@
-package io.github.dogo.badwords
+package io.github.dogo.core.listeners
 
+import io.github.dogo.core.Database
 import io.github.dogo.core.DogoBot
 import io.github.dogo.core.entities.DogoGuild
 import io.github.dogo.core.entities.DogoUser
@@ -9,6 +10,10 @@ import net.dv8tion.jda.core.EmbedBuilder
 import net.dv8tion.jda.core.Permission
 import net.dv8tion.jda.core.entities.Message
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.transactions.experimental.transaction
 import java.awt.Color
 
 /*
@@ -57,13 +62,25 @@ class BadwordListener {
             return
         }
 
-        val guild = DogoGuild(msg.guild)
-        val user = DogoUser(echos[msg]?.also { echos.remove(msg) } ?: msg.author.id)
-        if (user.id != DogoBot.jda!!.selfUser.id && !user.getPermGroups().can("badword.bypass")) {
+        val guild = DogoGuild.from(msg.guild)
+        val user = DogoUser.from(echos[msg]?.also { echos.remove(msg) } ?: msg.author.id)
+        if (user.id != DogoBot.jda!!.selfUser.id && !user.permgroups.can("badword.bypass")) {
             val container = mutableListOf<String>()
-            val newmsg = msg.contentDisplay.replaceBadwords(guild.badwords.badwords, container)
+            val newmsg = msg.contentDisplay.replaceBadwords(guild.badwords, container)
             if (container.isNotEmpty()) {
                 DogoBot.eventBus.submit(BadwordMessageCensoredEvent(guild, msg, container))
+                suspend {
+                    transaction {
+                        Database.BADWORDS.slice(Database.BADWORDS.id).select {
+                            (Database.BADWORDS.guild eq guild.id) and (Database.BADWORDS.word inList container)
+                        }.map { it[Database.BADWORDS.id] }.forEach { badwordId ->
+                            Database.BADWORDPUNISHMENT.insert {
+                                it[this.user] = user.id
+                                it[this.badword] = badwordId
+                            }
+                        }
+                    }
+                }
                 DogoBot.jdaOutputThread.execute {
                     msg.channel.sendMessage(newmsg.createEmbed(user).build()).complete()
                     msg.delete().complete()

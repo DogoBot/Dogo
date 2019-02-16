@@ -31,7 +31,7 @@ limitations under the License.
  * @since 3.1.0
  */
 class TicTacToe : ReferencedCommand(
-        CommandReference("tictactoe", aliases = "ttt", usage = "@MyFriend", category = CommandCategory.FUN),
+        CommandReference("tictactoe", aliases = "ttt", usage = "@MyFriend", category = CommandCategory.FUN, permission = "command"),
         {
             var friend = msg.mentionedUsers.firstOrNull() ?: DogoBot.jda!!.selfUser
             if(friend.id == sender.id) friend = DogoBot.jda!!.selfUser
@@ -44,15 +44,15 @@ class TicTacToe : ReferencedCommand(
                     it.embed = EmbedBuilder().setColor(ThemeColor.PRIMARY).setTitle(langEntry.getText("title", sender.formatName(guild)))
                     val refuse = {
                         it.end(true)
-                        reply("refused", DogoUser(friend).formatName(guild), preset = true)
+                        reply("refused", DogoUser.from(friend).formatName(guild), preset = true)
                     }
                     it.addAction(EmoteReference.WHITE_CHECK_MARK, langEntry.getText("accept")){
-                        TicTacToeImp(this, sender, DogoUser(friend))
+                        TicTacToeImp(this, sender, DogoUser.from(friend))
                         it.end(true)
                     }
                     it.addAction(EmoteReference.NEGATIVE_SQUARED_CROSS_MARK, langEntry.getText("deny"), refuse)
                     it.build()
                 }.send()
-            } else TicTacToeImp(this, sender, DogoUser(friend))
+            } else TicTacToeImp(this, sender, DogoUser.from(friend))
         }
 )

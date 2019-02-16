@@ -28,7 +28,7 @@ limitations under the License.
  * @since 3.1.0
  */
 class WebhookEcho : ReferencedCommand(
-        CommandReference("news", args = 1, category = CommandCategory.GUILD_ADMINISTRATION),
+        CommandReference("news", args = 1, category = CommandCategory.GUILD_ADMINISTRATION, permission = "command.guildowner"),
         {
             if(guild?.newsWebhook != null){
                 guild.newsWebhook!!.newClient().build().also {
@@ -36,16 +36,16 @@ class WebhookEcho : ReferencedCommand(
                     if(text.length > 2000) {
                         reply("texttoolong", preset = true)
                     } else {
-                        it.send(args.joinToString(" "))
+                        it.send(text)
                     }
                 }.close()
             } else {
-                reply("notconfigured", DogoBot.getCommandPrefixes().first(), preset = true)
+                reply("notconfigured", DogoBot.getCommandPrefixes().sortedBy { -it.length }.first(), preset = true)
             }
         }
 ){
     class Configure : ReferencedCommand(
-            CommandReference("configure"),
+            CommandReference("configure", permission = "command.guildowner"),
             {
                 val hooks = guild!!.g!!.webhooks!!.complete()
                 if(hooks.isNotEmpty()){
@@ -68,7 +68,7 @@ class WebhookEcho : ReferencedCommand(
     )
 
     class Current : ReferencedCommand(
-            CommandReference("current"),
+            CommandReference("current", permission = "command.guildowner"),
             {
                 if(guild?.newsWebhook != null){
                     reply("current", guild.newsWebhook!!.name, preset = true)

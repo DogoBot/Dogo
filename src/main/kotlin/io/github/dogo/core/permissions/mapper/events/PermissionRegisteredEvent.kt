@@ -1,7 +1,7 @@
-package io.github.dogo.statistics
+package io.github.dogo.core.permissions.mapper.events
 
-import io.github.dogo.finder.IFinder
-import org.bson.Document
+import io.github.dogo.core.permissions.events.PermissionEvent
+import io.github.dogo.core.permissions.mapper.PermissionNode
 
 /*
 Copyright 2019 Nathan Bombana
@@ -20,13 +20,8 @@ limitations under the License.
 */
 
 /**
- * Interface used to create a Finder for any subclass of [Statistic].
- *
- * @param[T] the statistic type.
  *
  * @author NathanPB
- * @since 3.1.0
+ * @since 1.0.0
  */
-abstract class StatisticsFinder<T : Statistic> : IFinder<T>() {
-    override val col = Statistic.col
-}
+class PermissionRegisteredEvent(val node: PermissionNode) : PermissionEvent()

@@ -1,12 +1,11 @@
 package io.github.dogo.core
 
 import com.google.common.reflect.TypeToken
-import com.mongodb.MongoClient
-import com.mongodb.client.MongoDatabase
 import io.github.dogo.core.command.CommandFactory
 import io.github.dogo.core.data.DogoData
 import io.github.dogo.core.entities.DogoGuild
 import io.github.dogo.core.eventBus.EventBus
+import io.github.dogo.core.permissions.mapper.PermissionMapper
 import io.github.dogo.menus.SimpleReactionMenu
 import io.github.dogo.server.APIServer
 import net.dv8tion.jda.core.JDA
@@ -14,6 +13,7 @@ import ninja.leaping.configurate.ConfigurationOptions
 import ninja.leaping.configurate.json.JSONConfigurationLoader
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import org.jetbrains.exposed.sql.Database
 import sun.misc.Unsafe
 import java.io.File
 import java.io.FileWriter
@@ -44,6 +44,7 @@ limitations under the License.
  */
 class DogoBot {
     companion object {
+
         /**
          * Dogo Version.
          */
@@ -55,14 +56,9 @@ class DogoBot {
         var jda: JDA? = null
 
         /**
-         * Mongo Client.
+         * Database connection.
          */
-        var mongoClient: MongoClient? = null
-
-        /**
-         * Mongo Database.
-         */
-        var db: MongoDatabase? = null
+        lateinit var db: Database
 
         /**
          * The data loader from Configurate.
@@ -70,9 +66,9 @@ class DogoBot {
         val dataLoader = JSONConfigurationLoader.builder()
                 .setFile(File("init.json").also { if(!it.exists()) {
                     it.createNewFile()
-                    FileWriter(it).let {
-                        it.write("{}")
-                        it.close()
+                    FileWriter(it).apply {
+                        write("{}")
+                        close()
                     }
                 }})
                 .setIndent(3)
@@ -92,7 +88,7 @@ class DogoBot {
         }()
 
         /**
-         * Directory used to store temporary things
+         * Directory used to store temporary things.
          */
         val dynamicDir = File(".dynamic").also { it.mkdirs() }
 
@@ -107,14 +103,18 @@ class DogoBot {
          */
         val initTime = System.currentTimeMillis()
 
-
         /**
          * The Event Bus.
          */
         val eventBus = EventBus()
 
         /**
-         * Event Bus Thread
+         * The permission manager.
+         */
+        val permissionManager = PermissionMapper(DogoBot.eventBus)
+
+        /**
+         * Event Bus Thread.
          */
 
         val eventBusThread = Executors.newSingleThreadExecutor()
@@ -141,11 +141,10 @@ class DogoBot {
             }
         }.also { Timer().schedule(it, 1, 1000) }
 
-
         /**
          * The command factory.
          */
-        val cmdFactory = CommandFactory().also { DogoBot.eventBus.register(it::onMessage) }
+        val cmdFactory = CommandFactory()
 
         /**
          * The API Server.
@@ -174,8 +173,8 @@ class DogoBot {
          * @return the list with all the valid command prefixes.
          */
         fun getCommandPrefixes(vararg guilds : DogoGuild) : List<String> {
-            val list = io.github.dogo.core.DogoBot.Companion.data.COMMAND_PREFIX.toMutableList()
-            guilds.map { it.prefix }.forEach { list.addAll(it)}
+            val list = DogoBot.data.COMMAND_PREFIX.toMutableList()
+            guilds.map { it.prefixes }.forEach { list.addAll(it)}
             return list.sortedBy { -it.length }
         }
     }

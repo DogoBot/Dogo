@@ -109,7 +109,7 @@ open class SimpleReactionMenu(val context: CommandContext) {
         DogoBot.eventBus.unregister(this::onReact)
         instances.remove(this)
 
-        val member = context.guild?.g?.getMember(DogoBot.jda!!.selfUser)
+        val member = context.guild?.g?.getMember(DogoBot.jda?.selfUser)
         if(context.guild?.g != null && member?.hasPermission(Permission.MESSAGE_MANAGE) == true){
             if(delete) {
                 msg?.delete()?.queue()
@@ -138,7 +138,7 @@ open class SimpleReactionMenu(val context: CommandContext) {
                 .filter { !actions.any { ac -> ac.emote.id == if(it.reactionEmote.isEmote) it.reactionEmote.id else it.reactionEmote.name } }
                 .forEach { it.removeReaction().queue() }
 
-        val presentEmotes = msg!!.reactions.filter { r -> r.users.any { it.id == DogoBot.jda!!.selfUser.id } }
+        val presentEmotes = msg!!.reactions.filter { r -> r.users.any { it.id == DogoBot.jda?.selfUser?.id } }
                 .map { if(it.reactionEmote.isEmote) it.reactionEmote.id else it.reactionEmote.name}
         actions
                 .filter { !presentEmotes.contains(it.emote.id) }

@@ -3,6 +3,7 @@ package io.github.dogo.core.command
 import io.github.dogo.core.DogoBot
 import io.github.dogo.core.entities.DogoGuild
 import io.github.dogo.core.entities.DogoUser
+import io.github.dogo.core.permissions.PermGroupSet
 import io.github.dogo.lang.BoundLanguage
 import io.github.dogo.lang.LanguageEntry
 import io.github.dogo.utils.Holder
@@ -14,10 +15,10 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent
 import java.awt.Color
 
 class CommandFactory {
-    var route : CommandRouter = CommandRouter(CommandRouter.root){}
+    var route : CommandRouter = CommandRouter(CommandRouter.root, DogoBot.permissionManager){}
 
     fun route(body: CommandRouter.()->Unit){
-        CommandRouter(CommandRouter.root, body).also { route = it }
+        CommandRouter(CommandRouter.root, DogoBot.permissionManager, body).also { route = it }
     }
 
     fun onMessage(event : MessageReceivedEvent){
@@ -25,7 +26,7 @@ class CommandFactory {
 
         var prefixes = io.github.dogo.core.DogoBot.getCommandPrefixes()
         if(event.guild != null){
-            prefixes = io.github.dogo.core.DogoBot.getCommandPrefixes(DogoGuild(event.guild))
+            prefixes = io.github.dogo.core.DogoBot.getCommandPrefixes(DogoGuild.from(event.guild))
         }
         for(p in prefixes){
             if(event.message.contentRaw.startsWith(p)){
@@ -36,16 +37,15 @@ class CommandFactory {
 
         prefix?.let {
             DogoBot.cmdProcessorThread.execute {
-                if(event.guild?.getMember(DogoBot.jda!!.selfUser)?.hasPermission(Permission.MESSAGE_WRITE) != true){
+                if(event.guild?.getMember(DogoBot.jda?.selfUser)?.hasPermission(Permission.MESSAGE_WRITE) != true){
                     return@execute
                 }
                 val text = event.message.contentRaw.replaceFirst(prefix, "")
                 val argsHolder = Holder<Int>()
                 val route = this.route.findRoute(text, argsHolder)
-                val user = DogoUser(event.author)
-                val guild: DogoGuild? = if (event.guild != null) DogoGuild(event.guild) else null
-                val pgs = user.getPermGroups()
-                guild?.let { pgs.addAll(guild.permgroups.filterApplied(user.id)) }
+                val user = DogoUser.from(event.author)
+                val guild: DogoGuild? = if (event.guild != null) DogoGuild.from(event.guild) else null
+                val pgs = PermGroupSet.find(user, guild)
 
                 route.let { cmd ->
                     if(pgs.can(cmd.getPermission())){
@@ -62,13 +62,6 @@ class CommandFactory {
                                 }
                             }
 
-                            //todo temporary shit
-                            if(cmd.reference.category == CommandCategory.GUILD_ADMINISTRATION && guild != null){
-                                if(!guild.g!!.getMember(user.usr!!).isOwner) {
-                                    return@execute
-                                }
-                            }
-
                             if(cmd.reference.category == CommandCategory.GUILD_ADMINISTRATION && guild == null) {
                                 DogoBot.jdaOutputThread.execute {
                                     val lang = LanguageEntry("text")
@@ -76,19 +69,31 @@ class CommandFactory {
                                 }
                                 return@let
                             }
-                            if(cmd.reference.category == CommandCategory.OWNER && !user.getPermGroups().can("commands.admin.root")){
+                            if(cmd.reference.category == CommandCategory.OWNER && !user.permgroups.can("commands.admin.root")){
                                 DogoBot.jdaOutputThread.execute {
                                     val lang = BoundLanguage(user.lang, "text")
                                     EmbedBuilder()
                                             .setColor(Color.YELLOW)
                                             .setTitle(lang.getText("error.commandforbidden.title"))
                                             .setDescription(lang.getText("error.commandforbidden.description", "command.admin.root"))
+                                            .let { event.channel.sendMessage(it.build()).queue() }
                                 }
                                 return@let
                             }
                             if(!route.isRoot()){
-                                val context = CommandContext(event.message, route, args)
-                                cmd.run?.let { it.command(context) }
+                                try {
+                                    val context = CommandContext(event.message, route, args)
+                                    cmd.run?.command?.invoke(context)
+                                } catch(ex: Exception) {
+                                    DogoBot.jdaOutputThread.execute {
+                                        val lang = BoundLanguage(user.lang, "text")
+                                        EmbedBuilder()
+                                                .setColor(Color.YELLOW)
+                                                .setTitle("error.commandfailed.title")
+                                                .setDescription(lang.getText("error.commandfailed.description", ex.message.orEmpty()))
+                                                .let { event.channel.sendMessage(it.build()).queue() }
+                                    }
+                                }
                             }
 
                         } else {
@@ -110,7 +115,7 @@ class CommandFactory {
                                     EmbedBuilder()
                                             .setColor(Color.YELLOW)
                                             .setTitle(lang.getText("error.commandforbidden.title"))
-                                            .setDescription(lang.getText("error.commandforbidden.description", cmd.getPermission()))
+                                            .setDescription(lang.getText("error.commandforbidden.description", cmd.getPermission()+".run"))
                                             .build()
                             ).queue({}, {})
                         }

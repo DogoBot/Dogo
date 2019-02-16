@@ -1,22 +1,19 @@
 package io.github.dogo.core.boot
 
 import com.mashape.unirest.http.Unirest
-import com.mongodb.MongoClient
-import com.mongodb.MongoClientOptions
-import com.mongodb.MongoCredential
-import com.mongodb.ServerAddress
-import com.mongodb.client.MongoDatabase
 import io.github.dogo.core.DogoBot
-import io.github.dogo.core.JDAListener
+import io.github.dogo.core.listeners.JDAListener
 import io.github.dogo.core.command.CommandCategory
 import io.github.dogo.core.command.CommandReference
-import io.github.dogo.core.profiles.PermGroup
+import io.github.dogo.core.permissions.mapper.events.PermissionRegisteredEvent
 import io.github.dogo.lang.LanguageEntry
 import io.github.dogo.server.APIServer
 import io.github.dogo.utils.Holder
 import net.dv8tion.jda.core.AccountType
 import net.dv8tion.jda.core.JDABuilder
 import net.dv8tion.jda.core.entities.Game
+import org.apache.logging.log4j.LogManager
+import org.jetbrains.exposed.sql.Database
 import org.json.JSONObject
 import java.io.*
 import java.text.SimpleDateFormat
@@ -50,7 +47,7 @@ limitations under the License.
  */
 class Boot {
     /**
-     * The list of phases on boot proccess.
+     * The list of phases on boot process.
      *
      * @see Phase
      */
@@ -63,25 +60,19 @@ class Boot {
                         .build().awaitReady()
             },
             Phase("Connecting to Database") {
-                DogoBot.mongoClient = MongoClient(
-                        ServerAddress(DogoBot.data.DB.HOST, DogoBot.data.DB.PORT),
-                        MongoCredential.createCredential(
-                                DogoBot.data.DB.USER,
-                                DogoBot.data.DB.NAME,
-                                DogoBot.data.DB.PWD.toCharArray()
-                        ),
-                        MongoClientOptions.builder().build()
-                ).also {
-                    DogoBot.db = it.getDatabase(DogoBot.data.DB.NAME)
-                }
+                DogoBot.db = Database.connect(
+                        "jdbc:mysql://${DogoBot.data.DB.HOST}:${DogoBot.data.DB.PORT}/${DogoBot.data.DB.NAME}",
+                        driver = "com.mysql.jdbc.Driver",
+                        user = DogoBot.data.DB.USER,
+                        password = DogoBot.data.DB.PWD
+                )
             },
-            Phase("Checking Database") {
-                DogoBot.db?.checkCollection("users")
-                DogoBot.db?.checkCollection("guilds")
-                DogoBot.db?.checkCollection("permgroups")
-                DogoBot.db?.checkCollection("stats")
-                DogoBot.db?.checkCollection("tokens")
-                DogoBot.db?.checkCollection("badwords")
+            Phase("Registering Random Event Listeners"){
+                DogoBot.eventBus.register(io.github.dogo.core.listeners.BadwordListener::listenSend)
+                DogoBot.eventBus.register(object: Any(){
+                   fun run(e: PermissionRegisteredEvent) = DogoBot.logger.info("Permission Registered: ${e.node.fullName}")
+                }::run)
+                DogoBot.eventBus.register(DogoBot.cmdFactory::onMessage)
             },
             Phase("Loading Language Assets") {
                 LanguageEntry.load()
@@ -91,7 +82,8 @@ class Boot {
                   route(io.github.dogo.commands.Help())
                   route(io.github.dogo.commands.TicTacToe())
                   route(io.github.dogo.commands.Stats())
-                  route(CommandReference("trasleite", category = CommandCategory.FUN)){
+                  route(io.github.dogo.commands.Roles())
+                  route(CommandReference("trasleite", category = CommandCategory.FUN, permission = "command")){
                       execute {
                           if(java.util.Random().nextInt(1000) == 1){
                               this.reply("nope", preset = true)
@@ -100,7 +92,7 @@ class Boot {
                           }
                       }
                   }
-                  route(CommandReference("route", category = CommandCategory.OWNER)){
+                  route(CommandReference("route", category = CommandCategory.OWNER, permission = "command.admin")){
                       execute {
                           if(this.args.isEmpty()){
                               DogoBot.cmdFactory.route
@@ -114,7 +106,7 @@ class Boot {
                           }.let { r -> this.reply("```json\n$r\n```") }
                       }
                   }
-                  route(CommandReference("update", category = CommandCategory.OWNER)){
+                  route(CommandReference("update", category = CommandCategory.OWNER, permission = "command.admin.root")){
                       execute {
                           Executors.newSingleThreadExecutor().execute {
                               replySynk("preparing", preset = true)
@@ -135,16 +127,13 @@ class Boot {
                                       Thread.sleep(3000)
                                       System.exit(3) //exit code for update restart
                                   }
-
                               } catch (ex: java.lang.Exception){
                                   replySynk("failed", preset = true)
-                                  return@execute
                               }
-
                           }
                       }
                   }
-                  route(CommandReference("eval", args = 1, category = CommandCategory.OWNER)){
+                  route(CommandReference("eval", args = 1, category = CommandCategory.OWNER, permission = "command.admin.root")){
                       route(io.github.dogo.commands.Eval.KotlinEval())
                   }
                   route(io.github.dogo.commands.WebhookEcho()){
@@ -157,36 +146,8 @@ class Boot {
                   }
               }
             },
-            Phase("Setting up Permgroups") {
-                PermGroup("0").apply {
-                    name = "default"
-                    priority = 0
-                    applyTo = arrayListOf("everyone")
-                    include = arrayListOf("command.*")
-                    exclude = arrayListOf("command.admin.*", "command.news.*")
-                }
-                PermGroup("-1").apply {
-                    name = "admin"
-                    include = arrayListOf("command.admin.*", "badword.bypass")
-                    exclude = arrayListOf("command.admin.root.*")
-                    priority = -1
-                }
-                PermGroup("-2").apply {
-                    name = "root"
-                    applyTo = arrayListOf(DogoBot.data.OWNER_ID)
-                    include = arrayListOf("*")
-                    priority = -2
-                }
-            },
             Phase("Initializing API"){
                 DogoBot.apiServer = APIServer().also { it.start() }
-            },
-            Phase("Registering Random Event Listeners"){
-                DogoBot.eventBus.register(io.github.dogo.badwords.BadwordProfile.listener::listenSend)
-                DogoBot.eventBus.register()
-                io.github.dogo.core.PermgroupsListener().let {
-                    DogoBot.eventBus.register(it::onEvent1, it::onEvent2)
-                }
             }
     )
 
@@ -194,6 +155,7 @@ class Boot {
         Thread.currentThread().name = "Boot"
         System.setProperty("logFile", File(File(DogoBot.data.LOGGER_PATH), SimpleDateFormat("dd-MM-YYYY HH-mm-ss").format(Date())).absolutePath)
 
+        LogManager.getLogger("aaa").info("bbb")
         DogoBot.logger.info("Starting Dogo v${DogoBot.version}")
 
         if(DogoBot.data.DEBUG_PROFILE){
@@ -244,7 +206,7 @@ class Boot {
             count++
         }
         DogoBot.ready = true
-        DogoBot.jda?.presence?.game = Game.watching("to ${DogoBot.jda?.guilds?.size} guilds | dg!help")
+        DogoBot.jda!!.presence.game = Game.watching("to ${DogoBot.jda!!.guilds?.size} guilds | dg!help")
         DogoBot.logger.info("Dogo is Done! ${io.github.dogo.core.DogoBot.initTime.timeSince()}")
     }
 
@@ -254,39 +216,16 @@ class Boot {
      */
 
     /**
-     * Checks if a database has a collection.
-     *
-     * @param[name] the collection name.
-     *
-     * @return true if exists, false if not.
-     */
-    private fun MongoDatabase.hasCollection(name : String) : Boolean {
-        return this.listCollectionNames().contains(name)
-    }
-
-    /**
      * Get the delay between a long and the current time and formats it to a human-readable format.
      *
      * @return the delay between [this] and the current time in a human-readable format.
      */
     private fun Long.timeSince() : String {
         val time = System.currentTimeMillis() - this
-        return when{
+        return when {
             time < 1000 -> time.toString()+"ms"
             time < 60000 -> TimeUnit.MILLISECONDS.toSeconds(time).toString()+"sec"
             else -> TimeUnit.MILLISECONDS.toMinutes(time).toString()+"min"
-        }
-    }
-
-    /**
-     * Creates a collection if it doesn't exists.
-     *
-     * @param[collection] the collection name.
-     */
-    private fun MongoDatabase.checkCollection(collection: String) {
-        if(!this.hasCollection(collection)) {
-            DogoBot.logger.info("'$collection' collection doesn't exists! Creating one...")
-            this.createCollection(collection)
         }
     }
 }
@@ -294,6 +233,6 @@ class Boot {
 /**
  * Hello Java
  */
-fun main(args : Array<String>){
+fun main(){
     Boot()
 }

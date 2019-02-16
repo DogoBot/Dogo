@@ -32,7 +32,8 @@ class Help : ReferencedCommand(
                 "help",
                 usage = "help\nhelp command\n help command subcommand ... subcommand",
                 aliases = "plsSendHelp",
-                category = CommandCategory.BOT
+                category = CommandCategory.BOT,
+                permission = "command"
         ),
         {
                 val route = if(args.isNotEmpty()){
@@ -55,7 +56,7 @@ class Help : ReferencedCommand(
                         if(!hm.containsKey(c.reference.category)) hm[c.reference.category] = ArrayList()
                         (hm[c.reference.category] as ArrayList).add(c.reference)
                     }
-                    hm.forEach{
+                    hm.forEach {
                         var s = StringBuilder()
                         it.value.forEach {s.append("``${it.name}``, ") }
                         s = StringBuilder(s.substring(0, s.length-2))
@@ -83,7 +84,7 @@ class Help : ReferencedCommand(
         fun getHelpFor(cmd: CommandRouter, cnt: CommandContext): EmbedBuilder {
             val embed = EmbedBuilder()
                     .setColor(ThemeColor.PRIMARY)
-                    .setAuthor(cnt.langEntry.getText(cnt.sender.lang, "helpfor", cmd.reference.name), null, io.github.dogo.commands.Help.Companion.HELP_IMAGE)
+                    .setAuthor(cnt.langEntry.getText(cnt.sender.lang, "helpfor", cmd.reference.name), null, Help.HELP_IMAGE)
 
             embed.addField(cnt.langEntry.getText(cnt.sender.lang, "category"), cmd.reference.category.getDisplay(cnt.sender.lang), false)
 

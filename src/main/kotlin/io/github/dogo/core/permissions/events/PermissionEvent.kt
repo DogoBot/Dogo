@@ -1,6 +1,4 @@
-package io.github.dogo.finder
-
-import org.bson.Document
+package io.github.dogo.core.permissions.events
 
 /*
 Copyright 2019 Nathan Bombana
@@ -19,32 +17,9 @@ limitations under the License.
 */
 
 /**
+ * General permission event.
  *
  * @author NathanPB
- * @since 3.1.0
+ * @since 1.0.0
  */
-class FinderField {
-    /**
-     * The name of the field. Will be initialized when the [IFinder] instance is created.
-     */
-    var name: String = ""
-
-    /**
-     * The filter. Empty one means to match anything.
-     */
-    var doc = Document()
-
-    /**
-     * Clears [doc], to match any value on DB.
-     */
-    fun matchAll() {
-        doc = Document()
-    }
-
-    /**
-     * Fills [doc] with a filter.
-     */
-    fun matchFilter(filter: String.()->Document) {
-        doc = filter(name)
-    }
-}
+open class PermissionEvent

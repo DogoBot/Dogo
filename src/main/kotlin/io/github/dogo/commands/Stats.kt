@@ -4,6 +4,8 @@ import io.github.dogo.core.DogoBot
 import io.github.dogo.core.command.CommandCategory
 import io.github.dogo.core.command.CommandReference
 import io.github.dogo.core.command.ReferencedCommand
+import io.github.dogo.core.entities.DogoGuild
+import io.github.dogo.core.entities.DogoUser
 import io.github.dogo.lang.BoundLanguage
 import io.github.dogo.lang.LanguageEntry
 import io.github.dogo.menus.SimpleReactionMenu
@@ -33,7 +35,7 @@ limitations under the License.
  * @since 3.1.0
  */
 class Stats : ReferencedCommand(
-        CommandReference("stats", aliases = "status", category = CommandCategory.BOT),
+        CommandReference("stats", aliases = "status", category = CommandCategory.BOT, permission = "command"),
         {
             val menu = SimpleReactionMenu(this).also {
                 it.timeout = DogoBot.data.TIMEOUTS.GENERAL
@@ -53,7 +55,6 @@ class Stats : ReferencedCommand(
         /**
          * Builds the basic information embed.
          *
-         * @param[lang] the language.
          * @param[langEntry] the [Stats] command [LanguageEntry].
          */
         private fun getBasicInfo(langEntry: BoundLanguage) : EmbedBuilder {
@@ -62,14 +63,17 @@ class Stats : ReferencedCommand(
                     .setAuthor("Dogo v${DogoBot.version}", null, DogoBot.jda!!.selfUser.effectiveAvatarUrl)
                     .setTitle(langEntry.getText("amihealthy"))
                     .setThumbnail("https://i.imgur.com/9rmyKUk.png")
-                    .addField(langEntry.getText("users"), DogoBot.jda?.users?.size.toString(),true)
-                    .addField(langEntry.getText("guilds"), DogoBot.jda?.guilds?.size.toString(), true)
+                    .addField(langEntry.getText("users"), DogoBot.jda!!.users.size.toString(),true)
+                    .addField(langEntry.getText("guilds"), DogoBot.jda!!.guilds.size.toString(), true)
 
                     .addField(langEntry.getText("cpu"), BeamUtils.usedCPU().toString()+"%", true)
                     .addField(langEntry.getText("ram"), "${BeamUtils.usedMemory()}MB | ${BeamUtils.maxMemory()}MB", true)
 
-                    .addField(langEntry.getText("ping"), "${DogoBot.jda?.ping}ms", true)
+                    .addField(langEntry.getText("ping"), "${DogoBot.jda!!.ping}ms", true)
                     .addField(langEntry.getText("uptime"), DisplayUtils.formatTimeSimple(System.currentTimeMillis() - DogoBot.initTime), true)
+
+                    .addField(langEntry.getText("cachedguild"), DogoGuild.cache.size.toString(), true)
+                    .addField(langEntry.getText("cacheduser"), DogoUser.cache.size.toString(), true)
         }
     }
 }

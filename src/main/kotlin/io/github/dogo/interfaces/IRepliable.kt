@@ -65,7 +65,7 @@ interface IRepliable {
         return if(content[0] is MessageEmbed) {
             replyChannel.sendMessage(content[0] as MessageEmbed).complete()
         } else {
-            var text = content[0].toString()
+            val text = content[0].toString()
 
             replyChannel.sendMessage(when {
                 preset -> langEntry.getText(text, *Arrays.copyOfRange(content, 1, content.size))

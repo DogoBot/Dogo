@@ -2,24 +2,18 @@ package io.github.dogo.commands
 
 import com.mashape.unirest.http.Unirest
 import com.sun.org.glassfish.external.statistics.Statistic
-import io.github.dogo.badwords.BadwordFinder
-import io.github.dogo.badwords.BadwordListener
-import io.github.dogo.badwords.BadwordProfile
+import io.github.dogo.core.listeners.BadwordListener
 import io.github.dogo.core.DogoBot
-import io.github.dogo.core.JDAListener
-import io.github.dogo.core.PermgroupsListener
+import io.github.dogo.core.listeners.JDAListener
 import io.github.dogo.core.command.*
 import io.github.dogo.core.data.DogoData
 import io.github.dogo.core.entities.DogoGuild
 import io.github.dogo.core.entities.DogoUser
 import io.github.dogo.core.eventBus.EventBus
-import io.github.dogo.core.profiles.PermGroup
-import io.github.dogo.core.profiles.PermGroupSet
+import io.github.dogo.core.permissions.PermGroup
+import io.github.dogo.core.permissions.PermGroupSet
 import io.github.dogo.exceptions.APIException
 import io.github.dogo.exceptions.DiscordException
-import io.github.dogo.finder.Findable
-import io.github.dogo.finder.FinderField
-import io.github.dogo.finder.IFinder
 import io.github.dogo.interfaces.IRepliable
 import io.github.dogo.lang.LanguageEntry
 import io.github.dogo.menus.ListReactionMenu
@@ -32,9 +26,7 @@ import io.github.dogo.minigames.tictactoe.TwoPlayersTTT
 import io.github.dogo.minigames.tictactoe.discord.TicTacToeImp
 import io.github.dogo.server.APIRequestProcessor
 import io.github.dogo.server.APIServer
-import io.github.dogo.server.token.Token
-import io.github.dogo.server.token.TokenFinder
-import io.github.dogo.statistics.StatisticsFinder
+import io.github.dogo.server.Token
 import io.github.dogo.statistics.TicTacToeStatistics
 import io.github.dogo.utils.*
 import io.github.dogo.utils._static.*
@@ -55,9 +47,7 @@ class Eval {
 
     companion object {
         val imports = arrayOf(
-                BadwordFinder::class,
                 BadwordListener::class,
-                BadwordProfile::class,
                 CommandCategory::class,
                 CommandContext::class,
                 CommandReference::class,
@@ -71,12 +61,8 @@ class Eval {
                 PermGroupSet::class,
                 DogoBot::class,
                 JDAListener::class,
-                PermgroupsListener::class,
                 APIException::class,
                 DiscordException::class,
-                Findable::class,
-                FinderField::class,
-                IFinder::class,
                 IRepliable::class,
                 LanguageEntry::class,
                 ListReactionMenu::class,
@@ -89,11 +75,9 @@ class Eval {
                 TicTacToe::class,
                 TwoPlayersTTT::class,
                 Token::class,
-                TokenFinder::class,
                 APIRequestProcessor::class,
                 APIServer::class,
                 Statistic::class,
-                StatisticsFinder::class,
                 TicTacToeStatistics::class,
                 BeamUtils::class,
                 DiscordAPI::class,
@@ -117,13 +101,11 @@ class Eval {
 
                 Unirest::class,
                 Jsoup::class
-        )
-                .map { "import ${it.qualifiedName}\n" }
-                .joinToString("")
+        ).joinToString("") { "import ${it.qualifiedName}\n" }
     }
 
     class KotlinEval : ReferencedCommand(
-            CommandReference("kotlin", aliases = "kt", args = 1),
+            CommandReference("kotlin", aliases = "kt", args = 1, permission = "command.admin.root"),
             {
                 val embedPast = replySynk(EmbedBuilder().setColor(Color.YELLOW).setTitle(langEntry.getText("evaluating")).build())
                 System.setProperty("idea.io.use.fallback", "true")
@@ -153,7 +135,7 @@ class Eval {
                             it.setDescription(
                                 langEntry.getText("result")+
                                 if(desc.length > 1500){
-                                    "[Hastebin](${HastebinUtils.URL}${HastebinUtils.upload(it.descriptionBuilder.toString())})"
+                                    " [Hastebin](${HastebinUtils.URL}${HastebinUtils.upload(desc.toString())})"
                                 } else "\n```$desc```"
                             )
                             DogoBot.jdaOutputThread.submit {

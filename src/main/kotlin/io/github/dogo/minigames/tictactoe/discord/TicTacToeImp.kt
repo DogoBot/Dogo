@@ -1,5 +1,6 @@
 package io.github.dogo.minigames.tictactoe.discord
 
+import io.github.dogo.core.Database
 import io.github.dogo.core.DogoBot
 import io.github.dogo.core.command.CommandContext
 import io.github.dogo.core.entities.DogoUser
@@ -8,10 +9,11 @@ import io.github.dogo.minigames.tictactoe.ITTTImp
 import io.github.dogo.minigames.tictactoe.OnePlayerTTT
 import io.github.dogo.minigames.tictactoe.TTTPlayer
 import io.github.dogo.minigames.tictactoe.TwoPlayersTTT
-import io.github.dogo.statistics.TicTacToeStatistics
 import io.github.dogo.utils._static.EmoteReference
 import io.github.dogo.utils._static.ThemeColor
 import net.dv8tion.jda.core.EmbedBuilder
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.transactions.transaction
 
 /*
 Copyright 2019 Nathan Bombana
@@ -68,7 +70,24 @@ class TicTacToeImp(context: CommandContext, val p1: DogoUser, val p2: DogoUser) 
      * Sets the player statistics.
      */
     private fun dumbSetStatistics(winner: TTTPlayer) {
-        TicTacToeStatistics(ttt.table, p1, p2, if(winner != TTTPlayer.ENVIRONMENT) getCurrentPlayer() else null).update()
+        transaction {
+            Database.TICTACTOESTATISTICS.run {
+                insert {
+                    it[table] = ttt.table
+                }[id]?.let { id ->
+                    Database.TTTPlayers.run {
+                        arrayOf(p1, p2).forEach { p ->
+                            insert {
+                                it[statistic] = id
+                                it[user] = p.id
+                                it[slot] = p2.id == p.id
+                                it[this.winner] = p.id == winner.id
+                            }.let {} //just to return Unit
+                        }
+                    }
+                }
+            }
+        }
     }
 
     init {

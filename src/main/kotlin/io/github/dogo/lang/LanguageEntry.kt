@@ -1,13 +1,9 @@
 package io.github.dogo.lang
 
 import io.github.dogo.core.DogoBot
-import io.ktor.util.cio.readChannel
 import io.ktor.util.extension
-import kotlinx.coroutines.io.readUTF8Line
 import java.nio.file.*
 import java.nio.file.attribute.BasicFileAttributes
-import java.util.*
-import java.util.concurrent.ConcurrentLinkedDeque
 
 /*
 Copyright 2019 Nathan Bombana

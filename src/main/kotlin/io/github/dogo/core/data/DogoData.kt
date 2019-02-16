@@ -34,12 +34,6 @@ class DogoData {
     var BOT_TOKEN = "BOT_TOKEN"
 
     /**
-     * The bot owner's ID.
-     */
-    @Setting
-    var OWNER_ID = "214173547965186048"
-
-    /**
      * The list of acceptable command prefixes.
      */
     @Setting
@@ -84,5 +78,4 @@ class DogoData {
      */
     @Setting
     val JENKINS = Jenkins()
-
 }

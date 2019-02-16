@@ -1,5 +1,6 @@
-package io.github.dogo.core
+package io.github.dogo.core.listeners
 
+import io.github.dogo.core.DogoBot
 import io.github.dogo.core.eventBus.EventBus
 import net.dv8tion.jda.core.events.Event
 import net.dv8tion.jda.core.hooks.EventListener

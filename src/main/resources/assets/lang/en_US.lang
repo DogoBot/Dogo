@@ -19,7 +19,9 @@ text.error.argsmissing.description=Hey! This command needs ``%2$s`` args to work
 text.error.notnsfwchannel=:underage: Hey! This channel is not a NSFW channel!
 text.error.guildrequired=:exclamation: Hey! This command need to be executed inside a guild!
 text.error.commandforbidden.title=Missing Permissions
-error.commandforbidden.description=:lock: Sadly you have no permissions to access this command and I can't allow you to execute it :frowing:\nRequired: ``%s``
+text.error.commandforbidden.description=:lock: Sadly you have no permissions to access this command and I can't allow you to execute it :frowing:\nRequired: ``%s``
+text.error.commandfailed.title=Something went wrong white executing your command!
+text.error.commandfailed.description=``%s``
 
 ##############
 #HELP COMMAND#
@@ -48,6 +50,8 @@ command.stats.threadinfo=Want to go deeper?
 command.stats.advancedinfo=Advanced Info
 command.stats.basicinfo=Basic Info
 command.stats.description=Show my stats
+command.stats.cacheduser=:1234: Cached Users
+command.stats.cachedguild=:1234: Cached Guilds
 
 #############
 #TTT COMMAND#
@@ -66,20 +70,20 @@ command.tictactoe.title=%s is inviting you to play Tic Tac Toe!
 ##################
 #BADWORDS COMMAND#
 ##################
-command.badwords.description=Lists all the badwords registered for the current guild
-command.badwords.empty=:warning: This guild has no defined badwords
-command.badwords.pagetitle=Page %s of %s
-command.badwords.author=Present Words:
+command.guildowner.badwords.description=Lists all the badwords registered for the current guild
+command.guildowner.badwords.empty=:warning: This guild has no defined badwords
+command.guildowner.badwords.pagetitle=Page %s of %s
+command.guildowner.badwords.author=Present Words:
 
-command.badwords.add.description=Add a badword to the list
-command.badwords.add.nothing=:warning: No badwords were added!
-command.badwords.add.pagetitle=Page %s of %s
-command.badwords.add.author=Added Badwords:
+command.guildowner.badwords.add.description=Add a badword to the list
+command.guildowner.badwords.add.nothing=:warning: No badwords were added!
+command.guildowner.badwords.add.pagetitle=Page %s of %s
+command.guildowner.badwords.add.author=Added Badwords:
 
-command.badwords.remove.description=Remove a badword from the list
-command.badwords.remove.nothing=:warning: No badwords were removed!
-command.badwords.remove.pagetitle=Page %s of %s
-command.badwords.remove.author=Removed Words:
+command.guildowner.badwords.remove.description=Remove a badword from the list
+command.guildowner.badwords.remove.nothing=:warning: No badwords were removed!
+command.guildowner.badwords.remove.pagetitle=Page %s of %s
+command.guildowner.badwords.remove.author=Removed Words:
 
 ###################
 #TRASLEITE COMMAND#
@@ -91,26 +95,82 @@ command.trasleite.nope=Nope I don't like you
 ################
 #UPDATE COMMAND#
 ################
-command.update.preparing=:warning: Preparing to update...
-command.update.failed=:warning: Something went wrong while building the last update! Check Jenkins for more details!
-command.update.success=<:nathanbb:390267731846627329> Build compiled! Restarting to apply...
+command.admin.root.update.preparing=:warning: Preparing to update...
+command.admin.root.update.failed=:warning: Something went wrong while building the last update! Check Jenkins for more details!
+command.admin.root.update.success=<:nathanbb:390267731846627329> Build compiled! Restarting to apply...
 
 ##############
 #EVAL COMMAND#
 ##############
-command.eval.kotlin.title=Kotlin Evaluation
-command.eval.kotlin.result=Result:
-command.eval.kotlin.noreturn=No Returns
-command.eval.kotlin.took=Took %s seconds
-command.eval.kotlin.evaluating=Evaluating...
+command.admin.root.eval.kotlin.title=Kotlin Evaluation
+command.admin.root.eval.kotlin.result=Result:
+command.admin.root.eval.kotlin.noreturn=No Returns
+command.admin.root.eval.kotlin.took=Took %s seconds
+command.admin.root.eval.kotlin.evaluating=Evaluating...
 
 ##############
 #NEWS COMMAND#
 ##############
-command.news.notconfigured=:warning: There is no webhook configured for this guild! Please use ``%snews configure``
-command.news.configure.pagetitle=Select a Webhook:
-command.news.configure.done=:white_check_mark: New Webhook: **%s**
-command.news.configure.none=You have no Webhooks available! Please create one on guild settings
-command.news.current.current= Current Webhook: **%s**
-command.news.current.none=:warning: There is no webhook configured for this guild! Please use ``%snews configure``
-command.news.texttoolong=:octagonal_sign: The text is longer than 2000 characters!
+command.guildowner.news.notconfigured=:warning: There is no webhook configured for this guild! Please use ``%snews configure``
+command.guildowner.news.configure.pagetitle=Select a Webhook:
+command.guildowner.news.configure.done=:white_check_mark: New Webhook: **%s**
+command.guildowner.news.configure.none=You have no Webhooks available! Please create one on guild settings
+command.guildowner.news.current.current= Current Webhook: **%s**
+command.guildowner.news.current.none=:warning: There is no webhook configured for this guild! Please use ``%snews configure``
+command.guildowner.news.texttoolong=:octagonal_sign: The text is longer than 2000 characters!
+
+###################
+#PERMGROUP COMMAND#
+###################
+command.guildowner.role.new=Create New
+command.guildowner.role.select=**Select to edit or click :new: to create a new one.**\n
+command.guildowner.role.alreadyexits=A permgroup named ``%s`` already exists! Please enter another one
+command.guildowner.role.created=:white_check_mark: Permgroup created successfully!
+command.guildowner.role.renamed=:white_check_mark: Permgroup renamed successfully!
+command.guildowner.role.editdisplayname=Edit Display Name
+command.guildowner.role.editmembers=Edit Members
+command.guildowner.role.editpermissions=Edit Permissions
+command.guildowner.role.editdelete=Delete
+command.guildowner.role.newname=Enter the permgroup name:
+command.guildowner.role.findbyname=Enter the new name:
+command.guildowner.role.noedit=:worried: I'm Sorry, you cannot edit this permgroup. Please choose another one...
+command.guildowner.role.creating=Creating new permgroup...
+command.guildowner.role.created=Permgroup ``%s`` created!
+command.guildowner.role.renaming=Renaming %s
+command.guildowner.role.editing=Editing %s
+command.guildowner.role.pagetitle=Page %s / %s
+command.guildowner.role.areusure=Are you sure?
+command.guildowner.role.deleting=Deleting %s...
+command.guildowner.role.deleted=:white_check_mark: Permgroup ``%s`` deleted successfully!
+command.guildowner.role.deletionaborted=:white_check_mark: Deletion Aborted!
+command.guildowner.role.done=Done
+command.guildowner.role.viewmembers=View Members
+command.guildowner.role.addmembers=Add Members
+command.guildowner.role.removemembers=Remove Members
+command.guildowner.role.nomembers=:warning: This permgroup has no members!
+command.guildowner.role.mentionadd=:keyboard: Please mention the members you wanna add (or put his ID)
+command.guildowner.role.mentionremove=:keyboard: Please mention the members you wanna remove (or put his ID)
+command.guildowner.role.membersaddsuccess=:white_check_mark: Members added successfully!
+command.guildowner.role.membersremovesuccess=:white_check_mark: Members removed successfully!
+command.guildowner.role.editingmembers=Editing Members
+
+command.guildowner.role.editingperms=Editing Permissions
+command.guildowner.role.editinginclude=Editing Included Permissions
+command.guildowner.role.editingexclude=Editing Excluded Permissions
+command.guildowner.role.includeperms=Included Permissions
+command.guildowner.role.excludeperms=Excluded Permissions
+
+command.guildowner.role.typeadd=:keyboard: Type the permissions you want to add (separated by spaces)
+command.guildowner.role.typeremove=:keyboard: Type the permissions you want to remove (separated by spaces)
+
+command.guildowner.role.permadded=:white_check_mark: Permissions added successfully!
+command.guildowner.role.permremoved=:white_check_mark: Permissions removed successfully!
+
+command.guildowner.role.listperms=View Permissions
+command.guildowner.role.addperm=Add Permissions
+command.guildowner.role.removeperm=Remove Permissions
+
+command.guildowner.role.back=Return
+command.guildowner.role.subtitle=:unlock: Included | :lock: Excluded
+
+command.nopermissionstoshow=:warning: Permission list is empty!
