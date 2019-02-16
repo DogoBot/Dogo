@@ -29,17 +29,8 @@ TTTPlayers: statistic@, duser@, slot, winner
 
 
 
-PermGroups: id#
-
-Permissions: permgroup@, permission, type
+Permissions: guild#@, role#, permission, type, is_default
     permgroup@ references PermGroups(id#)
-
-UserBoundPermGroup: id#@, duser@
-    id#@ references PermGroups(id#)
-    duser@ references Users(id#)
-
-RoleBoundPermGroup: id#@, role
-    id#@ references PermGroups(id#)
 
 
 
