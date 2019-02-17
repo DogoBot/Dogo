@@ -5,6 +5,7 @@ import io.github.dogo.core.command.CommandContext
 import io.github.dogo.core.command.CommandReference
 import io.github.dogo.core.command.ReferencedCommand
 import io.github.dogo.core.permissions.PermGroup
+import io.github.dogo.core.permissions.PermGroupSet
 import io.github.dogo.menus.ListReactionMenu
 import io.github.dogo.menus.SelectorReactionMenu
 import io.github.dogo.menus.SimpleReactionMenu
@@ -61,8 +62,12 @@ class Roles : ReferencedCommand(
                     SimpleReactionMenu(cmd).also { editinclude ->
                         editinclude.addAction(EmoteReference.HEAVY_PLUS_SIGN, cmd.langEntry.getText("addperm")){
                             TextInputMenu(cmd){ it, instance ->
-                                pg.include.addAll(it.split(" ").filter { !pg.include.contains(it) })
-                                cmd.reply("permadded", preset = true)
+                                if(it.split(" ").any { !PermGroupSet.find(cmd.sender, cmd.guild).can(it) }){
+                                    cmd.reply("notpossible", preset = true)
+                                } else {
+                                    pg.include.addAll(it.split(" ").filter { !pg.include.contains(it) })
+                                    cmd.reply("permadded", preset = true)
+                                }
                                 editinclude.send()
                                 instance.end()
                             }.let {
@@ -75,8 +80,12 @@ class Roles : ReferencedCommand(
                         }
                         editinclude.addAction(EmoteReference.HEAVY_MINUS_SIGN, cmd.langEntry.getText("removeperm")){
                             TextInputMenu(cmd){ it, instance ->
-                                pg.include.removeAll(it.split(" "))
-                                cmd.reply("permremoved", preset = true)
+                                if(it.split(" ").any { !PermGroupSet.find(cmd.sender, cmd.guild).can(it) }){
+                                    cmd.reply("notpossible", preset = true)
+                                } else {
+                                    pg.include.removeAll(it.split(" "))
+                                    cmd.reply("permremoved", preset = true)
+                                }
                                 editinclude.send()
                                 instance.end()
                             }.let {
@@ -102,8 +111,12 @@ class Roles : ReferencedCommand(
                     SimpleReactionMenu(cmd).also { editexclude ->
                         editexclude.addAction(EmoteReference.HEAVY_PLUS_SIGN, cmd.langEntry.getText("addperm")){
                             TextInputMenu(cmd){ it, instance ->
-                                pg.exclude.addAll(it.split(" ").filter { !pg.exclude.contains(it) })
-                                cmd.reply("permadded", preset = true)
+                                if(it.split(" ").any { !PermGroupSet.find(cmd.sender, cmd.guild).can(it) }){
+                                    cmd.reply("notpossible", preset = true)
+                                } else {
+                                    pg.exclude.addAll(it.split(" ").filter { !pg.exclude.contains(it) })
+                                    cmd.reply("permadded", preset = true)
+                                }
                                 editexclude.send()
                                 instance.end()
                             }.let {
@@ -116,8 +129,12 @@ class Roles : ReferencedCommand(
                         }
                         editexclude.addAction(EmoteReference.HEAVY_MINUS_SIGN, cmd.langEntry.getText("removeperm")){
                             TextInputMenu(cmd){ it, instance ->
-                                pg.exclude.removeAll(it.split(" "))
-                                cmd.reply("permremoved", preset = true)
+                                if(it.split(" ").any { !PermGroupSet.find(cmd.sender, cmd.guild).can(it) }){
+                                    cmd.reply("notpossible", preset = true)
+                                } else {
+                                    pg.exclude.removeAll(it.split(" "))
+                                    cmd.reply("permremoved", preset = true)
+                                }
                                 editexclude.send()
                                 instance.end()
                             }.let {
