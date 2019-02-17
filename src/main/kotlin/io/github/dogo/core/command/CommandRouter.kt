@@ -1,10 +1,9 @@
 package io.github.dogo.core.command
 
-import io.github.dogo.core.permissions.mapper.PermissionMapper
 import io.github.dogo.utils.Holder
 import org.json.JSONObject
 
-class CommandRouter(val reference: CommandReference, val permMapper: PermissionMapper, body: CommandRouter.()->Unit) {
+class CommandRouter(val reference: CommandReference, body: CommandRouter.()->Unit) {
     val children = mutableListOf<CommandRouter>()
     var run: ReferencedCommand? = null
     var parent: CommandRouter? = null
@@ -12,7 +11,7 @@ class CommandRouter(val reference: CommandReference, val permMapper: PermissionM
     init { body() }
 
     fun CommandRouter.route(reference: CommandReference, body: CommandRouter.()->Unit) : CommandRouter {
-        return CommandRouter(reference, permMapper, body)
+        return CommandRouter(reference, body)
                 .also {
                     it.parent = this
                     children.add(it)
@@ -21,7 +20,6 @@ class CommandRouter(val reference: CommandReference, val permMapper: PermissionM
 
     fun CommandRouter.route(referenced: ReferencedCommand, body: CommandRouter.()->Unit = {}) : CommandRouter {
         return route(referenced.reference, body).also {
-            permMapper.registerPermission(it.getPermission())
             it.execute(referenced.command)
         }
     }
@@ -41,16 +39,6 @@ class CommandRouter(val reference: CommandReference, val permMapper: PermissionM
         } else router
     }
 
-    fun getPermission() : String {
-        var currentRoute : CommandRouter? = this
-        val routes = mutableListOf<String>()
-        do {
-            routes.add(currentRoute!!.reference.name)
-            currentRoute = currentRoute.parent
-        } while(currentRoute != null)
-        return routes.reversed().filter{ it.isNotEmpty() }.joinToString(separator = ".", prefix = "${reference.permission}.")
-    }
-
     fun getFullName() : String {
         var currentRoute : CommandRouter? = this
         val routes = mutableListOf<String>()
@@ -59,6 +47,16 @@ class CommandRouter(val reference: CommandReference, val permMapper: PermissionM
             currentRoute = currentRoute.parent
         } while (currentRoute != null)
         return routes.joinToString(" ")
+    }
+
+    fun getPermission(): String {
+        var currentRoute : CommandRouter? = this
+        val routes = mutableListOf<String>()
+        do {
+            routes.add(currentRoute!!.reference.name)
+            currentRoute = currentRoute.parent
+        } while(currentRoute != null)
+        return routes.reversed().filter{ it.isNotEmpty() }.joinToString(separator = ".", prefix = "${reference.permission}.")
     }
 
 

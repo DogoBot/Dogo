@@ -172,5 +172,6 @@ command.guildowner.role.removeperm=Remove Permissions
 
 command.guildowner.role.back=Return
 command.guildowner.role.subtitle=:unlock: Included | :lock: Excluded
+command.guildowner.role.notpossible=:octagonal_sign: Was not possible to add one of the specified permissions! Operation aborted!
 
-command.nopermissionstoshow=:warning: Permission list is empty!
+command.guildowner.role.nopermissionstoshow=:warning: Permission list is empty!

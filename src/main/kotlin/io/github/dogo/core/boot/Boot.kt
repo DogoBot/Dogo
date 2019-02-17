@@ -5,14 +5,12 @@ import io.github.dogo.core.DogoBot
 import io.github.dogo.core.listeners.JDAListener
 import io.github.dogo.core.command.CommandCategory
 import io.github.dogo.core.command.CommandReference
-import io.github.dogo.core.permissions.mapper.events.PermissionRegisteredEvent
 import io.github.dogo.lang.LanguageEntry
 import io.github.dogo.server.APIServer
 import io.github.dogo.utils.Holder
 import net.dv8tion.jda.core.AccountType
 import net.dv8tion.jda.core.JDABuilder
 import net.dv8tion.jda.core.entities.Game
-import org.apache.logging.log4j.LogManager
 import org.jetbrains.exposed.sql.Database
 import org.json.JSONObject
 import java.io.*
@@ -69,9 +67,6 @@ class Boot {
             },
             Phase("Registering Random Event Listeners"){
                 DogoBot.eventBus.register(io.github.dogo.core.listeners.BadwordListener::listenSend)
-                DogoBot.eventBus.register(object: Any(){
-                   fun run(e: PermissionRegisteredEvent) = DogoBot.logger.info("Permission Registered: ${e.node.fullName}")
-                }::run)
                 DogoBot.eventBus.register(DogoBot.cmdFactory::onMessage)
             },
             Phase("Loading Language Assets") {
@@ -155,7 +150,6 @@ class Boot {
         Thread.currentThread().name = "Boot"
         System.setProperty("logFile", File(File(DogoBot.data.LOGGER_PATH), SimpleDateFormat("dd-MM-YYYY HH-mm-ss").format(Date())).absolutePath)
 
-        LogManager.getLogger("aaa").info("bbb")
         DogoBot.logger.info("Starting Dogo v${DogoBot.version}")
 
         if(DogoBot.data.DEBUG_PROFILE){

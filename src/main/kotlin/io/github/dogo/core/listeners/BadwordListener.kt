@@ -64,7 +64,7 @@ class BadwordListener {
 
         val guild = DogoGuild.from(msg.guild)
         val user = DogoUser.from(echos[msg]?.also { echos.remove(msg) } ?: msg.author.id)
-        if (user.id != DogoBot.jda!!.selfUser.id && !user.permgroups.can("badword.bypass")) {
+        if (user.id != DogoBot.jda!!.selfUser.id && !user.permgroups.can("badword.admin.bypass")) {
             val container = mutableListOf<String>()
             val newmsg = msg.contentDisplay.replaceBadwords(guild.badwords, container)
             if (container.isNotEmpty()) {

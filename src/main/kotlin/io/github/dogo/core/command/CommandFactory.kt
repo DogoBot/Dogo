@@ -15,10 +15,10 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent
 import java.awt.Color
 
 class CommandFactory {
-    var route : CommandRouter = CommandRouter(CommandRouter.root, DogoBot.permissionManager){}
+    var route : CommandRouter = CommandRouter(CommandRouter.root){}
 
     fun route(body: CommandRouter.()->Unit){
-        CommandRouter(CommandRouter.root, DogoBot.permissionManager, body).also { route = it }
+        CommandRouter(CommandRouter.root, body).also { route = it }
     }
 
     fun onMessage(event : MessageReceivedEvent){
@@ -115,7 +115,7 @@ class CommandFactory {
                                     EmbedBuilder()
                                             .setColor(Color.YELLOW)
                                             .setTitle(lang.getText("error.commandforbidden.title"))
-                                            .setDescription(lang.getText("error.commandforbidden.description", cmd.getPermission()+".run"))
+                                            .setDescription(lang.getText("error.commandforbidden.description", cmd.getPermission()))
                                             .build()
                             ).queue({}, {})
                         }

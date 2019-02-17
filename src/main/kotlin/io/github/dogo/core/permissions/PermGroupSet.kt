@@ -5,9 +5,7 @@ import io.github.dogo.core.DogoBot
 import io.github.dogo.core.entities.DogoGuild
 import io.github.dogo.core.entities.DogoUser
 import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.or
 import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
 /**

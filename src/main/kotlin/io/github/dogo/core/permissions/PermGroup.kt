@@ -1,9 +1,7 @@
 package io.github.dogo.core.permissions
 
 import io.github.dogo.core.Database
-import io.github.dogo.core.DogoBot
 import io.github.dogo.core.entities.DogoGuild
-import io.github.dogo.core.permissions.mapper.PermissionNode
 import io.github.dogo.utils.BoundList
 import net.dv8tion.jda.core.entities.Role
 import org.jetbrains.exposed.sql.*
@@ -157,23 +155,24 @@ open class PermGroup(val role: Role?, val guild: DogoGuild?) {
     /**
      * Checks if the permgroup has a included permission.
      */
-    fun hasIncluded(perm: String) : Boolean {
-        for(s in include){
-            if(PermissionNode("fakenode").apply {
-                children.addAll(DogoBot.permissionManager.permissions.findFamily(s))
-            }.findFamily(perm).containsAll(DogoBot.permissionManager.permissions.findFamily(s))) return true
-        }
-        return false
-    }
+    fun hasIncluded(perm: String) = hasInList(include, perm)
 
     /**
      * Checks if the permgroup has a excluded permission.
      */
-    fun hasExcluded(perm : String) : Boolean {
-        for(s in exclude){
-            if(PermissionNode("fakenode").apply {
-                children.addAll(DogoBot.permissionManager.permissions.findFamily(s))
-            }.findFamily(perm).containsAll(DogoBot.permissionManager.permissions.findFamily(s))) return true
+    fun hasExcluded(perm: String) = hasInList(exclude, perm)
+
+    /**
+     * Checks if a permission is listed on a list.
+     */
+    private fun hasInList(list: List<String>, perm: String) : Boolean {
+        list.forEach { s ->
+            val cutS = s.split(".")
+            val cutPerm = perm.split(".").filterIndexed { i, _ -> i < cutS.size }
+            cutS.forEachIndexed { i, it ->
+                if(Pattern.compile(it.replace("*", ".*")).matcher(cutPerm[i]).matches())
+                    return@hasInList true
+            }
         }
         return false
     }

@@ -5,7 +5,6 @@ import io.github.dogo.core.command.CommandFactory
 import io.github.dogo.core.data.DogoData
 import io.github.dogo.core.entities.DogoGuild
 import io.github.dogo.core.eventBus.EventBus
-import io.github.dogo.core.permissions.mapper.PermissionMapper
 import io.github.dogo.menus.SimpleReactionMenu
 import io.github.dogo.server.APIServer
 import net.dv8tion.jda.core.JDA
@@ -107,11 +106,6 @@ class DogoBot {
          * The Event Bus.
          */
         val eventBus = EventBus()
-
-        /**
-         * The permission manager.
-         */
-        val permissionManager = PermissionMapper(DogoBot.eventBus)
 
         /**
          * Event Bus Thread.
