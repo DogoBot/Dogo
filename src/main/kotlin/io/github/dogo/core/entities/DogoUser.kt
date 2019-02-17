@@ -27,9 +27,11 @@ class DogoUser private constructor(val id : String){
 
     init {
         transaction {
-            if(Database.USERS.selectAll().count() == 0) {
-                Database.USERS.insert {
-                    it[id] = this@DogoUser.id
+            Database.USERS.run {
+                if(select { id eq this@DogoUser.id }.count() == 0){
+                    insert {
+                        it[id] = this@DogoUser.id
+                    }
                 }
             }
         }

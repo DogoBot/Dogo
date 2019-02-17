@@ -27,9 +27,11 @@ class DogoGuild private constructor(val id : String){
 
     init {
         transaction {
-            if(Database.GUILDS.selectAll().count() == 0) {
-                Database.GUILDS.insert {
-                    it[id] = this@DogoGuild.id
+            Database.GUILDS.run {
+                if(select { id eq this@DogoGuild.id }.count() == 0){
+                    insert {
+                        it[id] = this@DogoGuild.id
+                    }
                 }
             }
         }
