@@ -186,7 +186,7 @@ class DogoBot {
          */
         fun takeDumps(){
             val file = File("dumps").also { if(!it.exists()) it.mkdirs()}
-            val currDate = SimpleDateFormat("dd-MM-YYYY HH-mm-ss").format(Date())
+            val currDate = SimpleDateFormat("dd-MM-YYYY_HH-mm-ss").format(Date())
             DogoBot.logger.info("Taking Heap Dump and Thread Dump...")
             SystemUtils.exec("jmap -dump:format=b,file=${file.absolutePath}/$currDate.bin ${DogoBot.pid} ")
             SystemUtils.exec("jstack -l ${DogoBot.pid} > ${file.absolutePath}/$currDate.tdump")
