@@ -2,7 +2,6 @@ package io.github.dogo.core.entities
 
 import io.github.dogo.core.Database
 import io.github.dogo.core.DogoBot
-import io.github.dogo.core.permissions.PermGroup
 import io.github.dogo.core.permissions.PermGroupSet
 import io.github.dogo.exceptions.DiscordException
 import io.github.dogo.utils._static.DiscordAPI
@@ -57,12 +56,12 @@ class DogoUser private constructor(val id : String){
     fun fetchUser() : JSONObject {
         return transaction {
             Database.TOKENS.run {
-                (this innerJoin Database.TOKENSCOPES)
+                (this innerJoin Database.TOKENCOPES)
                     .slice(token, type)
                     .select {
                         (user eq this@DogoUser.id) and
                         (expiresIn greater DateTime.now()) and
-                        (Database.TOKENSCOPES.token inList(listOf("email", "identify")))
+                        (Database.TOKENCOPES.token inList(listOf("email", "identify")))
                     }.firstOrNull()
                     ?.let { DiscordAPI.fetchUser(it[token], it[type])} ?: throw DiscordException("Invalid or Unknown Token")
             }

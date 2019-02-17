@@ -47,7 +47,7 @@ data class Token(val token: String, val owner: DogoUser, val authTime: Date, val
     val scopes = BoundList(
             { thescope ->
                 transaction {
-                    Database.TOKENSCOPES.run {
+                    Database.TOKENCOPES.run {
                         insert {
                             it[token] = this@Token.token
                             it[scope] = thescope
@@ -57,7 +57,7 @@ data class Token(val token: String, val owner: DogoUser, val authTime: Date, val
             },
             { thescope ->
                 transaction {
-                    Database.TOKENSCOPES.run {
+                    Database.TOKENCOPES.run {
                         deleteWhere {
                             (token eq this@Token.token) and (scope eq thescope)
                         }
@@ -66,9 +66,9 @@ data class Token(val token: String, val owner: DogoUser, val authTime: Date, val
             },
             {
                 transaction {
-                    return@transaction Database.TOKENSCOPES.run {
+                    return@transaction Database.TOKENCOPES.run {
                         slice(scope).select { token eq this@Token.token }
-                    }.map { it[Database.TOKENSCOPES.scope] }
+                    }.map { it[Database.TOKENCOPES.scope] }
                 }
             }
     )

@@ -135,7 +135,7 @@ class APIServer {
                                                     data.put("scopes", mutableListOf<String>())
                                                 }
                                             }
-                                            Database.TOKENSCOPES.run {
+                                            Database.TOKENCOPES.run {
                                                 call.parameters["scope"].orEmpty().split(" ").forEach { scopeName ->
                                                     insert {
                                                         it[scope] = scopeName
@@ -245,12 +245,12 @@ class APIServer {
                 if(auth.size != 2) throw APIException(HttpStatusCode.BadRequest, "invalid authorization")
                 transaction {
                     return@transaction Database.TOKENS.run {
-                        (this innerJoin Database.TOKENSCOPES).select {
+                        (this innerJoin Database.TOKENCOPES).select {
                             (type eq auth[0]) and
                             (token eq auth[1]) and
                             (expiresIn greater DateTime.now()) and
-                            (Database.TOKENSCOPES.scope inList validScopes.asList())
-                        }.groupBy(Database.TOKENSCOPES.token)
+                            (Database.TOKENCOPES.scope inList validScopes.asList())
+                        }.groupBy(Database.TOKENCOPES.token)
                         .map {
                             Token(it[token], DogoUser.from(it[user]), it[authTime].toDate(), it[expiresIn].toDate(), it[type])
                         }.firstOrNull { it.isValid() }
