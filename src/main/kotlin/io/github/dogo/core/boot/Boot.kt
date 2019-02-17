@@ -101,31 +101,18 @@ class Boot {
                           }.let { r -> this.reply("```json\n$r\n```") }
                       }
                   }
-                  route(CommandReference("update", category = CommandCategory.OWNER, permission = "command.admin.root")){
+                  route(CommandReference("shutdown", category = CommandCategory.OWNER, permission = "command.admin.root")){
                       execute {
-                          Executors.newSingleThreadExecutor().execute {
-                              replySynk("preparing", preset = true)
-                              try {
-                                  Unirest.get("${DogoBot.data.JENKINS.URL}/job/${DogoBot.data.JENKINS.JOB_NAME}/build?token=${DogoBot.data.JENKINS.AUTH_TOKEN}")
-
-                                  var json: JSONObject
-                                  do {
-                                      json = Unirest.get("${DogoBot.data.JENKINS.URL}/job/${DogoBot.data.JENKINS.JOB_NAME}/lastBuild/api/json").asJson().body.`object`
-                                      Thread.sleep(1000)
-                                  } while (json["result"] == null)
-
-                                  if(json["result"] == "FAILED") {
-                                      throw Exception() //to trigger catch block
-                                  } else {
-                                      replySynk("success", preset = true)
-                                      DogoBot.logger.warn("Dogo is restarting to apply new build!")
-                                      Thread.sleep(3000)
-                                      System.exit(3) //exit code for update restart
-                                  }
-                              } catch (ex: java.lang.Exception){
-                                  replySynk("failed", preset = true)
-                              }
-                          }
+                          replySynk("msg", preset = true)
+                          DogoBot.logger.warn("Dogo is shutting down! Called by ${sender.id} in channel ${replyChannel.id}, guild ${guild?.id}, message ${msg.id}")
+                          System.exit(0)
+                      }
+                  }
+                  route(CommandReference("restart", category = CommandCategory.OWNER, permission = "command.admin.root")){
+                      execute {
+                          replySynk("msg", preset = true)
+                          DogoBot.logger.warn("Dogo is restarting! Called by ${sender.id} in channel ${replyChannel.id}, guild ${guild?.id}, message ${msg.id}")
+                          System.exit(3)
                       }
                   }
                   route(CommandReference("eval", args = 1, category = CommandCategory.OWNER, permission = "command.admin.root")){

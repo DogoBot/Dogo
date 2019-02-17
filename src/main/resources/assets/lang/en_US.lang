@@ -96,7 +96,7 @@ command.trasleite.nope=Nope I don't like you
 #UPDATE COMMAND#
 ################
 command.admin.root.update.preparing=:warning: Preparing to update...
-command.admin.root.update.failed=:warning: Something went wrong while building the last update! Check Jenkins for more details!
+command.admin.root.update.failed=:octagonal_sign: Something went wrong while building the last update! Check Jenkins for more details!
 command.admin.root.update.success=<:nathanbb:390267731846627329> Build compiled! Restarting to apply...
 
 ##############
@@ -175,3 +175,13 @@ command.guildowner.role.subtitle=:unlock: Included | :lock: Excluded
 command.guildowner.role.notpossible=:octagonal_sign: Was not possible to add one of the specified permissions! Operation aborted!
 
 command.guildowner.role.nopermissionstoshow=:warning: Permission list is empty!
+
+##################
+#SHUTDOWN COMMAND#
+##################
+command.admin.root.shutdown.msg=:outbox_tray: Dogo is shutting down...
+
+#################
+#RESTART COMMAND#
+#################
+command.admin.root.restart.msg=:arrows_counterclockwise: Dogo is restarting...
