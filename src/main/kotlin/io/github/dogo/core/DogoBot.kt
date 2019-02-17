@@ -7,6 +7,7 @@ import io.github.dogo.core.entities.DogoGuild
 import io.github.dogo.core.eventBus.EventBus
 import io.github.dogo.menus.SimpleReactionMenu
 import io.github.dogo.server.APIServer
+import io.github.dogo.utils._static.SystemUtils
 import net.dv8tion.jda.core.JDA
 import ninja.leaping.configurate.ConfigurationOptions
 import ninja.leaping.configurate.json.JSONConfigurationLoader
@@ -16,6 +17,8 @@ import org.jetbrains.exposed.sql.Database
 import sun.misc.Unsafe
 import java.io.File
 import java.io.FileWriter
+import java.lang.management.ManagementFactory
+import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.Executors
 
@@ -158,6 +161,10 @@ class DogoBot {
                             it.isAccessible = true
                             it.get(null) as Unsafe
                         }
+        /**
+         * The JVM pid.
+         */
+        val pid = ManagementFactory.getRuntimeMXBean().name.split("@")[0].toInt()
 
         /**
          * Function used to search for valid command prefixes. It will always return the global ones.
@@ -170,6 +177,19 @@ class DogoBot {
             val list = DogoBot.data.COMMAND_PREFIX.toMutableList()
             guilds.map { it.prefixes }.forEach { list.addAll(it)}
             return list.sortedBy { -it.length }
+        }
+
+        /**
+         * Take Thread Dump and Heap Dump.
+         * Note: IT'S ONLY AVAILABLE ON LINUX ENVIRONMENTS WITH JMAP AND JSTACK ON PATH.
+         * The dumps are stored in dumps/dd-MM-YYY  HH-MM-ss.bin and dumps/dd-MM-YYY  HH-MM-ss.tdump
+         */
+        fun takeDumps(){
+            val file = File("dumps").also { if(!it.exists()) it.mkdirs()}
+            val currDate = SimpleDateFormat("dd-MM-YYYY HH-mm-ss").format(Date())
+            DogoBot.logger.info("Taking Heap Dump and Thread Dump...")
+            SystemUtils.exec("jmap -dump:format=b,file=${file.absolutePath}/$currDate.bin ${DogoBot.pid} ")
+            SystemUtils.exec("jstack -l ${DogoBot.pid} > ${file.absolutePath}/$currDate.tdump")
         }
     }
 }
