@@ -1,6 +1,5 @@
 package io.github.dogo.core.boot
 
-import com.mashape.unirest.http.Unirest
 import io.github.dogo.core.DogoBot
 import io.github.dogo.core.listeners.JDAListener
 import io.github.dogo.core.command.CommandCategory
@@ -12,11 +11,9 @@ import net.dv8tion.jda.core.AccountType
 import net.dv8tion.jda.core.JDABuilder
 import net.dv8tion.jda.core.entities.Game
 import org.jetbrains.exposed.sql.Database
-import org.json.JSONObject
 import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 
@@ -137,7 +134,15 @@ class Boot {
         Thread.currentThread().name = "Boot"
         System.setProperty("logFile", File(File(DogoBot.data.LOGGER_PATH), SimpleDateFormat("dd-MM-YYYY HH-mm-ss").format(Date())).absolutePath)
 
-        DogoBot.logger.info("Starting Dogo v${DogoBot.version}")
+        //Take Thread Dump and Heap Dump every 30 minutes
+        Timer().scheduleAtFixedRate(object: TimerTask(){
+            override fun run() {
+               DogoBot.takeDumps()
+            }
+        }, 0, 1800000.toLong())
+
+
+        DogoBot.logger.info("Starting Dogo v${DogoBot.version} on PID ${DogoBot.pid}")
 
         if(DogoBot.data.DEBUG_PROFILE){
             DogoBot.logger.warn("DEBUG PROFILE IS ACTIVE")
