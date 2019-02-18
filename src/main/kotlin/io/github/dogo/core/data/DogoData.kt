@@ -78,4 +78,11 @@ class DogoData {
      */
     @Setting
     val JENKINS = Jenkins()
+
+    /**
+     * Dumps logging.
+     */
+    @Setting
+    val DUMPS = DumpLog()
+
 }

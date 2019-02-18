@@ -134,12 +134,12 @@ class Boot {
         Thread.currentThread().name = "Boot"
         System.setProperty("logFile", File(File(DogoBot.data.LOGGER_PATH), SimpleDateFormat("dd-MM-YYYY HH-mm-ss").format(Date())).absolutePath)
 
-        //Take Thread Dump and Heap Dump every 30 minutes
+        //Take Thread Dump and Heap Dump every hour
         Timer().scheduleAtFixedRate(object: TimerTask(){
             override fun run() {
                DogoBot.takeDumps()
             }
-        }, 0, 1800000.toLong())
+        }, DogoBot.data.DUMPS.PERIOD, 1)
 
 
         DogoBot.logger.info("Starting Dogo v${DogoBot.version} on PID ${DogoBot.pid}")

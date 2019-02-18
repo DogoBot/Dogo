@@ -1,5 +1,10 @@
 package io.github.dogo.utils._static
 
+import com.google.api.client.googleapis.media.MediaHttpUploader
+import com.google.api.client.googleapis.media.MediaHttpUploaderProgressListener
+import com.google.api.client.http.FileContent
+import com.google.api.client.http.InputStreamContent
+import io.github.dogo.core.DogoBot
 import java.io.File
 import java.io.InputStream
 import java.util.*

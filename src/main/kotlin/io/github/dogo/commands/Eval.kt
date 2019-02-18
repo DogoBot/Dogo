@@ -38,6 +38,7 @@ import net.dv8tion.jda.core.entities.User
 import org.jetbrains.kotlin.script.jsr223.KotlinJsr223JvmLocalScriptEngineFactory
 import org.jsoup.Jsoup
 import java.awt.Color
+import java.io.File
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.net.URL
@@ -97,10 +98,12 @@ class Eval {
                 EmbedBuilder::class,
                 Game::class,
 
+                File::class,
                 URL::class,
 
                 Unirest::class,
-                Jsoup::class
+                Jsoup::class,
+                DriveUtils::class
         ).joinToString("") { "import ${it.qualifiedName}\n" }
     }
 
