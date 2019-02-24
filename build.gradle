@@ -21,58 +21,41 @@ apply plugin: 'application'
 apply plugin: 'maven'
 
 
-group 'io.github.dogo'
-version '1.0-SNAPSHOT'
+group 'io.github.dogobot'
+version '4.0.0'
 
 
 
-mainClassName = "io.github.dogo.core.boot.BootKt"
+mainClassName = "io.github.dogobot.core.BootKt"
 
-sourceCompatibility = 1.8
+sourceCompatibility = 1.11
 
 repositories {
     mavenCentral()
     jcenter()
-    maven {url 'https://jitpack.io'}
     maven {
-        name = 'sponge'
-        url = 'https://repo.spongepowered.org/maven'
+        url 'https://jitpack.io'
     }
     maven {
-        url = 'http://maven.ej-technologies.com/repository'
+        name 'sponge'
+        url 'https://repo.spongepowered.org/maven'
+    }
+    maven {
+        url 'http://maven.ej-technologies.com/repository'
     }
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-reflect"
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-
-    compile "io.ktor:ktor-server-core:$ktor_version"
-    compile "io.ktor:ktor-server-netty:$ktor_version"
-
-    compile 'net.dv8tion:JDA:3.8.1_447'
-
-    compile 'mysql:mysql-connector-java:5.1.6'
-    compile 'org.jetbrains.exposed:exposed:0.12.1'
+    
+    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
     compile 'org.spongepowered:configurate-json:3.6'
-    compile 'com.fasterxml.jackson.core:jackson-databind:2.0.1'
-    compile 'com.mashape.unirest:unirest-java:1.3.1'
-    compile 'org.jsoup:jsoup:1.8.3'
 
     compile 'org.slf4j:slf4j-simple:1.6.1'
-    compile 'org.apache.logging.log4j:log4j-core:2.11.1'
-    compile 'org.apache.logging.log4j:log4j-api:2.11.1'
 
-    compile 'org.jetbrains.kotlin:kotlin-script-runtime:1.3.21'
-    compile 'org.jetbrains.kotlin:kotlin-script-util:1.3.21'
-    compile 'org.jetbrains.kotlin:kotlin-compiler-embeddable:1.3.21'
-
-    compile 'com.google.api-client:google-api-client:1.23.0'
-    compile 'com.google.oauth-client:google-oauth-client-jetty:1.23.0'
-    compile 'com.google.apis:google-api-services-drive:v3-rev110-1.23.0'
-
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.1'
+    compile 'com.github.NathanPB:BootingBits:1.0-SNAPSHOT'
+    compile 'io.github.microutils:kotlin-logging:1.6.24'
 
 }
 
@@ -85,7 +68,8 @@ compileTestKotlin {
 
 jar {
     manifest {
-        attributes 'Main-Class': 'io.github.dogo.core.boot.BootKt'
+        attributes 'Main-Class': 'io.github.dogobot.core.BootKt'
+        attributes 'Dogo-Version': '4.0.0'
     }
     from {
         configurations.compile

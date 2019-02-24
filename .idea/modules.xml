@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/io.github.dogo.Dogo.iml" filepath="$PROJECT_DIR$/.idea/modules/io.github.dogo.Dogo.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/io.github.dogo.Dogo.main.iml" filepath="$PROJECT_DIR$/.idea/modules/io.github.dogo.Dogo.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/io.github.dogo.Dogo.test.iml" filepath="$PROJECT_DIR$/.idea/modules/io.github.dogo.Dogo.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/io.github.dogobot.Dogo.iml" filepath="$PROJECT_DIR$/.idea/modules/io.github.dogobot.Dogo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/io.github.dogobot.Dogo.main.iml" filepath="$PROJECT_DIR$/.idea/modules/io.github.dogobot.Dogo.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/io.github.dogobot.Dogo.test.iml" filepath="$PROJECT_DIR$/.idea/modules/io.github.dogobot.Dogo.test.iml" />
     </modules>
   </component>
 </project>
