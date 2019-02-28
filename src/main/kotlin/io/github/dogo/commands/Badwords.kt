@@ -1,14 +1,15 @@
 package io.github.dogo.commands
 
+import io.github.dogo.badwords.BadwordAddedEvent
+import io.github.dogo.badwords.BadwordListAddedEvent
+import io.github.dogo.badwords.BadwordListRemovedEvent
+import io.github.dogo.badwords.BadwordRemovedEvent
 import io.github.dogo.core.DogoBot
 import io.github.dogo.core.command.CommandCategory
 import io.github.dogo.core.command.CommandReference
 import io.github.dogo.core.command.ReferencedCommand
-import io.github.dogo.events.badword.BadwordAddedEvent
-import io.github.dogo.events.badword.BadwordListAddedEvent
-import io.github.dogo.events.badword.BadwordListRemovedEvent
-import io.github.dogo.events.badword.BadwordRemovedEvent
-import io.github.dogo.menus.ListReactionMenu
+import io.github.dogo.discord.badwords
+import io.github.dogo.discord.menus.ListReactionMenu
 
 /*
 Copyright 2019 Nathan Bombana

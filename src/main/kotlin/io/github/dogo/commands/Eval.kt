@@ -2,33 +2,32 @@ package io.github.dogo.commands
 
 import com.mashape.unirest.http.Unirest
 import com.sun.org.glassfish.external.statistics.Statistic
-import io.github.dogo.core.listeners.BadwordListener
+import io.github.dogo.badwords.BadwordListener
 import io.github.dogo.core.DogoBot
-import io.github.dogo.core.listeners.JDAListener
 import io.github.dogo.core.command.*
 import io.github.dogo.core.data.DogoData
-import io.github.dogo.core.entities.DogoGuild
-import io.github.dogo.core.entities.DogoUser
 import io.github.dogo.core.eventBus.EventBus
-import io.github.dogo.core.permissions.PermGroup
-import io.github.dogo.core.permissions.PermGroupSet
-import io.github.dogo.exceptions.APIException
-import io.github.dogo.exceptions.DiscordException
-import io.github.dogo.interfaces.IRepliable
+import io.github.dogo.security.PermGroup
+import io.github.dogo.security.PermGroupSet
+import io.github.dogo.discord.DiscordException
+import io.github.dogo.discord.DiscordManager
+import io.github.dogo.discord.IRepliable
+import io.github.dogo.discord.JDAListener
+import io.github.dogo.discord.menus.ListReactionMenu
+import io.github.dogo.discord.menus.SelectorReactionMenu
+import io.github.dogo.discord.menus.SimpleReactionMenu
 import io.github.dogo.lang.LanguageEntry
-import io.github.dogo.menus.ListReactionMenu
-import io.github.dogo.menus.SelectorReactionMenu
-import io.github.dogo.menus.SimpleReactionMenu
 import io.github.dogo.minigames.tictactoe.ITTTImp
 import io.github.dogo.minigames.tictactoe.OnePlayerTTT
 import io.github.dogo.minigames.tictactoe.TTTPlayer
 import io.github.dogo.minigames.tictactoe.TwoPlayersTTT
 import io.github.dogo.minigames.tictactoe.discord.TicTacToeImp
+import io.github.dogo.server.APIException
 import io.github.dogo.server.APIRequestProcessor
 import io.github.dogo.server.APIServer
 import io.github.dogo.server.Token
 import io.github.dogo.statistics.TicTacToeStatistics
-import io.github.dogo.utils.*
+import io.github.dogo.utils.Holder
 import io.github.dogo.utils._static.*
 import net.dv8tion.jda.core.EmbedBuilder
 import net.dv8tion.jda.core.entities.Game
@@ -55,8 +54,6 @@ class Eval {
                 CommandRouter::class,
                 ReferencedCommand::class,
                 DogoData::class,
-                DogoGuild::class,
-                DogoUser::class,
                 EventBus::class,
                 PermGroup::class,
                 PermGroupSet::class,
@@ -141,7 +138,7 @@ class Eval {
                                     " [Hastebin](${HastebinUtils.URL}${HastebinUtils.upload(desc.toString())})"
                                 } else "\n```$desc```"
                             )
-                            DogoBot.jdaOutputThread.submit {
+                            DiscordManager.jdaOutputThread.submit {
                                 embedPast.editMessage(
                                         it.setFooter(langEntry.getText("took", UnitUtils.timeSince(embedPast.creationTime.toInstant().toEpochMilli())/1000), null)
                                         .setAuthor(langEntry.getText("title"), "https://kotlinlang.org", "https://kotlinlang.org/assets/images/open-graph/kotlin_250x250.png")

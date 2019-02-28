@@ -1,7 +1,6 @@
 package io.github.dogo.server
 
 import io.github.dogo.core.DogoBot
-import io.github.dogo.exceptions.APIException
 import io.ktor.http.HttpStatusCode
 import org.json.JSONObject
 

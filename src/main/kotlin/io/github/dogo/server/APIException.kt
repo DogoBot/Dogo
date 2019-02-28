@@ -1,7 +1,6 @@
-package io.github.dogo.events.badword
+package io.github.dogo.server
 
-import io.github.dogo.core.entities.DogoGuild
-import io.github.dogo.core.entities.DogoUser
+import io.ktor.http.HttpStatusCode
 
 /*
 Copyright 2019 Nathan Bombana
@@ -18,15 +17,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-
 /**
- * Event thrown when a badword is added.
+ * Thrown when something occurs bad on [API Server][io.github.dogo.server.APIServer]
+ *
+ * @param[httpCode] the http status code.
+ * @param[message] describing the error occurred error.
  *
  * @author NathanPB
  * @since 3.1.0
  */
-class BadwordAddedEvent(
-        guild: DogoGuild,
-        val addedBy: DogoUser,
-        val word: String
-) : BadwordEvent(guild)
+class APIException(val httpCode: HttpStatusCode, override val message: String) : Exception(message)

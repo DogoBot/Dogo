@@ -1,20 +1,40 @@
 package io.github.dogo.core.command
 
 import io.github.dogo.core.DogoBot
-import io.github.dogo.core.entities.DogoGuild
-import io.github.dogo.core.entities.DogoUser
-import io.github.dogo.core.permissions.PermGroupSet
+import io.github.dogo.security.PermGroupSet
+import io.github.dogo.discord.DiscordManager
+import io.github.dogo.discord.lang
+import io.github.dogo.discord.prefixes
+import io.github.dogo.discord.sendDontCareAboutIt
 import io.github.dogo.lang.BoundLanguage
 import io.github.dogo.lang.LanguageEntry
 import io.github.dogo.utils.Holder
 import net.dv8tion.jda.core.EmbedBuilder
 import net.dv8tion.jda.core.Permission
+import net.dv8tion.jda.core.entities.Guild
 import net.dv8tion.jda.core.entities.PrivateChannel
 import net.dv8tion.jda.core.entities.TextChannel
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent
 import java.awt.Color
 
 class CommandFactory {
+
+    companion object {
+
+        /**
+         * Function used to search for valid command prefixes. It will always return the global ones.
+         *
+         * @param[guilds] guilds to search in for local command prefixes.
+         *
+         * @return the list with all the valid command prefixes.
+         */
+        fun getCommandPrefixes(vararg guilds : Guild) : List<String> {
+            val list = DogoBot.data.COMMAND_PREFIX.toMutableList()
+            guilds.map { it.prefixes }.forEach { list.addAll(it)}
+            return list.sortedBy { -it.length }
+        }
+    }
+
     var route : CommandRouter = CommandRouter(CommandRouter.root){}
 
     fun route(body: CommandRouter.()->Unit){
@@ -22,102 +42,81 @@ class CommandFactory {
     }
 
     fun onMessage(event : MessageReceivedEvent){
-        var prefix : String? = null
-
-        var prefixes = io.github.dogo.core.DogoBot.getCommandPrefixes()
-        if(event.guild != null){
-            prefixes = io.github.dogo.core.DogoBot.getCommandPrefixes(DogoGuild.from(event.guild))
-        }
-        for(p in prefixes){
-            if(event.message.contentRaw.startsWith(p)){
-                prefix = p
-                break
-            }
+        val prefix = CommandFactory.getCommandPrefixes(event.guild).firstOrNull {
+            event.message.contentRaw.startsWith(it)
         }
 
         prefix?.let {
-            DogoBot.cmdProcessorThread.execute {
-                if(event.guild?.getMember(DogoBot.jda?.selfUser)?.hasPermission(Permission.MESSAGE_WRITE) != true){
+            CommandManager.cmdProcessorThread.execute {
+                if(event.guild?.getMember(DiscordManager.jda?.selfUser)?.hasPermission(Permission.MESSAGE_WRITE) != true){
                     return@execute
                 }
                 val text = event.message.contentRaw.replaceFirst(prefix, "")
                 val argsHolder = Holder<Int>()
                 val route = this.route.findRoute(text, argsHolder)
-                val user = DogoUser.from(event.author)
-                val guild: DogoGuild? = if (event.guild != null) DogoGuild.from(event.guild) else null
-                val pgs = PermGroupSet.find(user, guild)
+                val pgs = PermGroupSet.find(event.author, event.guild)
+
 
                 route.let { cmd ->
                     if(pgs.can(cmd.getPermission())){
                         val args = text.split(" ").filterIndexed { index, _ -> index >= argsHolder.hold()}
                         if(args.size >= cmd.reference.args){
+
+                            //Checks if its a NSFW command being executed outside NSFW Channel or a private one
                             if(cmd.reference.category == CommandCategory.NSFW){
                                 if(event.channel !is PrivateChannel){
                                     if(!(event.channel is TextChannel && (event.channel as TextChannel).isNSFW)){
-                                        DogoBot.jdaOutputThread.execute {
-                                            event.channel.sendMessage(BoundLanguage(user.lang, "text").getText("error.notnsfwchannel")).queue({}, {})
+                                        DiscordManager.jdaOutputThread.execute {
+                                            event.channel.sendMessage(BoundLanguage(event.author.lang, "text").getText("error.notnsfwchannel")).queue({}, {})
                                         }
                                         return@let
                                     }
                                 }
                             }
 
-                            if(cmd.reference.category == CommandCategory.GUILD_ADMINISTRATION && guild == null) {
-                                DogoBot.jdaOutputThread.execute {
-                                    val lang = LanguageEntry("text")
-                                    event.channel.sendMessage(lang.getTextIn(user.lang, "error.guildrequired")).queue({}, {})
+                            //Checks if its a guild administration command being executed outside guilds
+                            if(cmd.reference.category == CommandCategory.GUILD_ADMINISTRATION && event.guild == null) {
+                                DiscordManager.jdaOutputThread.execute {
+                                    event.channel.sendDontCareAboutIt(LanguageEntry("text").getTextIn(event.author.lang, "error.guildrequired"))
                                 }
                                 return@let
                             }
-                            if(cmd.reference.category == CommandCategory.OWNER && !user.permgroups.can("commands.admin.root")){
-                                DogoBot.jdaOutputThread.execute {
-                                    val lang = BoundLanguage(user.lang, "text")
-                                    EmbedBuilder()
-                                            .setColor(Color.YELLOW)
-                                            .setTitle(lang.getText("error.commandforbidden.title"))
-                                            .setDescription(lang.getText("error.commandforbidden.description", "command.admin.root"))
-                                            .let { event.channel.sendMessage(it.build()).queue() }
-                                }
-                                return@let
-                            }
+
                             if(!route.isRoot()){
                                 try {
                                     val context = CommandContext(event.message, route, args)
                                     cmd.run?.command?.invoke(context)
                                 } catch(ex: Exception) {
-                                    DogoBot.jdaOutputThread.execute {
-                                        val lang = BoundLanguage(user.lang, "text")
+                                    DiscordManager.jdaOutputThread.execute {
+                                        //todo report
+                                        val lang = BoundLanguage(event.author.lang, "text")
                                         EmbedBuilder()
                                                 .setColor(Color.YELLOW)
-                                                .setTitle("error.commandfailed.title")
+                                                .setTitle(lang.getText("error.commandfailed.title"))
                                                 .setDescription(lang.getText("error.commandfailed.description", ex.message.orEmpty()))
-                                                .let { event.channel.sendMessage(it.build()).queue() }
+                                                .let { event.channel.sendDontCareAboutIt(it.build()) }
                                     }
                                 }
                             }
 
                         } else {
-                            DogoBot.jdaOutputThread.execute {
-                                val lang = BoundLanguage(user.lang, "text")
-                                event.channel.sendMessage(
-                                        EmbedBuilder()
-                                                .setColor(Color.YELLOW)
-                                                .setTitle(lang.getText("error.argsmissing.title"))
-                                                .setDescription(lang.getText("error.argsmissing.description", args.size, cmd.reference.args))
-                                                .build()
-                                ).queue({}, {})
+                            DiscordManager.jdaOutputThread.execute {
+                                val lang = BoundLanguage(event.author.lang, "text")
+                                EmbedBuilder()
+                                        .setColor(Color.YELLOW)
+                                        .setTitle(lang.getText("error.argsmissing.title"))
+                                        .setDescription(lang.getText("error.argsmissing.description", args.size, cmd.reference.args))
+                                        .let { event.channel.sendDontCareAboutIt(it.build()) }
                             }
                         }
                     } else {
-                        DogoBot.jdaOutputThread.execute {
-                            val lang = BoundLanguage(user.lang, "text")
-                            event.channel.sendMessage(
-                                    EmbedBuilder()
-                                            .setColor(Color.YELLOW)
-                                            .setTitle(lang.getText("error.commandforbidden.title"))
-                                            .setDescription(lang.getText("error.commandforbidden.description", cmd.getPermission()))
-                                            .build()
-                            ).queue({}, {})
+                        DiscordManager.jdaOutputThread.execute {
+                            val lang = BoundLanguage(event.author.lang, "text")
+                            EmbedBuilder()
+                                    .setColor(Color.YELLOW)
+                                    .setTitle(lang.getText("error.commandforbidden.title"))
+                                    .setDescription(lang.getText("error.commandforbidden.description", cmd.getPermission()))
+                                    .let { event.channel.sendDontCareAboutIt(it.build()) }
                         }
                     }
                 }

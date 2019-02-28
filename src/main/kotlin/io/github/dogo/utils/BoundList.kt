@@ -1,7 +1,5 @@
 package io.github.dogo.utils
 
-import java.lang.UnsupportedOperationException
-
 /*
 Copyright 2019 Nathan Bombana
 

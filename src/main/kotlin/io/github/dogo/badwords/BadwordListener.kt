@@ -1,14 +1,17 @@
-package io.github.dogo.core.listeners
+package io.github.dogo.badwords
 
 import io.github.dogo.core.Database
 import io.github.dogo.core.DogoBot
-import io.github.dogo.core.entities.DogoGuild
-import io.github.dogo.core.entities.DogoUser
 import io.github.dogo.core.eventBus.EventBus
-import io.github.dogo.events.badword.BadwordMessageCensoredEvent
+import io.github.dogo.discord.DiscordManager
+import io.github.dogo.discord.badwords
+import io.github.dogo.discord.formatName
+import io.github.dogo.discord.permgroups
 import net.dv8tion.jda.core.EmbedBuilder
 import net.dv8tion.jda.core.Permission
+import net.dv8tion.jda.core.entities.Guild
 import net.dv8tion.jda.core.entities.Message
+import net.dv8tion.jda.core.entities.User
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.insert
@@ -41,7 +44,7 @@ limitations under the License.
 class BadwordListener {
 
     companion object {
-        val echos = mutableMapOf<Message, String>()
+        val echos = mutableMapOf<Message, User>()
     }
 
     /**
@@ -57,32 +60,53 @@ class BadwordListener {
      * @param[msg] the message.
      */
     fun check(msg: Message) {
-        val member = msg.guild.getMember(DogoBot.jda!!.selfUser)
-        if(!member.hasPermission(Permission.MESSAGE_WRITE) || !member.hasPermission(Permission.MESSAGE_MANAGE)){
+
+        //Badwords cannot exists outside guilds!
+        if(msg.guild == null){
             return
         }
 
-        val guild = DogoGuild.from(msg.guild)
-        val user = DogoUser.from(echos[msg]?.also { echos.remove(msg) } ?: msg.author.id)
-        if (user.id != DogoBot.jda!!.selfUser.id && !user.permgroups.can("badword.admin.bypass")) {
-            val container = mutableListOf<String>()
-            val newmsg = msg.contentDisplay.replaceBadwords(guild.badwords, container)
+        //Checks if Dogo has permission to WRITE and DELETE messages
+        val dogo = msg.guild.getMember(DiscordManager.jda!!.selfUser)
+        if(!dogo.hasPermission(Permission.MESSAGE_WRITE) || !dogo.hasPermission(Permission.MESSAGE_MANAGE)){
+            return
+        }
+
+        //If the message is found on [echos], the author is its value (to don't blame Dogo if anyone say shitty).
+        //Also removes it from echos to let the object be garbage collected.
+        //Else, the author is the [msg] author.
+        val user = echos[msg]?.also { echos.remove(msg) } ?: msg.author
+        if(!user.permgroups.can("badword.admin.bypass")){
+
+        }
+
+        echos.remove(msg)
+        if (msg.author.id != DiscordManager.jda!!.selfUser.id && !msg.author.permgroups.can("badword.admin.bypass")) {
+
+            val container = mutableListOf<String>() //will be stored all the changed words
+            val newmsg = msg.contentDisplay.replaceBadwords(msg.guild.badwords, container)
+
             if (container.isNotEmpty()) {
-                DogoBot.eventBus.submit(BadwordMessageCensoredEvent(guild, msg, container))
+                //Sends the event to EventBus
+                DogoBot.eventBus.submit(BadwordMessageCensoredEvent(msg.guild, msg, container))
+
+                //stores the punishment on db
                 suspend {
                     transaction {
                         Database.BADWORDS.slice(Database.BADWORDS.id).select {
-                            (Database.BADWORDS.guild eq guild.id) and (Database.BADWORDS.word inList container)
+                            (Database.BADWORDS.guild eq msg.guild.id) and (Database.BADWORDS.word inList container)
                         }.map { it[Database.BADWORDS.id] }.forEach { badwordId ->
                             Database.BADWORDPUNISHMENT.insert {
-                                it[this.user] = user.id
+                                it[this.user] = msg.author.id
                                 it[this.badword] = badwordId
                             }
                         }
                     }
                 }
-                DogoBot.jdaOutputThread.execute {
-                    msg.channel.sendMessage(newmsg.createEmbed(user).build()).complete()
+
+                //reply the new message
+                DiscordManager.jdaOutputThread.execute {
+                    msg.channel.sendMessage(newmsg.createEmbed(msg.author, msg.guild).build()).complete()
                     msg.delete().complete()
                 }
             }
@@ -97,17 +121,19 @@ class BadwordListener {
      *
      * @return the string replaced.
      */
+    @SuppressWarnings("private")
     fun String.replaceBadwords(badwords: List<String>, container: MutableList<String>): String {
         return this.split(" ")
-                .filter { it.isNotEmpty() }
-                .map { word ->
-                    if(badwords.any { word.contains(it, ignoreCase = true) }){
-                        container.add(badwords.first { word.contains(it, ignoreCase = true) })
-                        val sw = StringBuilder("``")
-                        for(i in 0..word.length) sw.append("*")
-                        sw.toString()+"``"
-                    } else word
-                }.joinToString(" ")
+            .filter { it.isNotEmpty() }
+            .joinToString(" ") { word ->
+                if(badwords.any { word.contains(it, ignoreCase = true) }){
+                    container.add(badwords.first { word.contains(it, ignoreCase = true) })
+                    val sw = StringBuilder("``")
+                    for(i in 0..word.length) sw.append("*")
+
+                    "$sw``" //returned statement
+                } else word
+            }
     }
 
     /**
@@ -117,9 +143,10 @@ class BadwordListener {
      *
      * @return the embed builder.
      */
-    fun String.createEmbed(sender: DogoUser): EmbedBuilder {
+    @SuppressWarnings("private")
+    fun String.createEmbed(sender: User, guild: Guild): EmbedBuilder {
         return EmbedBuilder()
-                .setAuthor("${sender.formatName()} said", null, sender.usr?.effectiveAvatarUrl.orEmpty())
+                .setAuthor("${sender.formatName(guild)} said", null, sender.effectiveAvatarUrl.orEmpty())
                 .setColor(Color.YELLOW)
                 .setDescription(this)
     }

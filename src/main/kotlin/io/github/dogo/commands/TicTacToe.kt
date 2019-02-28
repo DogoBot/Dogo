@@ -4,8 +4,9 @@ import io.github.dogo.core.DogoBot
 import io.github.dogo.core.command.CommandCategory
 import io.github.dogo.core.command.CommandReference
 import io.github.dogo.core.command.ReferencedCommand
-import io.github.dogo.core.entities.DogoUser
-import io.github.dogo.menus.SimpleReactionMenu
+import io.github.dogo.discord.DiscordManager
+import io.github.dogo.discord.formatName
+import io.github.dogo.discord.menus.SimpleReactionMenu
 import io.github.dogo.minigames.tictactoe.discord.TicTacToeImp
 import io.github.dogo.utils._static.EmoteReference
 import io.github.dogo.utils._static.ThemeColor
@@ -33,8 +34,8 @@ limitations under the License.
 class TicTacToe : ReferencedCommand(
         CommandReference("tictactoe", aliases = "ttt", usage = "@MyFriend", category = CommandCategory.FUN, permission = "command"),
         {
-            var friend = msg.mentionedUsers.firstOrNull() ?: DogoBot.jda!!.selfUser
-            if(friend.id == sender.id) friend = DogoBot.jda!!.selfUser
+            var friend = msg.mentionedUsers.firstOrNull() ?: DiscordManager.jda!!.selfUser
+            if(friend.id == sender.id) friend = DiscordManager.jda!!.selfUser
 
             if(!friend.isBot && !friend.isFake) {
                 reply("inviting", friend.asMention, preset = true)
@@ -44,15 +45,15 @@ class TicTacToe : ReferencedCommand(
                     it.embed = EmbedBuilder().setColor(ThemeColor.PRIMARY).setTitle(langEntry.getText("title", sender.formatName(guild)))
                     val refuse = {
                         it.end(true)
-                        reply("refused", DogoUser.from(friend).formatName(guild), preset = true)
+                        reply("refused", friend.formatName(guild), preset = true)
                     }
                     it.addAction(EmoteReference.WHITE_CHECK_MARK, langEntry.getText("accept")){
-                        TicTacToeImp(this, sender, DogoUser.from(friend))
+                        TicTacToeImp(this, sender, friend)
                         it.end(true)
                     }
                     it.addAction(EmoteReference.NEGATIVE_SQUARED_CROSS_MARK, langEntry.getText("deny"), refuse)
                     it.build()
                 }.send()
-            } else TicTacToeImp(this, sender, DogoUser.from(friend))
+            } else TicTacToeImp(this, sender, friend)
         }
 )

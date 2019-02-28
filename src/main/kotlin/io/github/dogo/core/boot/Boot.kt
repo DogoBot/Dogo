@@ -1,17 +1,17 @@
 package io.github.dogo.core.boot
 
+import io.github.dogo.badwords.BadwordListener
 import io.github.dogo.core.DogoBot
-import io.github.dogo.core.listeners.JDAListener
 import io.github.dogo.core.command.CommandCategory
 import io.github.dogo.core.command.CommandReference
+import io.github.dogo.discord.DiscordManager
 import io.github.dogo.lang.LanguageEntry
 import io.github.dogo.server.APIServer
 import io.github.dogo.utils.Holder
-import net.dv8tion.jda.core.AccountType
-import net.dv8tion.jda.core.JDABuilder
+import io.github.dogo.utils._static.BeamUtils
 import net.dv8tion.jda.core.entities.Game
 import org.jetbrains.exposed.sql.Database
-import java.io.*
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -48,11 +48,7 @@ class Boot {
      */
     private val phaseList = listOf(
             Phase("Initializing JDA") {
-                io.github.dogo.core.DogoBot.jda = JDABuilder(AccountType.BOT)
-                        .setToken(DogoBot.data.BOT_TOKEN)
-                        .setGame(Game.watching("myself starting"))
-                        .addEventListener(JDAListener(DogoBot.eventBus))
-                        .build().awaitReady()
+                DiscordManager.connect(DogoBot.data.BOT_TOKEN)
             },
             Phase("Connecting to Database") {
                 DogoBot.db = Database.connect(
@@ -63,7 +59,7 @@ class Boot {
                 )
             },
             Phase("Registering Random Event Listeners"){
-                DogoBot.eventBus.register(io.github.dogo.core.listeners.BadwordListener::listenSend)
+                DogoBot.eventBus.register(BadwordListener::listenSend)
                 DogoBot.eventBus.register(DogoBot.cmdFactory::onMessage)
             },
             Phase("Loading Language Assets") {
@@ -101,14 +97,14 @@ class Boot {
                   route(CommandReference("shutdown", category = CommandCategory.OWNER, permission = "command.admin.root")){
                       execute {
                           replySynk("msg", preset = true)
-                          DogoBot.logger.warn("Dogo is shutting down! Called by ${sender.id} in channel ${replyChannel.id}, guild ${guild?.id}, message ${msg.id}")
+                          DogoBot.logger.warn("Dogo is shutting down! Called by ${sender.id} in channel ${replyChannel.id}, guild ${guild.id}, message ${msg.id}")
                           System.exit(0)
                       }
                   }
                   route(CommandReference("restart", category = CommandCategory.OWNER, permission = "command.admin.root")){
                       execute {
                           replySynk("msg", preset = true)
-                          DogoBot.logger.warn("Dogo is restarting! Called by ${sender.id} in channel ${replyChannel.id}, guild ${guild?.id}, message ${msg.id}")
+                          DogoBot.logger.warn("Dogo is restarting! Called by ${sender.id} in channel ${replyChannel.id}, guild ${guild.id}, message ${msg.id}")
                           System.exit(3)
                       }
                   }
@@ -127,6 +123,13 @@ class Boot {
             },
             Phase("Initializing API"){
                 DogoBot.apiServer = APIServer().also { it.start() }
+            },
+            Phase("Inizializing dump logs"){
+                Timer().scheduleAtFixedRate(object: TimerTask(){
+                    override fun run() {
+                        BeamUtils.takeDumps()
+                    }
+                }, DogoBot.data.DUMPS.PERIOD, 1)
             }
     )
 
@@ -134,18 +137,9 @@ class Boot {
         Thread.currentThread().name = "Boot"
         System.setProperty("logFile", File(File(DogoBot.data.LOGGER_PATH), SimpleDateFormat("dd-MM-YYYY HH-mm-ss").format(Date())).absolutePath)
 
-        //Take Thread Dump and Heap Dump every hour
-        Timer().scheduleAtFixedRate(object: TimerTask(){
-            override fun run() {
-               DogoBot.takeDumps()
-            }
-        }, DogoBot.data.DUMPS.PERIOD, 1)
-
-
-        DogoBot.logger.info("Starting Dogo v${DogoBot.version} on PID ${DogoBot.pid}")
-
+        DogoBot.logger.info("Starting Dogo v${DogoBot.version} on PID ${BeamUtils.pid}")
         if(DogoBot.data.DEBUG_PROFILE){
-            DogoBot.logger.warn("DEBUG PROFILE IS ACTIVE")
+            DogoBot.logger.warn("DEBUG PROFILE IS ENABLED")
         }
 
         try {
@@ -183,7 +177,7 @@ class Boot {
             object : TimerTask() {
                 override fun run() {
                     if(now.hold() == count)
-                        DogoBot.jda?.presence?.game = Game.watching("myself starting - ${phase.display}")
+                        DiscordManager.jda?.presence?.game = Game.watching("myself starting - ${phase.display}")
                 }
             }.let { Timer().schedule(it, 3000) }
 
@@ -192,8 +186,8 @@ class Boot {
             count++
         }
         DogoBot.ready = true
-        DogoBot.jda!!.presence.game = Game.watching("to ${DogoBot.jda!!.guilds?.size} guilds | dg!help")
-        DogoBot.logger.info("Dogo is Done! ${io.github.dogo.core.DogoBot.initTime.timeSince()}")
+        DiscordManager.jda?.presence?.game = Game.watching("to ${DiscordManager.jda!!.guilds?.size} guilds | dg!help")
+        DogoBot.logger.info("Dogo is Done! ${DogoBot.initTime.timeSince()}")
     }
 
 

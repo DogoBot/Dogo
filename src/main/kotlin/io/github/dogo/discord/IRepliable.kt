@@ -1,4 +1,4 @@
-package io.github.dogo.interfaces
+package io.github.dogo.discord
 
 import io.github.dogo.lang.BoundLanguage
 import io.github.dogo.lang.LanguageEntry
@@ -48,7 +48,7 @@ interface IRepliable {
      * @param[preset] if true, means that the first argument of [content] is a entry on [LanguageEntry], and will reply with its text.
      */
     fun reply(vararg content : Any, preset : Boolean = false){
-        io.github.dogo.core.DogoBot.jdaOutputThread.submit {
+        DiscordManager.jdaOutputThread.submit {
             replySynk(*content, preset = preset)
         }
     }

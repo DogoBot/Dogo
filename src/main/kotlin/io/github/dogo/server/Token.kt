@@ -1,9 +1,9 @@
 package io.github.dogo.server
 
 import io.github.dogo.core.Database
-import io.github.dogo.core.entities.DogoUser
 import io.github.dogo.utils.BoundList
 import io.github.dogo.utils._static.DiscordAPI
+import net.dv8tion.jda.core.entities.User
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
@@ -39,7 +39,7 @@ limitations under the License.
  * @author NathanPB
  * @since 3.1.0
  */
-data class Token(val token: String, val owner: DogoUser, val authTime: Date, val expiresIn: Date, val type: String){
+data class Token(val token: String, val owner: User, val authTime: Date, val expiresIn: Date, val type: String){
 
     /**
      * The token scopes.

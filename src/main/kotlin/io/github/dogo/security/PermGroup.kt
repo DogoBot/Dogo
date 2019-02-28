@@ -1,8 +1,8 @@
-package io.github.dogo.core.permissions
+package io.github.dogo.security
 
 import io.github.dogo.core.Database
-import io.github.dogo.core.entities.DogoGuild
 import io.github.dogo.utils.BoundList
+import net.dv8tion.jda.core.entities.Guild
 import net.dv8tion.jda.core.entities.Role
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -14,7 +14,7 @@ import java.util.regex.Pattern
  * @param[role] the role. Null means the permgroup belongs to the guild owner
  * @param[guild] the guild. Null means the permgroup is applied to every guild.
  */
-open class PermGroup(val role: Role?, val guild: DogoGuild?) {
+open class PermGroup(val role: Role?, val guild: Guild?) {
 
     companion object {
 
@@ -45,7 +45,7 @@ open class PermGroup(val role: Role?, val guild: DogoGuild?) {
         /**
          * Searches a permgroup on cache, creates a new one if doesn't exists.
          */
-        fun from(role: Role?, guild: DogoGuild?) = cached.firstOrNull { it.role?.id == role?.id && guild?.id == guild?.id } ?: PermGroup(role, guild).also { cached += it }
+        fun from(role: Role?, guild: Guild?) = cached.firstOrNull { it.role?.id == role?.id && guild?.id == guild?.id } ?: PermGroup(role, guild).also { cached += it }
     }
 
     /**
@@ -182,9 +182,9 @@ open class PermGroup(val role: Role?, val guild: DogoGuild?) {
      */
     val designation
         get() = when {
-        isDefault || this == DEFAULT                                     -> Designations.DEFAULT
+        isDefault || this == DEFAULT -> Designations.DEFAULT
         guild == null && role != null                                    -> Designations.ADMINS
-        (guild == null && role == null) || this == PermGroup.GUILD_OWNER -> Designations.GUILD_OWNER
+        (guild == null && role == null) || this == GUILD_OWNER -> Designations.GUILD_OWNER
         guild != null && role != null                                    -> Designations.GUILD_LOCAL
         else                                                             -> Designations.INVALID
     }

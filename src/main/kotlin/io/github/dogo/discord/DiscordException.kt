@@ -1,6 +1,4 @@
-package io.github.dogo.events.badword
-
-import io.github.dogo.core.entities.DogoGuild
+package io.github.dogo.discord
 
 /*
 Copyright 2019 Nathan Bombana
@@ -17,11 +15,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-
 /**
- * Event thrown on every badword action.
+ * Throws when something occurs bad while fetching data from Discord.
  *
  * @author NathanPB
  * @since 3.1.0
  */
-abstract class BadwordEvent(val guild: DogoGuild)
+class DiscordException(override val message: String) : Exception(message)

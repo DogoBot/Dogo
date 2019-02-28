@@ -1,7 +1,8 @@
-package io.github.dogo.menus
+package io.github.dogo.discord.menus
 
 import io.github.dogo.core.DogoBot
 import io.github.dogo.core.command.CommandContext
+import io.github.dogo.discord.DiscordManager
 import io.github.dogo.utils._static.EmoteReference
 import net.dv8tion.jda.core.EmbedBuilder
 import net.dv8tion.jda.core.Permission
@@ -44,6 +45,18 @@ open class SimpleReactionMenu(val context: CommandContext) {
          * @see DogoBot.menuTimeWatcher
          */
         val instances = mutableListOf<SimpleReactionMenu>()
+
+        /**
+         * This thread is responsible to finish up the timeout things.
+         */
+        val timeoutWatcher = object : TimerTask() {
+            override fun run() {
+                SimpleReactionMenu.instances
+                        .filter {it.timeout > 0L}
+                        .filter { it.lastSend > 0 && System.currentTimeMillis() > it.lastSend + it.timeout }
+                        .forEach {it.end(false)}
+            }
+        }.also { Timer().schedule(it, 1, 1000) }
     }
     init {
         instances.add(this)
@@ -109,8 +122,8 @@ open class SimpleReactionMenu(val context: CommandContext) {
         DogoBot.eventBus.unregister(this::onReact)
         instances.remove(this)
 
-        val member = context.guild?.g?.getMember(DogoBot.jda?.selfUser)
-        if(context.guild?.g != null && member?.hasPermission(Permission.MESSAGE_MANAGE) == true){
+        val member = context.guild?.getMember(DiscordManager.jda?.selfUser)
+        if(context.guild != null && member?.hasPermission(Permission.MESSAGE_MANAGE) == true){
             if(delete) {
                 msg?.delete()?.queue()
             } else {
@@ -138,7 +151,7 @@ open class SimpleReactionMenu(val context: CommandContext) {
                 .filter { !actions.any { ac -> ac.emote.id == if(it.reactionEmote.isEmote) it.reactionEmote.id else it.reactionEmote.name } }
                 .forEach { it.removeReaction().queue() }
 
-        val presentEmotes = msg!!.reactions.filter { r -> r.users.any { it.id == DogoBot.jda?.selfUser?.id } }
+        val presentEmotes = msg!!.reactions.filter { r -> r.users.any { it.id == DiscordManager.jda?.selfUser?.id } }
                 .map { if(it.reactionEmote.isEmote) it.reactionEmote.id else it.reactionEmote.name}
         actions
                 .filter { !presentEmotes.contains(it.emote.id) }
@@ -171,7 +184,7 @@ open class SimpleReactionMenu(val context: CommandContext) {
     fun onReact(e: GenericMessageReactionEvent) {
         msg?.let {
             if(e.messageId == it.id){
-                if(e.user.id != DogoBot.jda!!.selfUser.id && e is MessageReactionAddEvent && e.channel !is PrivateChannel){
+                if(e.user.id != DiscordManager.jda!!.selfUser.id && e is MessageReactionAddEvent && e.channel !is PrivateChannel){
                     e.reaction.removeReaction(e.user).queue()
                     if(e.user.id != target) return
                 }

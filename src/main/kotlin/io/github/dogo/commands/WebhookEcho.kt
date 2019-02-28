@@ -2,9 +2,11 @@ package io.github.dogo.commands
 
 import io.github.dogo.core.DogoBot
 import io.github.dogo.core.command.CommandCategory
+import io.github.dogo.core.command.CommandFactory
 import io.github.dogo.core.command.CommandReference
 import io.github.dogo.core.command.ReferencedCommand
-import io.github.dogo.menus.SelectorReactionMenu
+import io.github.dogo.discord.menus.SelectorReactionMenu
+import io.github.dogo.discord.newsWebhook
 
 /*
 Copyright 2019 Nathan Bombana
@@ -40,14 +42,14 @@ class WebhookEcho : ReferencedCommand(
                     }
                 }.close()
             } else {
-                reply("notconfigured", DogoBot.getCommandPrefixes().sortedBy { -it.length }.first(), preset = true)
+                reply("notconfigured", CommandFactory.getCommandPrefixes().sortedBy { -it.length }.first(), preset = true)
             }
         }
 ){
     class Configure : ReferencedCommand(
             CommandReference("configure", permission = "command.guildowner"),
             {
-                val hooks = guild!!.g!!.webhooks!!.complete()
+                val hooks = guild!!.webhooks!!.complete()
                 if(hooks.isNotEmpty()){
                     SelectorReactionMenu(
                             this,

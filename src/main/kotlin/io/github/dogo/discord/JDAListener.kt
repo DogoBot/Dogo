@@ -1,4 +1,4 @@
-package io.github.dogo.core.listeners
+package io.github.dogo.discord
 
 import io.github.dogo.core.DogoBot
 import io.github.dogo.core.eventBus.EventBus

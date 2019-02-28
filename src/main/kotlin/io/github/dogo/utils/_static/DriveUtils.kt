@@ -1,13 +1,52 @@
 package io.github.dogo.utils._static
 
+import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp
+import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver
+import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow
+import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
 import com.google.api.client.googleapis.media.MediaHttpUploader
 import com.google.api.client.googleapis.media.MediaHttpUploaderProgressListener
 import com.google.api.client.http.InputStreamContent
+import com.google.api.client.json.jackson2.JacksonFactory
+import com.google.api.client.util.store.FileDataStoreFactory
+import com.google.api.services.drive.Drive
+import com.google.api.services.drive.DriveScopes
 import io.github.dogo.core.DogoBot
 import java.io.File
+import java.io.InputStreamReader
+import java.util.concurrent.Executors
 
 class DriveUtils {
     companion object {
+
+        /**
+         * Google Credential
+         */
+        val googleCredential = {
+            val clientSecrets = GoogleClientSecrets.load(JacksonFactory.getDefaultInstance(), InputStreamReader(File("credentials.json").inputStream()))
+
+            // Build flow and trigger user authorization request.
+            val flow = GoogleAuthorizationCodeFlow.Builder(
+                    GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), clientSecrets, listOf(DriveScopes.DRIVE))
+                    .setDataStoreFactory(FileDataStoreFactory(File(".dynamic/tokens")))
+                    .setAccessType("offline")
+                    .build()
+            val receiver = LocalServerReceiver.Builder().setPort(8888).build()
+            AuthorizationCodeInstalledApp(flow, receiver).authorize("user")
+        }()
+
+        /**
+         * Drive Service
+         */
+        val googleDrive = Drive.Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), googleCredential)
+                .apply { applicationName = "projeto-teste" }
+                .build()
+        /**
+         * Thread to upload heap/thread dumps to Google Drive.
+         */
+        val dumpUploaderThread = Executors.newSingleThreadExecutor()
+
 
         /**
          * Uploads a file to Google Drive.
@@ -24,7 +63,7 @@ class DriveUtils {
                     parents = listOf(parentId)
                 }
             }
-            return DogoBot.googleDrive.files().create(fileMetadata, mediaContent).apply {
+            return DriveUtils.googleDrive.files().create(fileMetadata, mediaContent).apply {
                 mediaHttpUploader.isDirectUploadEnabled = false
                 mediaHttpUploader.chunkSize = MediaHttpUploader.MINIMUM_CHUNK_SIZE
                 mediaHttpUploader.progressListener = object: MediaHttpUploaderProgressListener {
@@ -60,7 +99,7 @@ class DriveUtils {
          * @param[parentId] the directory parent
          */
         fun mkdir(dirName: String, parentId: String? = null): com.google.api.services.drive.model.File {
-            return DogoBot.googleDrive.files().create(com.google.api.services.drive.model.File().apply {
+            return DriveUtils.googleDrive.files().create(com.google.api.services.drive.model.File().apply {
                 name = dirName
                 mimeType = "application/vnd.google-apps.folder"
                 parentId?.let {
@@ -81,7 +120,7 @@ class DriveUtils {
             var pageToken: String?
 
             do {
-                pageToken = DogoBot.googleDrive.files().list().apply {
+                pageToken = DriveUtils.googleDrive.files().list().apply {
                     q = query
                     spaces = "drive"
                     fields = "nextPageToken, files(id, name, createdTime)"

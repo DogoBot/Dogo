@@ -4,12 +4,12 @@ import io.github.dogo.core.command.CommandCategory
 import io.github.dogo.core.command.CommandContext
 import io.github.dogo.core.command.CommandReference
 import io.github.dogo.core.command.ReferencedCommand
-import io.github.dogo.core.permissions.PermGroup
-import io.github.dogo.core.permissions.PermGroupSet
-import io.github.dogo.menus.ListReactionMenu
-import io.github.dogo.menus.SelectorReactionMenu
-import io.github.dogo.menus.SimpleReactionMenu
-import io.github.dogo.menus.TextInputMenu
+import io.github.dogo.security.PermGroup
+import io.github.dogo.security.PermGroupSet
+import io.github.dogo.discord.menus.ListReactionMenu
+import io.github.dogo.discord.menus.SelectorReactionMenu
+import io.github.dogo.discord.menus.SimpleReactionMenu
+import io.github.dogo.discord.menus.TextInputMenu
 import io.github.dogo.utils._static.EmoteReference
 
 /*
@@ -36,7 +36,7 @@ limitations under the License.
 class Roles : ReferencedCommand(
         CommandReference("role", aliases = "roles", category = CommandCategory.GUILD_ADMINISTRATION, permission = "command.guildowner"),
         {
-            val roles = guild!!.g!!.roles
+            val roles = guild!!.roles
             SelectorReactionMenu(this, roles,
                     { it, _ -> "${it.asMention}\n" },
                     {

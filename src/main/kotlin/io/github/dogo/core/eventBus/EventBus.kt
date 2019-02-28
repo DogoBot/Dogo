@@ -1,15 +1,19 @@
 package io.github.dogo.core.eventBus
 
-import io.github.dogo.core.DogoBot
 import java.util.*
+import java.util.concurrent.Executors
 import kotlin.reflect.KFunction
 import kotlin.reflect.jvm.javaMethod
 
 class EventBus {
+
+    @SuppressWarnings("private")
+    val executor = Executors.newSingleThreadExecutor()
+
     private val listeners = LinkedList<EventBus.EventListener>()
 
     fun submit(element : Any) {
-        DogoBot.eventBusThread.execute {
+        executor.execute {
             submitSync(element)
         }
     }

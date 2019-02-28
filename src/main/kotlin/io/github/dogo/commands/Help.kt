@@ -2,6 +2,7 @@ package io.github.dogo.commands
 
 import io.github.dogo.core.DogoBot
 import io.github.dogo.core.command.*
+import io.github.dogo.discord.lang
 import io.github.dogo.lang.BoundLanguage
 import io.github.dogo.utils.Holder
 import io.github.dogo.utils._static.ThemeColor
@@ -91,9 +92,9 @@ class Help : ReferencedCommand(
             var usage = ""
             if(cmd.reference.usage.contains("\n")){
                 cmd.reference.usage.split("\n")
-                        .forEach { e -> usage+= DogoBot.getCommandPrefixes().first()+e+"\n" }
+                        .forEach { e -> usage+= CommandFactory.getCommandPrefixes().first()+e+"\n" }
             } else {
-                usage = DogoBot.getCommandPrefixes().first()+cmd.reference.usage
+                usage = CommandFactory.getCommandPrefixes().first()+cmd.reference.usage
             }
             if(usage.endsWith("\n")){
                 usage = usage.substring(0, usage.length-1)
@@ -102,7 +103,7 @@ class Help : ReferencedCommand(
             embed.addField(cnt.langEntry.getText(cnt.sender.lang, "examples"), if(cmd.reference.usage.isNotEmpty()) usage else cnt.langEntry.getText(cnt.sender.lang, "noexamples"), true)
             embed.addField(cnt.langEntry.getText(cnt.sender.lang, "cmddescription"), BoundLanguage(cnt.sender.lang, cmd.getPermission()).getText("description"), true)
 
-            val subcommands = cnt.route.children.joinToString {"``${DogoBot.getCommandPrefixes().first()}${it.getFullName()}``\n"}
+            val subcommands = cnt.route.children.joinToString {"``${CommandFactory.getCommandPrefixes().first()}${it.getFullName()}``\n"}
             if(subcommands.isNotEmpty()){
                 embed.addField(cnt.langEntry.getText(cnt.sender.lang, "subcommands"), subcommands, false)
             }

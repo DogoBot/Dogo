@@ -1,6 +1,6 @@
 package io.github.dogo.statistics
 
-import io.github.dogo.core.entities.DogoUser
+import net.dv8tion.jda.core.entities.User
 
 /*
 Copyright 2019 Nathan Bombana
@@ -30,7 +30,7 @@ limitations under the License.
  * @author NathanPB
  * @since 3.1.0
  */
-class TicTacToeStatistics(val table: String, val p1: DogoUser, val p2: DogoUser, val winner: DogoUser?) : Statistic() {
+class TicTacToeStatistics(val table: String, val p1: User, val p2: User, val winner: User?) : Statistic() {
     init {
         if(winner != null && !(p1 == winner || p2 == winner)){
             throw RuntimeException("Winner ${winner.id} is neither p1(${p1.id}) or p2(${p2.id})")

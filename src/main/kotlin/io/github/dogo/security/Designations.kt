@@ -1,4 +1,4 @@
-package io.github.dogo.core.permissions
+package io.github.dogo.security
 
 /**
  * The permgroup designation.

@@ -4,11 +4,10 @@ import io.github.dogo.core.DogoBot
 import io.github.dogo.core.command.CommandCategory
 import io.github.dogo.core.command.CommandReference
 import io.github.dogo.core.command.ReferencedCommand
-import io.github.dogo.core.entities.DogoGuild
-import io.github.dogo.core.entities.DogoUser
+import io.github.dogo.discord.DiscordManager
+import io.github.dogo.discord.menus.SimpleReactionMenu
 import io.github.dogo.lang.BoundLanguage
 import io.github.dogo.lang.LanguageEntry
-import io.github.dogo.menus.SimpleReactionMenu
 import io.github.dogo.utils._static.BeamUtils
 import io.github.dogo.utils._static.DisplayUtils
 import io.github.dogo.utils._static.EmoteReference
@@ -60,20 +59,17 @@ class Stats : ReferencedCommand(
         private fun getBasicInfo(langEntry: BoundLanguage) : EmbedBuilder {
             return EmbedBuilder()
                     .setColor(ThemeColor.PRIMARY)
-                    .setAuthor("Dogo v${DogoBot.version}", null, DogoBot.jda!!.selfUser.effectiveAvatarUrl)
+                    .setAuthor("Dogo v${DogoBot.version}", null, DiscordManager.jda!!.selfUser.effectiveAvatarUrl)
                     .setTitle(langEntry.getText("amihealthy"))
                     .setThumbnail("https://i.imgur.com/9rmyKUk.png")
-                    .addField(langEntry.getText("users"), DogoBot.jda!!.users.size.toString(),true)
-                    .addField(langEntry.getText("guilds"), DogoBot.jda!!.guilds.size.toString(), true)
+                    .addField(langEntry.getText("users"), DiscordManager.jda!!.users.size.toString(),true)
+                    .addField(langEntry.getText("guilds"), DiscordManager.jda!!.guilds.size.toString(), true)
 
                     .addField(langEntry.getText("cpu"), BeamUtils.usedCPU().toString()+"%", true)
                     .addField(langEntry.getText("ram"), "${BeamUtils.usedMemory()}MB | ${BeamUtils.maxMemory()}MB", true)
 
-                    .addField(langEntry.getText("ping"), "${DogoBot.jda!!.ping}ms", true)
+                    .addField(langEntry.getText("ping"), "${DiscordManager.jda!!.ping}ms", true)
                     .addField(langEntry.getText("uptime"), DisplayUtils.formatTimeSimple(System.currentTimeMillis() - DogoBot.initTime), true)
-
-                    .addField(langEntry.getText("cachedguild"), DogoGuild.cache.size.toString(), true)
-                    .addField(langEntry.getText("cacheduser"), DogoUser.cache.size.toString(), true)
         }
     }
 }

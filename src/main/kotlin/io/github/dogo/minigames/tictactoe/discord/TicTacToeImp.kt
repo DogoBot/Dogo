@@ -3,8 +3,8 @@ package io.github.dogo.minigames.tictactoe.discord
 import io.github.dogo.core.Database
 import io.github.dogo.core.DogoBot
 import io.github.dogo.core.command.CommandContext
-import io.github.dogo.core.entities.DogoUser
-import io.github.dogo.menus.SimpleReactionMenu
+import io.github.dogo.discord.formatName
+import io.github.dogo.discord.menus.SimpleReactionMenu
 import io.github.dogo.minigames.tictactoe.ITTTImp
 import io.github.dogo.minigames.tictactoe.OnePlayerTTT
 import io.github.dogo.minigames.tictactoe.TTTPlayer
@@ -12,6 +12,7 @@ import io.github.dogo.minigames.tictactoe.TwoPlayersTTT
 import io.github.dogo.utils._static.EmoteReference
 import io.github.dogo.utils._static.ThemeColor
 import net.dv8tion.jda.core.EmbedBuilder
+import net.dv8tion.jda.core.entities.User
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
 
@@ -37,7 +38,7 @@ limitations under the License.
  * @author NathanPB
  * @since 3.1.0
  */
-class TicTacToeImp(context: CommandContext, val p1: DogoUser, val p2: DogoUser) : SimpleReactionMenu(context) {
+class TicTacToeImp(context: CommandContext, val p1: User, val p2: User) : SimpleReactionMenu(context) {
 
     /**
      * Runs when someone wins.
@@ -61,8 +62,8 @@ class TicTacToeImp(context: CommandContext, val p1: DogoUser, val p2: DogoUser) 
      * It will be [OnePlayerTTT] if one of [p1] or [p2] are bots, or [TwoPlayersTTT] if the two players are humans.
      */
     val ttt: ITTTImp = when {
-        p1.isBot() -> OnePlayerTTT(onWin, TTTPlayer.P2)
-        p2.isBot() -> OnePlayerTTT(onWin, TTTPlayer.P1)
+        p1.isntHuman() -> OnePlayerTTT(onWin, TTTPlayer.P2)
+        p2.isntHuman() -> OnePlayerTTT(onWin, TTTPlayer.P1)
         else -> TwoPlayersTTT(onWin)
     }
 
@@ -136,7 +137,7 @@ class TicTacToeImp(context: CommandContext, val p1: DogoUser, val p2: DogoUser) 
      *
      * @return [p1] or [p2]
      */
-    private fun getCurrentPlayer() : DogoUser = if(this.ttt.currentTTTPlayer == TTTPlayer.P1) p1 else p2
+    private fun getCurrentPlayer() = if(this.ttt.currentTTTPlayer == TTTPlayer.P1) p1 else p2
 
     /**
      * Sends the table and sets its actions.
@@ -174,5 +175,5 @@ class TicTacToeImp(context: CommandContext, val p1: DogoUser, val p2: DogoUser) 
     /**
      * Checks if the user is a bot or a fake user.
      */
-    fun DogoUser.isBot() = this.usr?.isBot == true || this.usr?.isFake == true
+    fun User.isntHuman() = isBot || isFake
 }

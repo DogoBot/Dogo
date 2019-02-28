@@ -1,9 +1,9 @@
-package io.github.dogo.core.permissions
+package io.github.dogo.security
 
 import io.github.dogo.core.Database
-import io.github.dogo.core.DogoBot
-import io.github.dogo.core.entities.DogoGuild
-import io.github.dogo.core.entities.DogoUser
+import io.github.dogo.discord.DiscordManager
+import net.dv8tion.jda.core.entities.Guild
+import net.dv8tion.jda.core.entities.User
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -23,28 +23,24 @@ open class PermGroupSet(elements: List<PermGroup> = mutableListOf()) : ArrayList
          * Note: If the user is invalid, returns an empty permgroup.
          * Note: The DEFAULT permgroup is included.
          */
-        fun findGlobalScope(user: DogoUser? = null): PermGroupSet {
-            return if(user != null && user.usr == null){
-                PermGroupSet()
-            } else {
-                Database.PERMISSIONS.run {
+        fun findGlobalScope(user: User? = null): PermGroupSet {
+            return Database.PERMISSIONS.run {
                     transaction {
                         return@transaction slice(this@run.role)
                         .select {
                             guild.isNull() and role.isNotNull()
                         }.mapNotNull {
-                            DogoBot.jda?.getRoleById(it[role]!!)
+                            DiscordManager.jda?.getRoleById(it[role]!!)
                         }.map {
-                            PermGroup(it, null)
+                                    PermGroup(it, null)
                         }.filter {
                             if(user != null)
-                                it.role?.id in (it.role?.guild?.getMember(user.usr)?.roles?.map { it.id } ?: emptyList())
+                                it.role?.id in (it.role?.guild?.getMember(user)?.roles?.map { it.id } ?: emptyList())
                             else true
                         }.let { PermGroupSet(it).also { it.add(PermGroup.DEFAULT) } }
                     }
                 }
             }
-        }
 
         /**
          * Finds the [PermGroupSet] from [user] in local scope.
@@ -52,32 +48,28 @@ open class PermGroupSet(elements: List<PermGroup> = mutableListOf()) : ArrayList
          * Note: The default permgroup is not included.
          * Note: If the user isn't null and is invalid, returns an empty permgroup.
          */
-        fun findLocalScope(guild: DogoGuild, user: DogoUser? = null): PermGroupSet {
-            return if(user != null && user.usr == null){
-                PermGroupSet()
-            } else {
-                Database.PERMISSIONS.run {
+        fun findLocalScope(guild: Guild, user: User? = null): PermGroupSet {
+            return Database.PERMISSIONS.run {
                     transaction {
                         return@transaction slice(this@run.guild, this@run.role)
                         .select {
                             this@run.guild eq guild.id
                         }.mapNotNull {
-                            DogoBot.jda?.getRoleById(it[role])?.let { role ->
+                            DiscordManager.jda?.getRoleById(it[role])?.let { role ->
                                 PermGroup(role, guild)
                             }
                         }.let {
-                            if(user != null){
+                            if(user != null) {
                                 it.filter {
-                                   it.role?.id in (guild.g?.getMember(user.usr)?.roles?.map { it.id } ?: emptyList())
+                                    it.role?.id in (guild.getMember(user)?.roles?.map { it.id } ?: emptyList())
                                 }
                             } else it
                         }.let {
-                            PermGroupSet(it).also { if(user != null && guild.g?.ownerId == user.id) it.add(PermGroup.GUILD_OWNER) }
+                            PermGroupSet(it).also { if(user != null && guild.ownerId == user.id) it.add(PermGroup.GUILD_OWNER) }
                         }
                     }
                 }
             }
-        }
 
         /**
          * Gets permgroups within a context.
@@ -87,7 +79,7 @@ open class PermGroupSet(elements: List<PermGroup> = mutableListOf()) : ArrayList
          * -No [user], with [guild] = Returns all the local permgroups from [guild] and the permgroups on global scope.
          * -With [user], with [guild] = Returns the permgroup from [user] in local and global scope.
          */
-        fun find(user: DogoUser? = null, guild: DogoGuild? = null): PermGroupSet {
+        fun find(user: User? = null, guild: Guild? = null): PermGroupSet {
             val globalScope = findGlobalScope(user)
             return if(guild == null){
                 globalScope

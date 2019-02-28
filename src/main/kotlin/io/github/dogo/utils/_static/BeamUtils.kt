@@ -1,6 +1,11 @@
 package io.github.dogo.utils._static
 
+import io.github.dogo.core.DogoBot
+import sun.misc.Unsafe
+import java.io.File
 import java.lang.management.ManagementFactory
+import java.text.SimpleDateFormat
+import java.util.*
 
 /*
 Copyright 2019 Nathan Bombana
@@ -46,5 +51,43 @@ class BeamUtils {
         fun usedCPU() : Double {
             return ManagementFactory.getOperatingSystemMXBean().systemLoadAverage/ ManagementFactory.getOperatingSystemMXBean().availableProcessors
         }
+
+        /**
+         * Take Thread Dump and Heap Dump.
+         * Note: IT'S ONLY AVAILABLE ON LINUX ENVIRONMENTS WITH JMAP AND JSTACK ON PATH.
+         * The dumps are stored in dumps/dd-MM-YYY  HH-MM-ss.bin and dumps/dd-MM-YYY  HH-MM-ss.tdump
+         */
+        fun takeDumps(){
+            val currDate = SimpleDateFormat("dd-MM-YYYY_HH-mm-ss").format(Date())
+            val heapDump = File(DogoBot.dynamicDir, "$currDate.bin")
+            val threadDump = File(DogoBot.dynamicDir, "$currDate.tdump")
+
+            DogoBot.logger.info("Taking Heap Dump and Thread Dump...")
+            SystemUtils.exec("jmap -dump:format=b,file=$heapDump ${BeamUtils.pid} ")
+            SystemUtils.exec("jstack -l ${BeamUtils.pid} > $threadDump")
+            DriveUtils.dumpUploaderThread.submit {
+                arrayOf(heapDump, threadDump)
+                        .filter { it.exists() && it.length() > 0 }
+                        .forEach {
+                            val dir = DriveUtils.getDir(DogoBot.data.DUMPS.PATH).firstOrNull() ?: DriveUtils.mkdir(DogoBot.data.DUMPS.PATH)
+                            DriveUtils.toDrive(it, dir.id)
+                            it.delete()
+                        }
+            }
+        }
+
+        /**
+         * The JVM pid.
+         */
+        val pid = ManagementFactory.getRuntimeMXBean().name.split("@")[0].toInt()
+
+        /**
+         * Simple container for [Unsafe]
+         */
+        val unsafe = Unsafe::class.java.getDeclaredField("theUnsafe")
+            .let {
+                it.isAccessible = true
+                it.get(null) as Unsafe
+            }
     }
 }

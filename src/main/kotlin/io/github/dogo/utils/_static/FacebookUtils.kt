@@ -3,7 +3,6 @@ package io.github.dogo.utils._static
 import net.dv8tion.jda.core.EmbedBuilder
 import org.json.JSONObject
 import org.jsoup.Jsoup
-import java.lang.Exception
 import java.net.URL
 
 /*

@@ -1,4 +1,4 @@
-package io.github.dogo.menus
+package io.github.dogo.discord.menus
 
 import io.github.dogo.core.DogoBot
 import io.github.dogo.core.command.CommandContext

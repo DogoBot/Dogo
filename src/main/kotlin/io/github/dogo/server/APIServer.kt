@@ -2,9 +2,7 @@ package io.github.dogo.server
 
 import io.github.dogo.core.Database
 import io.github.dogo.core.DogoBot
-import io.github.dogo.core.entities.DogoGuild
-import io.github.dogo.core.entities.DogoUser
-import io.github.dogo.exceptions.APIException
+import io.github.dogo.discord.DiscordManager
 import io.github.dogo.utils._static.DiscordAPI
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
@@ -159,11 +157,11 @@ class APIServer {
                     route("{id}") {
                         get {
                             APIRequestProcessor {data ->
-                                val user = DogoUser.from(call.parameters["id"].orEmpty())
+                                val user = DiscordManager.jda?.getUserById(call.parameters["id"].orEmpty())
                                 val auth: Token? = getAuthorization(call,  "identify")
 
-                                data.put("id", user.id)
-                                user.usr?.let {
+                                data.put("id", call.parameters["id"].orEmpty())
+                                user?.let {
                                     data.put("username", it.name)
                                         .put("discriminator", it.discriminator)
                                         .put("avatar", it.avatarUrl)
@@ -174,8 +172,8 @@ class APIServer {
                                             if(!data.has(k)) data.put(k, it[k])
                                         }
                                     }
-                                    it.owner.usr?.mutualGuilds.orEmpty().let { from ->
-                                        user.usr?.mutualGuilds?.filter { from.contains(it) }
+                                    it.owner.mutualGuilds.orEmpty().let { from ->
+                                        user?.mutualGuilds?.filter { from.contains(it) }
                                                 .orEmpty().map { it.id }
                                                 .let { data.put("mutual_guilds", it) }
                                     }
@@ -188,11 +186,14 @@ class APIServer {
                     route("{id}") {
                         get {
                             APIRequestProcessor { data ->
-                                val target = DogoGuild.from(call.parameters["id"].orEmpty())
+                                val target = DiscordManager.jda?.getGuildById(call.parameters["id"].orEmpty())
+
+                                //I don't really remember why I declared this when I wrote it,
+                                // but its working then I will not change anything
                                 val auth = getAuthorization(call, "guilds")
 
-                                data.put("id", target.id)
-                                target.g?.let {
+                                data.put("id", call.parameters["id"])
+                                target?.let {
                                     data.put("name", it.name)
                                     data.put("icon", it.iconUrl)
                                     data.put("invites", it.invites.complete().map { it.code }.toTypedArray())
@@ -252,7 +253,7 @@ class APIServer {
                             (Database.TOKENCOPES.scope inList validScopes.asList())
                         }.groupBy(Database.TOKENCOPES.token)
                         .map {
-                            Token(it[token], DogoUser.from(it[user]), it[authTime].toDate(), it[expiresIn].toDate(), it[type])
+                            Token(it[token], DiscordManager.jda?.getUserById(it[user])!!, it[authTime].toDate(), it[expiresIn].toDate(), it[type])
                         }.firstOrNull { it.isValid() }
                     }
                 }
