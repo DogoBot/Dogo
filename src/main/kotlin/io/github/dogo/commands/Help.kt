@@ -43,8 +43,8 @@ class Help : ReferencedCommand(
                     if(s.isNotEmpty()) {
                         s = s.substring(0, s.length - 1)
                     }
-                    DogoBot.cmdFactory.route.findRoute(s, Holder())
-                } else DogoBot.cmdFactory.route
+                    DogoBot.cmdManager.route.findRoute(s, Holder())
+                } else DogoBot.cmdManager.route
 
                 if(route.reference == CommandRouter.root){
                     val embed = EmbedBuilder()
@@ -53,7 +53,7 @@ class Help : ReferencedCommand(
 
                     val hm = HashMap<CommandCategory, ArrayList<CommandReference>>()
 
-                    DogoBot.cmdFactory.route.children.forEach { c ->
+                    DogoBot.cmdManager.route.children.forEach { c ->
                         if(!hm.containsKey(c.reference.category)) hm[c.reference.category] = ArrayList()
                         (hm[c.reference.category] as ArrayList).add(c.reference)
                     }
@@ -85,29 +85,29 @@ class Help : ReferencedCommand(
         fun getHelpFor(cmd: CommandRouter, cnt: CommandContext): EmbedBuilder {
             val embed = EmbedBuilder()
                     .setColor(ThemeColor.PRIMARY)
-                    .setAuthor(cnt.langEntry.getText(cnt.sender.lang, "helpfor", cmd.reference.name), null, Help.HELP_IMAGE)
+                    .setAuthor(cnt.langEntry.getText("helpfor", cmd.reference.name), null, Help.HELP_IMAGE)
 
-            embed.addField(cnt.langEntry.getText(cnt.sender.lang, "category"), cmd.reference.category.getDisplay(cnt.sender.lang), false)
+            embed.addField(cnt.langEntry.getText("category"), cmd.reference.category.getDisplay(cnt.sender.lang), false)
 
             var usage = ""
             if(cmd.reference.usage.contains("\n")){
                 cmd.reference.usage.split("\n")
-                        .forEach { e -> usage+= CommandFactory.getCommandPrefixes().first()+e+"\n" }
+                        .forEach { e -> usage+= CommandManager.getCommandPrefixes().first()+e+"\n" }
             } else {
-                usage = CommandFactory.getCommandPrefixes().first()+cmd.reference.usage
+                usage = CommandManager.getCommandPrefixes().first()+cmd.reference.usage
             }
             if(usage.endsWith("\n")){
                 usage = usage.substring(0, usage.length-1)
             }
 
-            embed.addField(cnt.langEntry.getText(cnt.sender.lang, "examples"), if(cmd.reference.usage.isNotEmpty()) usage else cnt.langEntry.getText(cnt.sender.lang, "noexamples"), true)
-            embed.addField(cnt.langEntry.getText(cnt.sender.lang, "cmddescription"), BoundLanguage(cnt.sender.lang, cmd.getPermission()).getText("description"), true)
+            embed.addField(cnt.langEntry.getText("examples"), if(cmd.reference.usage.isNotEmpty()) usage else cnt.langEntry.getText("noexamples"), true)
+            embed.addField(cnt.langEntry.getText("cmddescription"), BoundLanguage(cnt.sender.lang, cmd.getPermission()).getText("description"), true)
 
-            val subcommands = cnt.route.children.joinToString {"``${CommandFactory.getCommandPrefixes().first()}${it.getFullName()}``\n"}
+            val subcommands = cnt.route.children.joinToString {"``${CommandManager.getCommandPrefixes().first()}${it.getFullName()}``\n"}
             if(subcommands.isNotEmpty()){
-                embed.addField(cnt.langEntry.getText(cnt.sender.lang, "subcommands"), subcommands, false)
+                embed.addField(cnt.langEntry.getText("subcommands"), subcommands, false)
             }
-            embed.addField(cnt.langEntry.getText(cnt.sender.lang, "permission"), "``${cmd.getPermission()}``", false)
+            embed.addField(cnt.langEntry.getText("permission"), "``${cmd.getPermission()}``", false)
             return embed
         }
     } }
