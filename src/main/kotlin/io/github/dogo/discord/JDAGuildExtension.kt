@@ -1,6 +1,6 @@
 package io.github.dogo.discord
 
-import io.github.dogo.core.Database
+import io.github.dogo.core.database.Tables
 import io.github.dogo.security.PermGroupSet
 import io.github.dogo.utils.BoundList
 import net.dv8tion.jda.core.entities.Guild
@@ -29,7 +29,7 @@ limitations under the License.
 
 private fun Guild.createColumn(){
     transaction {
-        Database.GUILDS.run {
+        Tables.GUILDS.run {
             slice(id).select { id eq this@createColumn.id }.count()
                 .let {
                     if(it == 0){
@@ -44,7 +44,7 @@ val Guild.prefixes
         get() = BoundList(
         { value ->
             transaction {
-                Database.LOCALPREFIXES.insert {
+                Tables.LOCALPREFIXES.insert {
                     it[guild] = id
                     it[prefix] = value
                 }
@@ -52,16 +52,16 @@ val Guild.prefixes
         },
         { value ->
             transaction {
-                Database.LOCALPREFIXES.deleteWhere {
-                    (Database.LOCALPREFIXES.guild) eq id and (Database.LOCALPREFIXES.prefix eq value)
+                Tables.LOCALPREFIXES.deleteWhere {
+                    (Tables.LOCALPREFIXES.guild) eq id and (Tables.LOCALPREFIXES.prefix eq value)
                 }
             }
         },
         {
             transaction {
-                return@transaction Database.LOCALPREFIXES.slice(Database.LOCALPREFIXES.prefix).select {
-                    Database.LOCALPREFIXES.guild eq id
-                }.map { it[Database.LOCALPREFIXES.prefix] }
+                return@transaction Tables.LOCALPREFIXES.slice(Tables.LOCALPREFIXES.prefix).select {
+                    Tables.LOCALPREFIXES.guild eq id
+                }.map { it[Tables.LOCALPREFIXES.prefix] }
             }
         }
 )
@@ -72,15 +72,15 @@ val Guild.badwords
         { theword ->
             val t = this
             transaction {
-                val query: SqlExpressionBuilder.() -> Op<Boolean> = { (Database.BADWORDS.word eq theword.toLowerCase()) and (Database.BADWORDS.guild eq id)}
-                Database.BADWORDS.slice(Database.BADWORDS.id).select(query).also { result ->
+                val query: SqlExpressionBuilder.() -> Op<Boolean> = { (Tables.BADWORDS.word eq theword.toLowerCase()) and (Tables.BADWORDS.guild eq id)}
+                Tables.BADWORDS.slice(Tables.BADWORDS.id).select(query).also { result ->
                     if(result.count() == 0){
-                        Database.BADWORDS.insert {
+                        Tables.BADWORDS.insert {
                             it[word] = theword.toLowerCase()
                             it[guild] = t.id
                         }
-                    } else if(!result.first()[Database.BADWORDS.active]){
-                        Database.BADWORDS.update(query){
+                    } else if(!result.first()[Tables.BADWORDS.active]){
+                        Tables.BADWORDS.update(query){
                             it[active] = true
                         }
                     }
@@ -89,11 +89,11 @@ val Guild.badwords
         },
         { theword ->
             transaction {
-                val query: SqlExpressionBuilder.() -> Op<Boolean> = { (Database.BADWORDS.word eq theword.toLowerCase()) and (Database.BADWORDS.guild eq id)}
-                Database.BADWORDS.slice(Database.BADWORDS.id).select(query).let { result ->
+                val query: SqlExpressionBuilder.() -> Op<Boolean> = { (Tables.BADWORDS.word eq theword.toLowerCase()) and (Tables.BADWORDS.guild eq id)}
+                Tables.BADWORDS.slice(Tables.BADWORDS.id).select(query).let { result ->
                     result.firstOrNull()?.let {
-                        if(it[Database.BADWORDS.active]){
-                            Database.BADWORDS.update(query){
+                        if(it[Tables.BADWORDS.active]){
+                            Tables.BADWORDS.update(query){
                                 it[active] = false
                             }
                         }
@@ -103,25 +103,25 @@ val Guild.badwords
         },
         {
             transaction {
-                return@transaction Database.BADWORDS.slice(Database.BADWORDS.word).select {
-                    (Database.BADWORDS.guild eq id) and (Database.BADWORDS.active eq true)
-                }.map { it[Database.BADWORDS.word] }
+                return@transaction Tables.BADWORDS.slice(Tables.BADWORDS.word).select {
+                    (Tables.BADWORDS.guild eq id) and (Tables.BADWORDS.active eq true)
+                }.map { it[Tables.BADWORDS.word] }
             }
         }
 )
 
 var Guild.newsWebhook: Webhook?
     get() = transaction {
-        return@transaction (Database.GUILDS.slice(Database.GUILDS.defaultHook).select {
-            Database.GUILDS.id eq this@newsWebhook.id
-        }.first()[Database.GUILDS.defaultHook])?.let { hookId ->
+        return@transaction (Tables.GUILDS.slice(Tables.GUILDS.defaultHook).select {
+            Tables.GUILDS.id eq this@newsWebhook.id
+        }.first()[Tables.GUILDS.defaultHook])?.let { hookId ->
             this@newsWebhook.webhooks.complete().firstOrNull { it.id == hookId }
         }
     }
     set(wh) {
         this.createColumn()
         transaction {
-            Database.GUILDS.update({ Database.GUILDS.id eq id }){
+            Tables.GUILDS.update({ Tables.GUILDS.id eq id }){
                 it[defaultHook] = wh?.id
             }
         }

@@ -1,6 +1,6 @@
 package io.github.dogo.server
 
-import io.github.dogo.core.Database
+import io.github.dogo.core.database.Tables
 import io.github.dogo.core.DogoBot
 import io.github.dogo.discord.DiscordManager
 import io.github.dogo.utils._static.DiscordAPI
@@ -103,7 +103,7 @@ class APIServer {
                                             }
 
                                     transaction {
-                                        Database.TOKENS.run {
+                                        Tables.TOKENS.run {
                                             select {
                                                 token eq call.parameters["access_token"].orEmpty()
                                             }.count().let {
@@ -117,7 +117,7 @@ class APIServer {
                                     val fetch = DiscordAPI.fetchUser(call.parameters["access_token"].orEmpty(), call.parameters["token_type"].orEmpty())
                                     if(fetch.has("id")){
                                         transaction {
-                                            Database.TOKENS.run {
+                                            Tables.TOKENS.run {
                                                 insert {
                                                     it[token] = call.parameters["access_token"].orEmpty()
                                                     it[user] = fetch.getString("id")
@@ -133,7 +133,7 @@ class APIServer {
                                                     data.put("scopes", mutableListOf<String>())
                                                 }
                                             }
-                                            Database.TOKENCOPES.run {
+                                            Tables.TOKENCOPES.run {
                                                 call.parameters["scope"].orEmpty().split(" ").forEach { scopeName ->
                                                     insert {
                                                         it[scope] = scopeName
@@ -245,13 +245,13 @@ class APIServer {
                 val auth = call.request.headers["Authorization"].orEmpty().split(" ")
                 if(auth.size != 2) throw APIException(HttpStatusCode.BadRequest, "invalid authorization")
                 transaction {
-                    return@transaction Database.TOKENS.run {
-                        (this innerJoin Database.TOKENCOPES).select {
+                    return@transaction Tables.TOKENS.run {
+                        (this innerJoin Tables.TOKENCOPES).select {
                             (type eq auth[0]) and
                             (token eq auth[1]) and
                             (expiresIn greater DateTime.now()) and
-                            (Database.TOKENCOPES.scope inList validScopes.asList())
-                        }.groupBy(Database.TOKENCOPES.token)
+                            (Tables.TOKENCOPES.scope inList validScopes.asList())
+                        }.groupBy(Tables.TOKENCOPES.token)
                         .map {
                             Token(it[token], DiscordManager.jda?.getUserById(it[user])!!, it[authTime].toDate(), it[expiresIn].toDate(), it[type])
                         }.firstOrNull { it.isValid() }

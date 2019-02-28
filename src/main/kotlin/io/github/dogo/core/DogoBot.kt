@@ -45,11 +45,6 @@ class DogoBot {
         const val version = "3.2.0"
 
         /**
-         * Database connection.
-         */
-        lateinit var db: Database
-
-        /**
          * The data loader from Configurate.
          */
         val dataLoader = JSONConfigurationLoader.builder()

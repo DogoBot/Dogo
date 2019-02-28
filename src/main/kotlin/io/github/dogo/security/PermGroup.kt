@@ -1,6 +1,6 @@
 package io.github.dogo.security
 
-import io.github.dogo.core.Database
+import io.github.dogo.core.database.Tables
 import io.github.dogo.utils.BoundList
 import net.dv8tion.jda.core.entities.Guild
 import net.dv8tion.jda.core.entities.Role
@@ -53,15 +53,15 @@ open class PermGroup(val role: Role?, val guild: Guild?) {
      */
     open var isDefault: Boolean
         get() = transaction {
-            Database.PERMISSIONS.run {
-                slice(Database.PERMISSIONS.isDefault)
+            Tables.PERMISSIONS.run {
+                slice(Tables.PERMISSIONS.isDefault)
                     .select {
                         (guild eq this@PermGroup.guild?.id) and (role eq this@PermGroup.role?.id)
-                    }.firstOrNull()?.get(Database.PERMISSIONS.isDefault) ?: false
+                    }.firstOrNull()?.get(Tables.PERMISSIONS.isDefault) ?: false
             }
         }
         set(value) = transaction {
-            Database.PERMISSIONS.run {
+            Tables.PERMISSIONS.run {
                 update({ (guild eq this@PermGroup.guild?.id) and (role eq this@PermGroup.role?.id)}){
                     it[isDefault] = value
                 }
@@ -74,7 +74,7 @@ open class PermGroup(val role: Role?, val guild: Guild?) {
     open val include: MutableList<String> = BoundList(
             { permname ->
                 transaction {
-                    Database.PERMISSIONS.run {
+                    Tables.PERMISSIONS.run {
                         insert {
                             it[guild] = this@PermGroup.guild?.id
                             it[role] = this@PermGroup.role?.id
@@ -86,7 +86,7 @@ open class PermGroup(val role: Role?, val guild: Guild?) {
             },
             { permname ->
                 transaction {
-                    Database.PERMISSIONS.run {
+                    Tables.PERMISSIONS.run {
                         deleteWhere {
                             (guild eq this@PermGroup.guild?.id) and
                             (role eq this@PermGroup.role?.id) and
@@ -98,7 +98,7 @@ open class PermGroup(val role: Role?, val guild: Guild?) {
             },
             {
                 transaction {
-                    return@transaction Database.PERMISSIONS.run {
+                    return@transaction Tables.PERMISSIONS.run {
                         slice(permission)
                         .select {
                             (guild eq this@PermGroup.guild?.id) and
@@ -116,7 +116,7 @@ open class PermGroup(val role: Role?, val guild: Guild?) {
     open val exclude: MutableList<String> = BoundList(
             { permname ->
                 transaction {
-                    Database.PERMISSIONS.run {
+                    Tables.PERMISSIONS.run {
                         insert {
                             it[guild] = this@PermGroup.guild?.id
                             it[role] = this@PermGroup.role?.id
@@ -128,7 +128,7 @@ open class PermGroup(val role: Role?, val guild: Guild?) {
             },
             { permname ->
                 transaction {
-                    Database.PERMISSIONS.run {
+                    Tables.PERMISSIONS.run {
                         deleteWhere {
                             (guild eq this@PermGroup.guild?.id) and
                             (role eq this@PermGroup.role?.id) and
@@ -140,7 +140,7 @@ open class PermGroup(val role: Role?, val guild: Guild?) {
             },
             {
                 transaction {
-                    return@transaction Database.PERMISSIONS.run {
+                    return@transaction Tables.PERMISSIONS.run {
                         slice(permission)
                                 .select {
                                     (guild eq this@PermGroup.guild?.id) and

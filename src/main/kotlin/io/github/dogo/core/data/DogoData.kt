@@ -59,7 +59,7 @@ class DogoData {
     val TIMEOUTS = Timeouts()
 
     /**
-     * Database configurations.
+     * Tables configurations.
      * @see [Database]
      */
     @Setting

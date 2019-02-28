@@ -1,6 +1,6 @@
 package io.github.dogo.server
 
-import io.github.dogo.core.Database
+import io.github.dogo.core.database.Tables
 import io.github.dogo.utils.BoundList
 import io.github.dogo.utils._static.DiscordAPI
 import net.dv8tion.jda.core.entities.User
@@ -47,7 +47,7 @@ data class Token(val token: String, val owner: User, val authTime: Date, val exp
     val scopes = BoundList(
             { thescope ->
                 transaction {
-                    Database.TOKENCOPES.run {
+                    Tables.TOKENCOPES.run {
                         insert {
                             it[token] = this@Token.token
                             it[scope] = thescope
@@ -57,7 +57,7 @@ data class Token(val token: String, val owner: User, val authTime: Date, val exp
             },
             { thescope ->
                 transaction {
-                    Database.TOKENCOPES.run {
+                    Tables.TOKENCOPES.run {
                         deleteWhere {
                             (token eq this@Token.token) and (scope eq thescope)
                         }
@@ -66,9 +66,9 @@ data class Token(val token: String, val owner: User, val authTime: Date, val exp
             },
             {
                 transaction {
-                    return@transaction Database.TOKENCOPES.run {
+                    return@transaction Tables.TOKENCOPES.run {
                         slice(scope).select { token eq this@Token.token }
-                    }.map { it[Database.TOKENCOPES.scope] }
+                    }.map { it[Tables.TOKENCOPES.scope] }
                 }
             }
     )

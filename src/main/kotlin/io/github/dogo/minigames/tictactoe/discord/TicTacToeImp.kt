@@ -1,6 +1,6 @@
 package io.github.dogo.minigames.tictactoe.discord
 
-import io.github.dogo.core.Database
+import io.github.dogo.core.database.Tables
 import io.github.dogo.core.DogoBot
 import io.github.dogo.core.command.CommandContext
 import io.github.dogo.discord.formatName
@@ -72,11 +72,11 @@ class TicTacToeImp(context: CommandContext, val p1: User, val p2: User) : Simple
      */
     private fun dumbSetStatistics(winner: TTTPlayer) {
         transaction {
-            Database.TICTACTOESTATISTICS.run {
+            Tables.TICTACTOESTATISTICS.run {
                 insert {
                     it[table] = ttt.table
                 }[id]?.let { id ->
-                    Database.TTTPlayers.run {
+                    Tables.TTTPlayers.run {
                         arrayOf(p1, p2).forEach { p ->
                             insert {
                                 it[statistic] = id

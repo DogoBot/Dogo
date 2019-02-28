@@ -4,6 +4,7 @@ import io.github.dogo.badwords.BadwordListener
 import io.github.dogo.core.DogoBot
 import io.github.dogo.core.command.CommandCategory
 import io.github.dogo.core.command.CommandReference
+import io.github.dogo.core.database.DatabaseConnection
 import io.github.dogo.discord.DiscordManager
 import io.github.dogo.lang.LanguageEntry
 import io.github.dogo.server.APIServer
@@ -50,13 +51,10 @@ class Boot {
             Phase("Initializing JDA") {
                 DiscordManager.connect(DogoBot.data.BOT_TOKEN)
             },
-            Phase("Connecting to Database") {
-                DogoBot.db = Database.connect(
-                        "jdbc:mysql://${DogoBot.data.DB.HOST}:${DogoBot.data.DB.PORT}/${DogoBot.data.DB.NAME}",
-                        driver = "com.mysql.jdbc.Driver",
-                        user = DogoBot.data.DB.USER,
-                        password = DogoBot.data.DB.PWD
-                )
+            Phase("Connecting to Tables") {
+                DogoBot.data.DB.apply {
+                    DatabaseConnection.connect(HOST, PORT, NAME, USER, PWD)
+                }
             },
             Phase("Registering Random Event Listeners"){
                 DogoBot.eventBus.register(BadwordListener::listenSend)

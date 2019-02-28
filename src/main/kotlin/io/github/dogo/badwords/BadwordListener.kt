@@ -1,6 +1,6 @@
 package io.github.dogo.badwords
 
-import io.github.dogo.core.Database
+import io.github.dogo.core.database.Tables
 import io.github.dogo.core.DogoBot
 import io.github.dogo.core.eventBus.EventBus
 import io.github.dogo.discord.DiscordManager
@@ -93,10 +93,10 @@ class BadwordListener {
                 //stores the punishment on db
                 suspend {
                     transaction {
-                        Database.BADWORDS.slice(Database.BADWORDS.id).select {
-                            (Database.BADWORDS.guild eq msg.guild.id) and (Database.BADWORDS.word inList container)
-                        }.map { it[Database.BADWORDS.id] }.forEach { badwordId ->
-                            Database.BADWORDPUNISHMENT.insert {
+                        Tables.BADWORDS.slice(Tables.BADWORDS.id).select {
+                            (Tables.BADWORDS.guild eq msg.guild.id) and (Tables.BADWORDS.word inList container)
+                        }.map { it[Tables.BADWORDS.id] }.forEach { badwordId ->
+                            Tables.BADWORDPUNISHMENT.insert {
                                 it[this.user] = msg.author.id
                                 it[this.badword] = badwordId
                             }

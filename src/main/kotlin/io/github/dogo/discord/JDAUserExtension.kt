@@ -1,6 +1,6 @@
 package io.github.dogo.discord
 
-import io.github.dogo.core.Database
+import io.github.dogo.core.database.Tables
 import io.github.dogo.security.PermGroupSet
 import io.github.dogo.utils._static.DiscordAPI
 import net.dv8tion.jda.core.entities.Guild
@@ -33,13 +33,13 @@ limitations under the License.
 
 var User.lang : String
     get() = transaction {
-        return@transaction Database.USERS.run {
+        return@transaction Tables.USERS.run {
             slice(lang).select { id eq this@lang.id }.first()[lang]
         }
     }
     set(newLang) = transaction {
-        Database.USERS.run {
-            Database.USERS.update({ id eq this@lang.id }){
+        Tables.USERS.run {
+            Tables.USERS.update({ id eq this@lang.id }){
                 it[lang] = newLang
             }
         }
@@ -47,13 +47,13 @@ var User.lang : String
 
 fun User.fetchUser() : JSONObject {
     return transaction {
-        Database.TOKENS.run {
-            (this innerJoin Database.TOKENCOPES)
+        Tables.TOKENS.run {
+            (this innerJoin Tables.TOKENCOPES)
                     .slice(token, type)
                     .select {
                         (user eq this@fetchUser.id) and
                                 (expiresIn greater DateTime.now()) and
-                                (Database.TOKENCOPES.token inList(listOf("email", "identify")))
+                                (Tables.TOKENCOPES.token inList(listOf("email", "identify")))
                     }.firstOrNull()
                     ?.let { DiscordAPI.fetchUser(it[token], it[type])} ?: throw DiscordException("Invalid or Unknown Token")
         }

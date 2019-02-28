@@ -1,6 +1,6 @@
 package io.github.dogo.security
 
-import io.github.dogo.core.Database
+import io.github.dogo.core.database.Tables
 import io.github.dogo.discord.DiscordManager
 import net.dv8tion.jda.core.entities.Guild
 import net.dv8tion.jda.core.entities.User
@@ -24,7 +24,7 @@ open class PermGroupSet(elements: List<PermGroup> = mutableListOf()) : ArrayList
          * Note: The DEFAULT permgroup is included.
          */
         fun findGlobalScope(user: User? = null): PermGroupSet {
-            return Database.PERMISSIONS.run {
+            return Tables.PERMISSIONS.run {
                     transaction {
                         return@transaction slice(this@run.role)
                         .select {
@@ -49,7 +49,7 @@ open class PermGroupSet(elements: List<PermGroup> = mutableListOf()) : ArrayList
          * Note: If the user isn't null and is invalid, returns an empty permgroup.
          */
         fun findLocalScope(guild: Guild, user: User? = null): PermGroupSet {
-            return Database.PERMISSIONS.run {
+            return Tables.PERMISSIONS.run {
                     transaction {
                         return@transaction slice(this@run.guild, this@run.role)
                         .select {

@@ -1,4 +1,4 @@
-package io.github.dogo.core
+package io.github.dogo.core.database
 
 import org.jetbrains.exposed.sql.Table
 import org.joda.time.DateTime
@@ -25,7 +25,7 @@ limitations under the License.
  * @author NathanPB
  * @since 1.0.0
  */
-class Database {
+class Tables {
     object USERS: Table("Users") {
         val id = varchar("id", 32).primaryKey()
         val lang = varchar("lang", 5).default("en_US")
