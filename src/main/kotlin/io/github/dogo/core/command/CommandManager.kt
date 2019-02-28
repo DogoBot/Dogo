@@ -1,5 +1,8 @@
 package io.github.dogo.core.command
 
+import io.github.dogo.core.DogoBot
+import io.github.dogo.discord.prefixes
+import net.dv8tion.jda.core.entities.Guild
 import java.util.concurrent.Executors
 
 /*
@@ -26,5 +29,24 @@ class CommandManager {
          * The command processor queue.
          */
         val cmdProcessorThread = Executors.newSingleThreadExecutor()
+
+        /**
+         * Function used to search for valid command prefixes. It will always return the global ones.
+         *
+         * @param[guilds] guilds to search in for local command prefixes.
+         *
+         * @return the list with all the valid command prefixes.
+         */
+        fun getCommandPrefixes(vararg guilds : Guild) : List<String> {
+            val list = DogoBot.data.COMMAND_PREFIX.toMutableList()
+            guilds.map { it.prefixes }.forEach { list.addAll(it)}
+            return list.sortedBy { -it.length }
+        }
+    }
+
+    var route : CommandRouter = CommandRouter(CommandRouter.root){}
+
+    fun route(body: CommandRouter.()->Unit){
+        CommandRouter(CommandRouter.root, body).also { route = it }
     }
 }

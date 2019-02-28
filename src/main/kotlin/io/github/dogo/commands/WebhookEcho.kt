@@ -1,10 +1,7 @@
 package io.github.dogo.commands
 
 import io.github.dogo.core.DogoBot
-import io.github.dogo.core.command.CommandCategory
-import io.github.dogo.core.command.CommandFactory
-import io.github.dogo.core.command.CommandReference
-import io.github.dogo.core.command.ReferencedCommand
+import io.github.dogo.core.command.*
 import io.github.dogo.discord.menus.SelectorReactionMenu
 import io.github.dogo.discord.newsWebhook
 
@@ -42,7 +39,7 @@ class WebhookEcho : ReferencedCommand(
                     }
                 }.close()
             } else {
-                reply("notconfigured", CommandFactory.getCommandPrefixes().sortedBy { -it.length }.first(), preset = true)
+                reply("notconfigured", CommandManager.getCommandPrefixes().sortedBy { -it.length }.first(), preset = true)
             }
         }
 ){

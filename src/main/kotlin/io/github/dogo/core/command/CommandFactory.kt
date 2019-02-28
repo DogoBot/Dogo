@@ -1,48 +1,28 @@
 package io.github.dogo.core.command
 
-import io.github.dogo.core.DogoBot
 import io.github.dogo.security.PermGroupSet
 import io.github.dogo.discord.DiscordManager
 import io.github.dogo.discord.lang
-import io.github.dogo.discord.prefixes
 import io.github.dogo.discord.sendDontCareAboutIt
 import io.github.dogo.lang.BoundLanguage
 import io.github.dogo.lang.LanguageEntry
 import io.github.dogo.utils.Holder
 import net.dv8tion.jda.core.EmbedBuilder
 import net.dv8tion.jda.core.Permission
-import net.dv8tion.jda.core.entities.Guild
 import net.dv8tion.jda.core.entities.PrivateChannel
 import net.dv8tion.jda.core.entities.TextChannel
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent
 import java.awt.Color
 
-class CommandFactory {
-
-    companion object {
-
-        /**
-         * Function used to search for valid command prefixes. It will always return the global ones.
-         *
-         * @param[guilds] guilds to search in for local command prefixes.
-         *
-         * @return the list with all the valid command prefixes.
-         */
-        fun getCommandPrefixes(vararg guilds : Guild) : List<String> {
-            val list = DogoBot.data.COMMAND_PREFIX.toMutableList()
-            guilds.map { it.prefixes }.forEach { list.addAll(it)}
-            return list.sortedBy { -it.length }
-        }
-    }
-
-    var route : CommandRouter = CommandRouter(CommandRouter.root){}
-
-    fun route(body: CommandRouter.()->Unit){
-        CommandRouter(CommandRouter.root, body).also { route = it }
-    }
+/**
+ * Class responsible on generating and executing commands.
+ *
+ * @param[manager] its manager.
+ */
+class CommandFactory(val manager: CommandManager) {
 
     fun onMessage(event : MessageReceivedEvent){
-        val prefix = CommandFactory.getCommandPrefixes(event.guild).firstOrNull {
+        val prefix = CommandManager.getCommandPrefixes(event.guild).firstOrNull {
             event.message.contentRaw.startsWith(it)
         }
 
@@ -53,7 +33,7 @@ class CommandFactory {
                 }
                 val text = event.message.contentRaw.replaceFirst(prefix, "")
                 val argsHolder = Holder<Int>()
-                val route = this.route.findRoute(text, argsHolder)
+                val route = manager.route.findRoute(text, argsHolder)
                 val pgs = PermGroupSet.find(event.author, event.guild)
 
 

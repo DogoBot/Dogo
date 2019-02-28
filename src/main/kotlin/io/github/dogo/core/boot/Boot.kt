@@ -64,7 +64,7 @@ class Boot {
                 LanguageEntry.load()
             },
             Phase("Registering Commands") {
-              DogoBot.cmdFactory.route {
+              DogoBot.cmdManager.route {
                   route(io.github.dogo.commands.Help())
                   route(io.github.dogo.commands.TicTacToe())
                   route(io.github.dogo.commands.Stats())
@@ -81,14 +81,14 @@ class Boot {
                   route(CommandReference("route", category = CommandCategory.OWNER, permission = "command.admin")){
                       execute {
                           if(this.args.isEmpty()){
-                              DogoBot.cmdFactory.route
+                              DogoBot.cmdManager.route
                           } else {
                               var s = ""
                               this.args.forEach { a -> s+="$a " }
                               if(s.isNotEmpty()) {
                                   s = s.substring(0, s.length - 1)
                               }
-                              DogoBot.cmdFactory.route.findRoute(s, Holder())
+                              DogoBot.cmdManager.route.findRoute(s, Holder())
                           }.let { r -> this.reply("```json\n$r\n```") }
                       }
                   }

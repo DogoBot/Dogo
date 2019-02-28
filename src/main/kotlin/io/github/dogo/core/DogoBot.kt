@@ -2,6 +2,7 @@ package io.github.dogo.core
 
 import com.google.common.reflect.TypeToken
 import io.github.dogo.core.command.CommandFactory
+import io.github.dogo.core.command.CommandManager
 import io.github.dogo.core.data.DogoData
 import io.github.dogo.core.eventBus.EventBus
 import io.github.dogo.server.APIServer
@@ -93,9 +94,14 @@ class DogoBot {
         val eventBus = EventBus()
 
         /**
+         * The command manager.
+         */
+        val cmdManager = CommandManager()
+
+        /**
          * The command factory.
          */
-        val cmdFactory = CommandFactory()
+        val cmdFactory = CommandFactory(cmdManager)
 
         /**
          * The API Server.
