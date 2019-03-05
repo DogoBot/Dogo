@@ -168,5 +168,15 @@ enum class EmoteReference(val id : String, val external : Boolean = false, val e
          * Gets the equivalent [EmoteReference] for a [Char]
          */
         fun getRegional(char: Char) = EmoteReference.values().firstOrNull { it.equivalentChar == char } ?: DOGOHELP
+
+        /**
+         * All the single digits numbers.
+         */
+        val numbers = listOf(ZERO, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE)
+
+        /**
+         * All the single digit numbers without zero.
+         */
+        val numbersNoZero = numbers.filterIndexed { i, _ -> i > 0 }
     }
 }
