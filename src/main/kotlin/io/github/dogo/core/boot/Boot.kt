@@ -127,7 +127,7 @@ class Boot {
                     override fun run() {
                         BeamUtils.takeDumps()
                     }
-                }, DogoBot.data.DUMPS.PERIOD, 1)
+                }, DogoBot.data.DUMPS.PERIOD, DogoBot.data.DUMPS.PERIOD)
             }
     )
 
