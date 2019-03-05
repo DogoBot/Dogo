@@ -1,9 +1,9 @@
 package io.github.dogo.commands
 
-import io.github.dogo.badwords.BadwordAddedEvent
-import io.github.dogo.badwords.BadwordListAddedEvent
-import io.github.dogo.badwords.BadwordListRemovedEvent
-import io.github.dogo.badwords.BadwordRemovedEvent
+import io.github.dogo.discord.badwords.BadwordAddedEvent
+import io.github.dogo.discord.badwords.BadwordListAddedEvent
+import io.github.dogo.discord.badwords.BadwordListRemovedEvent
+import io.github.dogo.discord.badwords.BadwordRemovedEvent
 import io.github.dogo.core.DogoBot
 import io.github.dogo.core.command.CommandCategory
 import io.github.dogo.core.command.CommandReference

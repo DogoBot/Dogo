@@ -2,7 +2,7 @@ package io.github.dogo.commands
 
 import com.mashape.unirest.http.Unirest
 import com.sun.org.glassfish.external.statistics.Statistic
-import io.github.dogo.badwords.BadwordListener
+import io.github.dogo.discord.badwords.BadwordListener
 import io.github.dogo.core.DogoBot
 import io.github.dogo.core.command.*
 import io.github.dogo.core.data.DogoData

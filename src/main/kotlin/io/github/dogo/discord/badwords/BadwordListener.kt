@@ -1,4 +1,4 @@
-package io.github.dogo.badwords
+package io.github.dogo.discord.badwords
 
 import io.github.dogo.core.database.Tables
 import io.github.dogo.core.DogoBot

@@ -1,6 +1,6 @@
 package io.github.dogo.core.boot
 
-import io.github.dogo.badwords.BadwordListener
+import io.github.dogo.discord.badwords.BadwordListener
 import io.github.dogo.core.DogoBot
 import io.github.dogo.core.command.CommandCategory
 import io.github.dogo.core.command.CommandReference

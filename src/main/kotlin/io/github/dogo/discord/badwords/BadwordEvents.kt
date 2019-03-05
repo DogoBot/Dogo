@@ -1,4 +1,4 @@
-package io.github.dogo.badwords
+package io.github.dogo.discord.badwords
 
 import net.dv8tion.jda.core.entities.Guild
 import net.dv8tion.jda.core.entities.Message
