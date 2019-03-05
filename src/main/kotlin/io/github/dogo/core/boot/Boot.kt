@@ -11,7 +11,6 @@ import io.github.dogo.server.APIServer
 import io.github.dogo.utils.Holder
 import io.github.dogo.utils._static.BeamUtils
 import net.dv8tion.jda.core.entities.Game
-import org.jetbrains.exposed.sql.Database
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -125,7 +124,7 @@ class Boot {
             Phase("Inizializing dump logs"){
                 Timer().scheduleAtFixedRate(object: TimerTask(){
                     override fun run() {
-                        BeamUtils.takeDumps()
+                        BeamUtils.takeHeapDump()
                     }
                 }, DogoBot.data.DUMPS.PERIOD, DogoBot.data.DUMPS.PERIOD)
             }
