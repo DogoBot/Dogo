@@ -53,27 +53,16 @@ class BeamUtils {
         }
 
         /**
-         * Take Thread Dump and Heap Dump.
+         * Takes a Thread Dump and saves it.
          * Note: IT'S ONLY AVAILABLE ON LINUX ENVIRONMENTS WITH JMAP AND JSTACK ON PATH.
-         * The dumps are stored in dumps/dd-MM-YYY  HH-MM-ss.bin and dumps/dd-MM-YYY  HH-MM-ss.tdump
+         * The dump is stored in .dynamic/dumps/dd-MM-YYY _HH-MM-ss.bin
          */
-        fun takeDumps(){
+        fun takeHeapDump(){
             val currDate = SimpleDateFormat("dd-MM-YYYY_HH-mm-ss").format(Date())
             val heapDump = File(DogoBot.dynamicDir, "$currDate.bin")
-            val threadDump = File(DogoBot.dynamicDir, "$currDate.tdump")
 
             DogoBot.logger.info("Taking Heap Dump and Thread Dump...")
             SystemUtils.exec("jmap -dump:format=b,file=$heapDump ${BeamUtils.pid} ")
-            SystemUtils.exec("jstack -l ${BeamUtils.pid} > $threadDump")
-            DriveUtils.dumpUploaderThread.submit {
-                arrayOf(heapDump, threadDump)
-                        .filter { it.exists() && it.length() > 0 }
-                        .forEach {
-                            val dir = DriveUtils.getDir(DogoBot.data.DUMPS.PATH).firstOrNull() ?: DriveUtils.mkdir(DogoBot.data.DUMPS.PATH)
-                            DriveUtils.toDrive(it, dir.id)
-                            it.delete()
-                        }
-            }
         }
 
         /**
