@@ -54,7 +54,8 @@ class BeamUtils {
 
         /**
          * Takes a Thread Dump and saves it.
-         * Note: IT'S ONLY AVAILABLE ON LINUX ENVIRONMENTS WITH JMAP AND JSTACK ON PATH.
+         * Note: IT'S ONLY AVAILABLE ON ENVIRONMENTS WITH JMAP ON PATH. The following command is executed:
+         * <code>jmap -dump:format=b, file=thefile</code>
          * The dump is stored in .dynamic/dumps/dd-MM-YYY _HH-MM-ss.bin
          */
         fun takeHeapDump(){
