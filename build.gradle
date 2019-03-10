@@ -26,7 +26,7 @@ version '1.0-SNAPSHOT'
 
 
 
-mainClassName = "io.github.dogo.core.boot.BootKt"
+mainClassName = "dev.nathanpb.dogo.core.boot.BootKt"
 
 sourceCompatibility = 1.8
 
@@ -85,7 +85,7 @@ compileTestKotlin {
 
 jar {
     manifest {
-        attributes 'Main-Class': 'io.github.dogo.core.boot.BootKt'
+        attributes 'Main-Class': 'dev.nathanpb.dogo.core.boot.BootKt'
     }
     from {
         configurations.compile
